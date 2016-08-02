@@ -1,2 +1,2 @@
 # EggWars
-Minigame inspired by EggWars
+Minigame inspired by EggWars minigame
