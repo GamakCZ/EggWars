@@ -1,5 +1,6 @@
 name: EggWars
 version: DEV
+main:EggWars\EggWars
 api:
 - 1.13.0
 - 1.8.0
