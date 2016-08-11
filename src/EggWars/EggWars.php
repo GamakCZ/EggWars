@@ -25,5 +25,11 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
  if(!$sender instanceof Player) {
   return;
  }
- if($strtolower($args[0]))
+ switch(strotolower($args[0]="EggWars")) {
+  $sender->sendMessage("Use /ew help");
+  return;
+  case "help":
+   if(!$sender->hasPermission(""))
+   $sender->sendMessage(C::GOLD . "EggWars Commands");
+   $sender->
 }
