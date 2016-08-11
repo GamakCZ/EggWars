@@ -6,3 +6,15 @@ api:
 - 1.8.0
 - 2.0.0
 author: GamakCZ
+
+commands:
+  EggWars:
+    aliases: ew
+    description: default EggWars Command
+
+permissions:
+  ew.cmd.help:
+    default: op
+  
+  ew.cmd.ophelp:
+    default: op
