@@ -32,8 +32,10 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
   return;
   case "help":
    if(!$sender->hasPermission("ew.cmd.ophelp")) {
+   $sender->sendMessage(C::GOLD . "<><><><><><><><><><>");
    $sender->sendMessage(C::GOLD . "EggWars Commands");
    $sender->sendMessage(C::GOLD . "- /ew addarena");
+   $sender->sendMessage(C::GOLD . "<><><><><><><><><><>");
    return;
  }
  case "addarena":
