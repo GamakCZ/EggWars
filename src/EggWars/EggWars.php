@@ -41,8 +41,8 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
  case "addarena":
   $sender->sendMessage("use /ew addarena <world> <teams> <playersinteams>");
   if(empty($args[1])){
-   if($args[2]==5, 6, 7, 8, 9){
-   return false
+   if($args[2]==5, 6, 7, 8, 9) {
+   return false;
    }
    $sender->sendMessage("use /ew addarena <world> <teams> <playersinteams>");
   }
@@ -58,4 +58,8 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
    $cfg->set("PlayersInTeams", $pit);
    }
   }
+ }
+
+ public function onTranslateMessages() {
+  $msgcfg = new Config($his->getDataFolder()."messages.yml,Config:::YAML");
 }
