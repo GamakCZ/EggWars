@@ -22,7 +22,7 @@ public function onEnable(){
  $this->getLogger->info("EggWars enabled");
  $this->saveDefaultConfig();
  $mcfg = new Config($this->getDataFolder()."messages.yml, Config::YAML");
-
+}
 public function onDisable(){
  $this->getLogger->info("EggWars disabled");
 }
@@ -89,9 +89,9 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
    $arenaname = $args[3];
    $team = $args[4];
    $arena = $this->getDataFolder()."Arenas/".$arenaname."yml";
-   $sx = $this->$x;
-   $sy = $this->$y;
-   $sz = $this->$z
+   $sx = $sender->getX();
+   $sy = $sender->getY();
+   $sz = $sender->getZ();
     $arena->set("### TeamSigns");
     $arena->set("###");
     $arena->set("Team", $team);
