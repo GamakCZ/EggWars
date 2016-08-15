@@ -17,7 +17,13 @@ commands:
 
 permissions:
   ew.cmd.help:
-    default: op
+    default: true
   
   ew.cmd.ophelp:
+    default: op
+    
+  ew.cmd.addarena:
+    default: op
+    
+  ew.cmd.regsign:
     default: op
