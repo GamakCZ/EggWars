@@ -25,5 +25,8 @@ permissions:
   ew.cmd.addarena:
     default: op
     
+  ew.cmd.info:
+    default: true
+    
   ew.cmd.regsign:
     default: op
