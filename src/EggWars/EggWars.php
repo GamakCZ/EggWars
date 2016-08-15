@@ -50,6 +50,7 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
   $sender->sendMessage(C::GOLD . "<><><><><><><><><><><>");
  }
  case "addarena":
+  if(!$sender->hasPermission"ew.cmd.addarena") {
   $sender->sendMessage("use /ew addarena <world> <teams> <playersinteams>");
   if(empty($args[1])){
    if($args[2]==1, 2, 3, 5, 6, 7, 8, 9) {
@@ -75,8 +76,9 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
    $cfg->set("PlayersInTeams", $pit);
     }
    }
-   
+  } 
  case "regsign":
+  if(!sender->hasPermission"ew.cmd.regsign") {
   $sender->sendMessage("use /ew regsign <JoinSign|TeamSign> <Arena>");
   $sender->sendMessage("stand to x, y, z sign")
   if($args[2]=="TeamSign") {
@@ -97,7 +99,7 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
     $arena->set("Y", $sy);
     $arena->set("Z", $sz);
     $arena->set("###");
-   
+     }
     }
    }
   }
@@ -116,6 +118,6 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
  }
  
  public function onJoinTeam() {
-  $player = 
+  
  }
 }
