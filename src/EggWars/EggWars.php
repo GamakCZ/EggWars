@@ -78,7 +78,7 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
    }
   } 
  case "regsign":
-  if(!sender->hasPermission"ew.cmd.regsign") {
+  if(!sender->hasPermission("ew.cmd.regsign")) {
   $sender->sendMessage("use /ew regsign <JoinSign|TeamSign> <Arena>");
   $sender->sendMessage("stand to x, y, z sign")
   if($args[2]=="TeamSign") {
@@ -102,6 +102,16 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
      }
     }
    }
+   
+   case "info":
+    if(!sender->hasPermission("ew.cmd.info")) {
+     $sender->sendMessage("***************************");
+     $sender->sendMessage("- Plugin created by GamakCZ");
+     $sender->sendMessage("- Download on: bit.do/gamcz");
+     $sender->sendMessage("***************************");
+     
+     break;
+   }
   }
  }
 
@@ -118,6 +128,7 @@ public function onCommand(CommandSender $sender, Command $cmd, $label, array $ar
  }
  
  public function onJoinTeam() {
-  
+  $tjo = $this->getConfig()->get("msg.teamjoin.one");
+  $tht = $this->getConfig()->get("msg.teamjoin.two");
  }
 }
