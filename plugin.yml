@@ -1,6 +1,6 @@
 name: EggWars
 version: DEV
-main:EggWars\EggWars
+main: EggWars\EggWars
 description: EggWars MiniGame
 author: GamakCZ
 website: bit.do/gamcz
