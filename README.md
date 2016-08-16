@@ -1,9 +1,10 @@
 # EggWars
 
 _EggWars minigame same as on SurvivalGames MC Server_
+
 _ip: survival-games.cz_
 
-_my old website:_ (bit.do/gamcz)
+
 __ToDo:__
 
 _commands:_ [40%]
