@@ -10,7 +10,7 @@ _ip: survival-games.cz_
 
 __ToDo:__
 
-_commands:_ [40%]
+_commands:_ [50%]
 
 _messages:_ [20%]
 
