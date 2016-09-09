@@ -1,32 +1,33 @@
 name: EggWars
-version: DEV
-main: EggWars\EggWars
-description: EggWars MiniGame
 author: GamakCZ
-website: bit.do/gamcz
-
-api:
-- 1.13.0
-- 1.8.0
-- 2.0.0
+main: EggWars\EggWars
+description: EggWars plugin (InDev)
+version: InDev
 
 commands:
-  EggWars:
-    aliases: ew
-    description: default EggWars Command
-
+ eggwars:
+  description: default EggWars command
+  aliases:
+   - ew
+   - ewars
+   - eggw
+   
+ eggwarssetup:
+  description: EggWars set-up command
+  aliases:
+   - ews
+   - es
+   - ewsettup
+   - ewset
+   - eggwarss
+   
+   
 permissions:
-  ew.cmd.help:
-    default: true
+ ew.cmd.op:
+  default: op
   
-  ew.cmd.ophelp:
-    default: op
-    
-  ew.cmd.addarena:
-    default: op
-    
-  ew.cmd.info:
-    default: true
-    
-  ew.cmd.regsign:
-    default: op
+ ew.cmd.vip:
+  default: op
+  
+ ew.cmd.default:
+  default:true
