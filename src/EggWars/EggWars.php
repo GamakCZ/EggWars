@@ -2,133 +2,117 @@
 
 namespace EggWars;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat as C;
-use pocketmine\command\CommandSender;
-use pocketmine\command\Command;
-use pocketmine\Player;
+use pocketmine\event\Listener as L;
+use pocketmine\plugin\PluginBase as PB;
 use pocketmine\utils\Config;
-use pocketmine\math\Vector3;
-use pocketmine\block\Block;
-use pocketmine\item\Item;
+use pocketmine\command\Command as CMD;
+use pocketmine\command\CommandSender as CS;
+use pocketmine\utils\TextFormat as C;
+use pocketmine\entity\Villager;
 
-class EggWars extends PluginBase implements Listener {
-
-public $prefix = C::DARK_AQUA . "[EggWars]";
-
-public function onEnable(){
- $this->getServer->getPluginManager->registerEvents($this, $this)
- $this->getLogger->info("EggWars enabled");
- $this->saveDefaultConfig();
- $mcfg = new Config($this->getDataFolder()."messages.yml, Config::YAML");
-}
-public function onDisable(){
- $this->getLogger->info("EggWars disabled");
-}
-
-public function onCommand(CommandSender $sender, Command $cmd, $label, array $args) {
- if(!$sender instanceof Player) {
-  return;
- }
- switch(strotolower($args[0]=="EggWars")) {
-  $sender->sendMessage("Use /ew help");
-  return;
-  case "help":
-   if(!$sender->hasPermission("ew.cmd.ophelp")) {
-   $sender->sendMessage(C::GOLD . "<><><><><><><><><><>");
-   $sender->sendMessage(C::GOLD . "EggWars Commands");
-   $sender->sendMessage(C::GOLD . "- /ew addarena");
-   $sender->sendMessage(C::GOLD . "- /ew regsign")
-   $sender->sendMessage(C::GOLD . "<><><><><><><><><><>");
-   return;
-   
- } else {
-  $sender->sendMessage(C::GOLD . "<><><><><><><><><><><>");
-  $sender->sendMessage(C::GOLD . "EggWars Commands");
-  $sender->sendMessage(C::GOLD . /*"- /ew join"*/);
-  $sender->sendMessage(C::GOLD . "<><><><><><><><><><><>");
- }
- case "addarena":
-  if(!$sender->hasPermission"ew.cmd.addarena") {
-  $sender->sendMessage("use /ew addarena <world> <teams> <playersinteams>");
-  if(empty($args[1])){
-   if($args[2]==1, 2, 3, 5, 6, 7, 8, 9) {
-    $sender->sendMessage("teams must be 2, 3, 4");
-   return false;
-   }
-    if($args[3]==1,2,3, 5, 6, 7, 8, 9) {
-     $sender->sendMessage("limit is 4 players");
-    }
-   $sender->sendMessage("use /ew addarena <world> <teams> <playersinteams>");
-  }
-  else {
-   $sender->sendMessage($this->$prefix . "Arena was been saved");
-   $sender->sendMessage($this->$prefix . "now register team signs using /ew regsign");
-  $wd = $args[1];
-  $ts = $args[2];
-  $pit = $args[3];
+class EggWars extends PB implements L {
+ 
+ public $cfg;
+ public $status;
+ 
+ public function onEnable()
+ {
+  $this->getServer()->getPluginManager()->registerEvents($this, $this);
+  $this->getLogger()->info("EggWars loaded");
   
-  $cfg = new Config($this->getDataFolder()."Arenas/".$wd.".yml", Config::YAML);
-  if($cfg->get("name")==null) {
-   $cfg->set("name", $wd);
-   $cfg->set("Teams", $ts);
-   $cfg->set("PlayersInTeams", $pit);
-    }
-   }
-  } 
- case "regsign":
-  if(!sender->hasPermission("ew.cmd.regsign")) {
-  $sender->sendMessage("use /ew regsign <JoinSign|TeamSign> <Arena>");
-  $sender->sendMessage("stand to x, y, z sign")
-  if($args[2]=="TeamSign") {
-   $sender->sendMessage("use /ew regsign <TeamSign> <Arena> <Team>")
-   if($args[3]==null) {
-    return false;
-   } else {
-   $arenaname = $args[3];
-   $team = $args[4];
-   $arena = $this->getDataFolder()."Arenas/".$arenaname."yml";
-   $sx = $sender->getX();
-   $sy = $sender->getY();
-   $sz = $sender->getZ();
-    $arena->set("### TeamSigns");
-    $arena->set("###");
-    $arena->set("Team", $team);
-    $arena->set("X", $sx);
-    $arena->set("Y", $sy);
-    $arena->set("Z", $sz);
-    $arena->set("###");
-     }
-    }
-   }
-   
-   case "info":
-    if(!sender->hasPermission("ew.cmd.info")) {
-     $sender->sendMessage("***************************");
-     $sender->sendMessage("- Plugin created by GamakCZ");
-     $sender->sendMessage("- Download on: bit.do/gamcz");
-     $sender->sendMessage("***************************");
-     
-     break;
-   }
-  }
- }
-
- public function onTranslateMessages() {
-  
-  $mcfg = Config($this->getDataFolder()."messages.yml");
-  
-  $mcfg->set("msg.join", "has join to the EggWars game");
-  $mcfg->set("msg.leave", "has left the EggWars game");
-  $mcfg->set("msg.win", "team has won the EggWars game");
-  $mcfg->set("msg.eggbroke", "egg was been broke");
-  $mcfg->set("msg.teamjoin.one", "you are in ");
-  $mcfg->set("msg.teamjoin.two", " team");
+  $cfg = new Config($this->getDataFolder()."config.yml", Config::YAML);
  }
  
- public function onJoinTeam() {
-  $tjo = $this->getConfig()->get("msg.teamjoin.one");
-  $tht = $this->getConfig()->get("msg.teamjoin.two");
+ public function onCommand(CS $s, CMD $cmd, $label, array $args)
+ {
+  if($s instanceof Player)
+  {
+   return true;
+  }
+  
+  switch($cmd->getName())
+  {
+   case "eggwars":
+    if($s->hasPermission("ew.cmd.op"))
+    {
+     if($args[0]=="help")
+     {
+      $s->sendMessage("----<EggWarsHelp>----");
+      $s->sendMessage("> /ew create <map>");
+      $s->sendMessage("> /ew set <map>");
+     }
+     if($args[0]=="create")
+     {
+      $nameofmap = $args[1];
+      $config = new Config($this->getDataFolder()."/arenas/"$nameofmap".yml", Config::YAML);
+      $config->set("ArenaName", $nameofmap);
+      $s->sendMessage("-> Arena has been sucessfully saved!");
+      $s->sendMessage("-> for set arena use /ew set");
+     }
+     if($args[0]=="set")
+     {
+      if(empty($args[1]))
+      {
+       $s->sendMessage(">>> EggWarsSettupHelp <<<");
+       $s->sendMessage("- /ews villager");
+       $s->sendMessage("- /ews gold");
+       $s->sendMessage("- /ews iron");
+       $s->sendMessage("- /ews bronze");
+       $s->sendMessage("use /ew set 2 for more");
+      }
+      if($args[1]=="2")
+      {
+       $s->sendMessage(">>> EggWarsSettupHelp <<<");
+       $s->sendMessage("- /ews setspawn");
+       $s->sendMessage("- /ews setlobby");
+       $s->sendMessage("- /ews setleavepos");
+       $s->sendMessage("- /ews setstarttime");
+      }
+     }
+    }
+    else
+    {
+     $s->sendMessage(C::RED . "Unknown command. Try /help for list of commands");
+    }
+    
+    case "eggwarssetup":
+     if($s->hasPermission("ew.cmd.op"))
+     {
+      if($args[0]=="villager")
+      {
+       if(empty($args[1]))
+       {
+        $s->sendMessage("> use: /ews villager");
+        $s->sendMessage("-> spawn villager on your position");
+       }
+       else
+       {
+        $s->sendMessage("> villager was been spawned");
+        //villager
+        $vr = new Villager($this->spawnTo($s));
+       }
+      }
+      if($args[0]=="gold")
+      {
+       if(empty($args[1]))
+       {
+        $s->sendMessage("> use: /ews gold <map>");
+        $s->sendMessage("-> set postition to spawn gold");
+       }
+       else
+       {
+        $s->sendMessage("> gold spawn position has been set on your pos");
+        $xyz = array($x, $y, $z);
+        $x = $s->getX();
+        $y = $s->getY();
+        $z = $s->getZ();
+        $gcfg = new Config($this->getDataFolder()."/arenas/".$map."/golds");
+        $gcfg->set($xyz);
+       }
+      }
+     }
+  }
  }
+ 
+ 
 }
