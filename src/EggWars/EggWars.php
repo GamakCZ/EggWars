@@ -103,10 +103,11 @@ class EggWars extends PB implements L {
        else
        {
         $s->sendMessage("> gold spawn position has been set on your pos");
-        $xyz = array($x, $y, $z);
         $x = $s->getX();
         $y = $s->getY();
         $z = $s->getZ();
+        $xyz = array($x, $y, $z);
+        $map = $args[1];
         $gcfg = new Config($this->getDataFolder()."/arenas/".$map."/golds");
         $gcfg->set($xyz);
        }
