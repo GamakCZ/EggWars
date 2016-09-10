@@ -10,6 +10,7 @@ use pocketmine\command\Command as CMD;
 use pocketmine\command\CommandSender as CS;
 use pocketmine\utils\TextFormat as C;
 use pocketmine\entity\Villager;
+use pocketmine\Player;
 
 class EggWars extends PB implements L {
  
@@ -77,7 +78,7 @@ class EggWars extends PB implements L {
     }
     
     case "eggwarssetup":
-     if($s->hasPermission("ew.cmd.op"))
+     if($s->hasPermission("ew.cmd.settup"))
      {
       if($args[0]=="villager")
       {
@@ -93,6 +94,7 @@ class EggWars extends PB implements L {
         $vr = new Villager($this->spawnTo($s));
        }
       }
+      // commands for spawn items
       if($args[0]=="gold")
       {
        if(empty($args[1]))
@@ -108,13 +110,78 @@ class EggWars extends PB implements L {
         $z = $s->getZ();
         $xyz = array($x, $y, $z);
         $map = $args[1];
-        $gcfg = new Config($this->getDataFolder()."/arenas/".$map."/golds");
+        $gcfg = new Config($this->getDataFolder()."/arenas/".$map."/golds", Config::YAML);
         $gcfg->set($xyz);
+       }
+      }
+       if($args[0]=="iron")
+       {
+        if(empty($args[1]))
+        {
+         $s->sendMessage("> use: /ews iron <map>");
+         $s->sendMessage("->set position to spawn iron");
+        }
+        else
+        {
+        $s->sendMessage("> gold spawn position has been set on your pos");
+        $x = $s->getX();
+        $y = $s->getY();
+        $z = $s->getZ();
+        $xyz = array($x, $y, $z);
+        $map = $args[1];
+        $icfg = new Config($this->getDataFolder()."/arenas/".$map."/irons", Config::YAML);
+        $icfg->set($xyz);
+        }
+       }
+       if($args[0]=="bronze")
+       {
+        if(empty($args[1]))
+        {
+         $s->sendMessage("> use: /ews bronze <map>");
+         $s->sendMessage("-> set position to spawn bronze");
+        }
+        else
+        {
+        $s->sendMessage("> bronze spawn position has been set on your pos");
+        $x = $s->getX();
+        $y = $s->getY();
+        $z = $s->getZ();
+        $xyz = array($x, $y, $z);
+        $map = $args[1];
+        $bcfg = new Config($this->getDataFolder()."/arenas/".$map."/bronze");
+        $bcfg->set($xyz);
+        }
+       }
+       //end of code for item spawn
+       
+       if($args[0]=="setspawn")
+       {
+        if(empty($args[1]))
+        {
+         $s->sendMessage("> use: /ews setspawn <map> <team>");
+         $s->sendMessage("> teams: blue, red, yellow, green");
+         $s->sendMessage("-> set game map spawn");
+        }
+        else if(empty($args[2]))
+        {
+         $s->sendMessage("> use: /ews setspawn <map> <team>");
+         $s->sendMessage("> teams: blue, red, yellow, green");
+         $s->sendMessage("-> set game map spawn");
+        }
+        else
+        {
+         $map = $args[1];
+         $team = $args[2];
+         $x = $s->getX();
+         $y = $s->getY();
+         $z = $s->getZ();
+         $tcg = new Config($this->getDataFolder()."/arenas/".$map."/teams/".$team, Config::YAML);
+         $tcg->set("x", $x);
+         $tcg->set("y", $y);
+         $tcg->set("z", $z);
+        }
        }
       }
      }
   }
  }
- 
- 
-}
