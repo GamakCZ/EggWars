@@ -181,6 +181,18 @@ class EggWars extends PB implements L {
          $tcg->set("z", $z);
         }
        }
+       break;
+       if($args[0]=="setlobby")
+       {
+        if(empty($args[1]))
+        {
+         $s->sendMessage("use: /ews setlobby <map>");
+        }
+        elseif(empty($args[2]))
+        {
+         
+        }
+       }
       }
      }
   }
