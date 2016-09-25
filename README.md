@@ -1,7 +1,5 @@
 # EggWars
 
-#REPOSITORY MOVED TO github.com/SwagCraftDevs/EggWars
-
 
 _EggWars minigame same as on SurvivalGames MC Server_
 
