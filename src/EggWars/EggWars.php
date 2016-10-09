@@ -14,4 +14,9 @@ use pocketmine\event\player\PlayerChatEvent as CHE;
 class EggWars extends PB implements L {
  
  public $prefix = C::GRAY.C::BOLD."[".C::DARK_AQUA." EggWars ".C::GRAY."]";
+ 
+ public function onEnable()
+ {
+  $this->getLogger()->info("Enabled");
+ }
 }
