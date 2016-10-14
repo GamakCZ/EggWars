@@ -24,21 +24,21 @@ class EggWars extends PB implements L {
  
  public $prefix = C::GRAY.C::BOLD."[".C::DARK_AQUA." EggWars ".C::GRAY."]";
  public $mode = 0;
-	public $arenas = array();
+ public $arenas = array();
  
  public function onEnable()
  {
   $this->getLogger()->info("Eggs Ready");
   
   $this->getServer()->getPluginManager()->registerEvents($this ,$this);
-		@mkdir($this->getDataFolder());
-		$config = new Config($this->getDataFolder() . "/config.yml", Config::YAML);
+  @mkdir($this->getDataFolder());
+  $config = new Config($this->getDataFolder() . "/config.yml", Config::YAML);
   if($config->get("arenas")!=null)
 		{
-			$this->arenas = $config->get("arenas");
+		$this->arenas = $config->get("arenas");
 		}
 		foreach($this->arenas as $arena)
 		{
-			$this->getServer()->loadLevel($arena);
+		$this->getServer()->loadLevel($arena);
 		}
 }
