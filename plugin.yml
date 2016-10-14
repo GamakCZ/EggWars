@@ -1,7 +1,7 @@
 name: EggWars
 author: GamakCZ
-main: EggWars\EggWars
-description: EggWars plugin (InDev)
+main: src\EggWars
+description: New Minigames EggWars for Pocketmine Servers 
 version: InDev
 
 commands:
