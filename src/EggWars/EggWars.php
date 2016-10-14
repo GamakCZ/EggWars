@@ -17,6 +17,6 @@ class EggWars extends PB implements L {
  
  public function onEnable()
  {
-  $this->getLogger()->info("Enabled");
+  $this->getLogger()->info("Eggs Ready!");
  }
 }
