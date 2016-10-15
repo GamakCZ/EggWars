@@ -1,10 +1,20 @@
 ### Plugin created by GamakCZ
 
+
+#⤥You can rewrite prefix⤦
 # prefix: §3[EggWars]
 
+#⤥Edit Eggwars Shop⤦
 # shop:
 
+#Edit/Rewrite EggWars messages into your language
 #messages:
 #On Join: 
 #On Started:
 #In Game:
+#On Command help: >->->->->->->EGG Wars 💥 Commands<-<-<-<-<-<
+#                 >>>>/egs help - show your EggWars command<<<<
+#                 >>>/egs create - create a EggWars Arena<<<
+#                 >>/egs start - start your EggWars Game<<
+#                 >>>/egs stop - stop your EggWars Game<<<
+#                 >>>>/egs delete - delete EggWars Arena<<<<
