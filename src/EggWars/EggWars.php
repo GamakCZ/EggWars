@@ -17,12 +17,14 @@ use pocketmine\scheduler\PluginTask;
 
 class EggWars extends PB implements L {
     
-    public $prefix = C::GRAY.C::BOLD."[".C::DARK_AQUA." EggWars ".C::GRAY."]";
+    public $prefix;/*= C::GRAY.C::BOLD."[".C::DARK_AQUA." EggWars ".C::GRAY."]";*/
     public $mode = 0;
-    public $arenas = array();
-    public $ingame = 0;
+    //public $arenas = array();
+    public $ingame;
     public $cfg;
     public $msg;
+    public $map;
+    public $arena;
     /*        
     public $redegg;
     public $blueegg;
@@ -60,6 +62,21 @@ class EggWars extends PB implements L {
             $msg = new Config($this->getDataFolder()."languages/ces.yml", Config::YAML);
         }
         
+        $this->prefix = $cfg->get("Prefix");
+    }
+    
+    public function getLang()
+    {
+        $cfg = $this->cfg;
+        
+        if($cfg->get("lang") = "eng")
+        {
+            return "eng";
+        }
+        else
+        {
+            return "ces";
+        }
     }
     
     public function onCommand(CommandSender $s, Command $cmd, $label, array $args)
@@ -105,7 +122,9 @@ class EggWars extends PB implements L {
                                             $arena = new Config($this->getDataFolder()."arenas/".$args[2].".yml", Config::YAML);
                                             $arena->set("world", $args[1]);
                                             $arena->set("status", "set");
+                                            $arena->set("mode", 1);
                                             $arena->save();
+                                            $this->map = $args[2];
                                         }
                                         else
                                         {
@@ -151,37 +170,49 @@ class EggWars extends PB implements L {
                                         {
                                             if($args[3]=="bronze")
                                             {
-                                                $this->mode = 20;
+                                                $this->mode = 8;
                                             }
                                             elseif($args[3]=="iron")
                                             {
-                                                $this->mode = 22;
+                                                $this->mode = 9;
                                             }
                                             elseif($args[3]=="gold")
                                             {
-                                                $this->mode = 24;
+                                                $this->mode = 10;
                                             }
                                         }
                                         elseif($args[2]=="spawns")
                                         {
                                             $this->mode = 1;
+                                            $s->sendMessage("setup_spawns");
                                         }
                                         elseif($args[2]=="joinsign")
                                         {
-                                            $this->mode = 19;
+                                            $this->mode = 5;
                                         }
                                         elseif($args[2]=="leavepos")
                                         {
-                                            $this->mode = 18;
+                                            $this->mode = 6;
                                         }
                                         elseif($args[2]=="lobbypos")
                                         {
-                                            $this->mode = 17;
+                                            $this->mode = 7;
+                                        }
+                                        elseif($args[2]=="info")
+                                        {
+                                            if($this->getLang()=="eng")
+                                            {
+                                                $s->sendMessage("You can setup arena only when is on server 1 player, else it can go to bugs");
+                                            }
+                                            else
+                                            {
+                                                $s->sendMessage("Arenu nastavuj pouze kdyz je na serveru jeden hrac, jinak to muze dojit k chybam");
+                                            }
                                         }
                                     }
                                     else
                                     {
-                                        $s->sendMessage("Arena ".$args[1]." neexistuje"); 
+                                        $s->sendMessage($msg->get("arena_does_not_exists")." (".$args[1].")"); 
                                     }
                                 }
                                 else
@@ -212,6 +243,66 @@ class EggWars extends PB implements L {
                 {
                     $s->sendMessage($msg->get("usage"));
                 }
+        }
+    }
+    
+    public function onInteract(IE $e)
+    {
+        $p = $e->getPlayer();
+        $msg = $this->msg;
+        $prefix = $this->prefix;
+        $b = $e->getBlock();
+        $level = $e->getPlayer()->getLevel();
+        $t = $level->getTile($b);
+        $m = $this->mode;
+        
+        if($p->hasPermission("ew.set"))
+        {
+            if($m<4 && $m>=1)
+            {
+                // spawns
+                $m++;
+                if($m = 1)
+                {
+                    $spawn = "blue";
+                }
+                elseif($m = 2)
+                {
+                    $spawn = "red";
+                }
+                elseif($m = 3)
+                {
+                    $spawn = "yellow";
+                }
+                elseif($m= 4)
+                {
+                    $spawn = "green";
+                }
+                $x = $b->getX();
+                $yy = $b->getY();
+                $y = $yy+1;
+                $z = $b->getZ();
+                $arena->set($spawn."X", $x);
+                $arena->set($spawn."Y", $y);
+                $arena->set($spawn."Z", $z);
+                $arena->save();
+                $p->sendMessage($msg->get("registered_spawn").$spawn);
+                if($m = 4)
+                {
+                    $m = 0;
+                }
+            }
+            elseif($m = 5)
+            {
+                //joinsign
+                if($t instanceof Sign)
+                {
+                    $text = $t->getText();
+                    $t->setText($this->signprefix, "Â§9[ Â§30 / 16 Â§9]", "Â§a§lJoin", "Â§8map: Â§7".$this->map);
+                    $this->map = "";
+                }
+                
+            }
         }
     }
     
