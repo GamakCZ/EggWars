@@ -8,7 +8,7 @@ _EggWars minigame same as on SurvivalGames MC Server_
 
 __ToDo:__
 
-- [ ] _commands:_ [50%]
+- [x] _commands:_ [99%]
 
 - [ ] _messages:_ [20%]
 
