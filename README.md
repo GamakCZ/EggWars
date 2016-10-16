@@ -12,9 +12,9 @@ __ToDo:__
 
 - [ ] _messages:_ [20%]
 
-- [ ] _shop:_ [ ]
+- [ ] _shop:_ [0%]
 
-- [ ] _eggwars gameplay system:_ [ ]
+- [ ] _eggwars gameplay system:_ [20%]
 
-- [ ] _config:_ [10%]
+- [ ] _config:_ [40%]
 
