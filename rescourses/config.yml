@@ -1,10 +1,13 @@
 ### Plugin created by GamakCZ
 
-# prefix: §3[EggWars]
+# This change default Prefix
+prefix: §3[EggWars] §7
 
-# shop:
+# This change Sign Prefix
+signprefix: §3§lEggWars
 
-#messages:
-#On Join: 
-#On Started:
-#In Game:
+# This can change language
+# avaliable languages:
+# - eng (English)
+# - ces (Czech)
+lang: eng
