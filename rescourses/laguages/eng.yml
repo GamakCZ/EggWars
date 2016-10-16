@@ -1,0 +1,58 @@
+# English language file by GamakCZ
+# eng = English
+
+# command /ew help for op
+op_player_help:
+  - §7>=====> §3EggWarsHelp §7<=====<
+  - §7/ew help §8> shows hint
+  - §7/ew create §8> create arena
+  - §7/ew set §8> set arena
+
+# command /ew help for deop
+default_player_help:
+  - §7>=====> §3EggWarsHelp §7<=====<
+  - §7/ew leave §8> leave arena
+  
+# command /ew help for console
+console_help:
+  - §7>=====> §3EggWarsHelp §7<=====<
+  - §7/ew kick §8> kick player from the game
+  
+# command /ew
+usage: "Usage: /ew help"
+
+# message for player, when has not permissions
+not_permissions: "You does not have permissions to use this command"
+
+#------------------------------------------------------------#
+# messages for command /ew create
+
+# message, when sender chose world, when does not exists
+world_doesnot_exist: "This world does not exists" 
+
+# messages, for cmd /ew create or for cmd /ew create <...>
+usage_create: "Usage /ew create <world> <NameOfArena>"
+
+#------------------------------------------------------------#
+
+
+
+#------------------------------------------------------------#
+# messages for command /ew set
+
+# message for hint to use
+usage_set: "Usage /ew set help"
+
+# messages for command /ew set help
+setup_help:
+  - §7>=====> EggWarsSetupHelp <=====<
+  - §7> /ew set help > §8shows hint
+  - §7> /ew set spawns > §8set spawns
+  - §7> /ew set lobbypos > §8set lobby for arena
+  - §7> /ew set leavepos > §8set leave position
+  - §7> /ew set joinsign > §8set sing for join
+  - §7> /ew set info > §8shows tips for setup
+ 
+#------------------------------------------------------------#
+
+# more messages will be aded soon...
