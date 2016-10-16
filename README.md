@@ -27,3 +27,10 @@ _ip: PocketPlay.TK_
 _port: 27856_
 
 _website: http://PocketPlay.ML_
+
+
+__Releases:__
+
+_(yet nothing came)_
+
+_https://github.com/GamakCZ/EggWars/releases_
