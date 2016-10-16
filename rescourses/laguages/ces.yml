@@ -23,10 +23,35 @@ console_help:
   
 # prikaz /ew
 # command /ew
-usage: Pouzij /ew help
+usage: "Pouzij /ew help"
 
 # zprava pro hrace ktery nema povoleni na prikaz
 # message for player, when has not permissions
-not_permissions: Nemas povoleni pouzit tento prikaz!
+not_permissions: "Nemas povoleni pouzit tento prikaz!"
 
-# 
+#------------------------------------------------------------#
+# zpravy pro prikaz /ew create
+# messages for command /ew create
+
+# zprava, pokud hrac zada svet ktery neexistuh
+# message, when sender chose world, when does not exists
+world_doesnot_exist: "Tento svet neexistuje" 
+
+# zpravy pro prikaz /ew create nebo pro prikaz /ew create <...>
+# messages, for cmd /ew create or for cmd /ew create <...>
+usage_create: "Pouzij /ew create <svet> <nazevareny>"
+
+#------------------------------------------------------------#
+
+
+
+#------------------------------------------------------------#
+# zpravy pro prikaz /ew set
+# messages for command /ew set
+
+# zprava pro navod na pouziti
+# message for hint to use
+usage_set: "Pouzij /ew set help"
+
+
+#------------------------------------------------------------#
