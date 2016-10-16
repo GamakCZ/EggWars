@@ -18,3 +18,8 @@ __ToDo:__
 
 - [ ] _config:_ [40%]
 
+__TestServer:__
+
+_ip: PocketPlay.TK_
+_port: 27856_
+_website: http://PocketPlay.ML_
