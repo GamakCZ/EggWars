@@ -26,7 +26,7 @@ _ip: PocketPlay.TK_
 
 _port: 27856_
 
-_website: http://PocketPlay.ML_
+_website: http://PocketPlay.ML_& http://McPECz.TK
 
 
 __Releases:__
