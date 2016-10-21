@@ -2,34 +2,5 @@ name: EggWars
 author: GamakCZ
 main: EggWars\EggWars
 description: EggWars plugin (InDev)
-version: InDev
-
-commands:
- eggwars:
-  description: default EggWars command
-  aliases:
-   - ew
-   - ewars
-   - eggw
-   
- eggwarssetup:
-  description: EggWars set-up command
-  aliases:
-   - ews
-   - es
-   - ewsettup
-   - ewset
-   - eggwarss
-   
-   
-permissions:
- ew.cmd.op:
-  default: op
-  
- ew.cmd.vip:
-  default: op
-  
- ew.cmd.default:
-  default:true
-  
-  
+version: 0
+website: PocketPlay.ML & McPECz.TK
