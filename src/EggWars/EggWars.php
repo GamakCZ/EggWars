@@ -301,6 +301,12 @@ class EggWars extends PB implements L {
                     $t->setText($this->signprefix, "Â§9[ Â§30 / 16 Â§9]", "Â§a§lJoin", "Â§8map: Â§7".$this->map);
                     $this->map = "";
                 }
+                /**
+                uprav to k tomu kdyz clovek se pripoji na mapu 
+                public function onJoin($event){
+                $player = $event->getPlayer();
+                $name = $player->getName();
+                $this->getServer()->broadcastMessage("$name join to EggWars game!");**/
                 
             }
         }
