@@ -4,3 +4,17 @@ main: EggWars\EggWars
 description: EggWars plugin (InDev)
 version: 0
 website: PocketPlay.ML & McPECz.TK
+
+commands:
+  eggwars:
+    description: EggWars Commands
+    aliases:
+      - ew
+
+permission:
+  ew.cmd.help:
+    default: true
+  ew.cmd.create
+    default: op
+  ew.cmd.set
+    default: op
