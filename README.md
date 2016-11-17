@@ -14,11 +14,18 @@ __ToDo:__
 
 - [ ] _shop:_ [0%]
 
+- [ ] _eggwars setup system:_ [70%]
+
 - [ ] _eggwars gameplay system:_ [20%]
 
 - [ ] _config:_ [40%]
 
+- [ ] _wiki:_ [30%]
 
+
+__Wiki:__
+
+_website:_ https://github.com/GamakCZ/EggWars/wiki
 
 __TestServer:__
 
