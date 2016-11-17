@@ -27,6 +27,14 @@ __Wiki:__
 
 _website:_ https://github.com/GamakCZ/EggWars/wiki_
 
+__Commands:__
+
+- /ew help > _Help Command_
+- /ew create > _Command, that can create arena._
+- /ew set > _Command, taht can set arena_
+
+- __More on wiki__
+
 __TestServer:__
 
 _Private_
