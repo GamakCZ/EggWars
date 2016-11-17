@@ -25,7 +25,7 @@ __ToDo:__
 
 __Wiki:__
 
-_website:_ https://github.com/GamakCZ/EggWars/wiki
+_website:_ https://github.com/GamakCZ/EggWars/wiki_
 
 __TestServer:__
 
