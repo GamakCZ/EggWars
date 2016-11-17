@@ -22,9 +22,7 @@ __ToDo:__
 
 __TestServer:__
 
-_ip: PocketPlay.TK_
-
-_port: 27856_
+_Private_
 
 _website: http://PocketPlay.ML_ &  http://McPECz.TK
 
