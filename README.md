@@ -29,9 +29,12 @@ _website:_ https://github.com/GamakCZ/EggWars/wiki_
 
 __Commands:__
 
-- /ew help > _Help Command_
+- /ew help > _Help Command._
+
 - /ew create > _Command, that can create arena._
-- /ew set > _Command, taht can set arena_
+
+- /ew set > _Command, taht can set arena._
+
 
 - __More on wiki__
 
