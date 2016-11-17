@@ -17,26 +17,21 @@ use pocketmine\scheduler\PluginTask;
 
 class EggWars extends PB implements L {
     
-    public $prefix;/*= C::GRAY.C::BOLD."[".C::DARK_AQUA." EggWars ".C::GRAY."]";*/
+    public $prefix;
     public $mode = 0;
-    //public $arenas = array();
+    public $developer;
     public $ingame;
     public $cfg;
     public $msg;
     public $map;
     public $arena;
-    /*        
-    public $redegg;
-    public $blueegg;
-    public $yellowegg;
-    public $greenegg;
-    */
             
     public function onEnable()
     {
         $this->getLogger()->info("EggWars loaded");
         $this->getServer()->getPluginManager()->registerEvents($this ,$this);
         @mkdir($this->getDataFolder());
+        @mkdir($this->getDataFolder()."arenas");
         /*$config = new Config($this->getDataFolder() . "/config.yml", Config::YAML);
         if($config->get("arenas")!=null)
         {
@@ -125,6 +120,7 @@ class EggWars extends PB implements L {
                                             $arena->set("mode", 1);
                                             $arena->save();
                                             $this->map = $args[2];
+                                            $this->developer = $s->getName();
                                         }
                                         else
                                         {
@@ -159,7 +155,8 @@ class EggWars extends PB implements L {
                             {
                                 if(!empty($args[1]))
                                 {
-                                    $test = new Config($this->getDataFolder()."/arenas".$args[1].".yml", Config::YAML);
+                                    @mkdir($this->getDataFolder()."arenas");
+                                    $test = new Config($this->getDataFolder()."/arenas/".$args[1].".yml", Config::YAML);
                                     if($test !=null)
                                     {
                                         if($args[2]=="help")
@@ -255,8 +252,9 @@ class EggWars extends PB implements L {
         $level = $e->getPlayer()->getLevel();
         $t = $level->getTile($b);
         $m = $this->mode;
+        $arena = $this->arena;
         
-        if($p->hasPermission("ew.set"))
+        if($p->hasPermission("ew.set") && $p->getName()==$this->developer)
         {
             if($m<4 && $m>=1)
             {
@@ -264,27 +262,22 @@ class EggWars extends PB implements L {
                 $m++;
                 if($m = 1)
                 {
-                    $spawn = "blue";
+                    $spawn = "Blue";
                 }
                 elseif($m = 2)
                 {
-                    $spawn = "red";
+                    $spawn = "Red";
                 }
                 elseif($m = 3)
                 {
-                    $spawn = "yellow";
+                    $spawn = "Yellow";
                 }
                 elseif($m= 4)
                 {
-                    $spawn = "green";
+                    $spawn = "Green";
                 }
-                $x = $b->getX();
-                $yy = $b->getY();
-                $y = $yy+1;
-                $z = $b->getZ();
-                $arena->set($spawn."X", $x);
-                $arena->set($spawn."Y", $y);
-                $arena->set($spawn."Z", $z);
+                $xyz = array($b->getX(), $b->getY()+1, $b->getZ());
+                $arena->set($spawn."Spawn", $xyz);
                 $arena->save();
                 $p->sendMessage($msg->get("registered_spawn").$spawn);
                 if($m = 4)
@@ -298,12 +291,68 @@ class EggWars extends PB implements L {
                 if($t instanceof Sign)
                 {
                     $text = $t->getText();
-                    $t->setText($this->signprefix, "Â§9[ Â§30 / 16 Â§9]", "Â§a§lJoin", "Â§8map: Â§7".$this->map);
+                    $t->setText($this->signprefix, "Â§9[ Â§30 / 16 Â§9]", "Â§aÂ§lLobby", "Â§8map: Â§7".$this->map);
                     $this->map = "";
                 }
                 
             }
+            elseif($m = 6)
+            {
+                $xyz = array($b->getX(), $b->getY()+1, $b->getZ());
+                $arena->set("Quit", $xyz);
+            }
+            elseif($m = 7)
+            {
+                $xyz = array($b->getX(), $b->getY()+1, $b->getZ());
+                $arena->set("Lobby", $xyz);
+            }
+            elseif($m = 8)
+            {
+                $xyz = array($b->getX(), $b->getY(), $b->getZ());
+                $arena->set("Bronze", $xyz);
+            }
+            elseif($m = 9)
+            {
+                $xyz = array($b->getX(), $b->getY(), $b->getZ());
+                $arena->set("Iron", $xyz);
+            }
+            elseif($m = 10)
+            {
+                $xyz = array($b->getX(), $b->getY(), $b->getZ());
+                $arena->set("Gold", $xyz);
+            }
         }
-    }
-    
+        else
+        {
+            if($t instanceof Sign)
+            {
+                $text = $t->getText();
+                if($t->getText[0]==$this->signprefix)
+                {
+                    if($t->getText[2]=="Â§aÂ§lLobby")
+                    {
+                        $world = str_replace("Â§8map: Â§7", "", $text[3]);
+                        $acfg = new Config($this->getDataFolder()."arenas/".$world.".yml");
+                        $lobby = $acfg->get("Lobby");
+                        if(file_exists($this->getDataPath()."worlds/".$world))
+                        {
+                            $player->teleport($lobby);
+                            $cfg = new Config($this->getDataFolder()."/config.yml", Config::YAML);
+                            $pla = $acfg->get("PlayersInMap");
+                            $acfg->set($pla+1);
+                            $t->setText($this->signprefix, "Â§9[ Â§3".$pla." / 16 Â§9]", "Â§aÂ§lLobby", "Â§8map: Â§7".$this->map);
+                            if($pla >= $cfg->get("PlayersToStart"))
+                            {
+                                $t->setText($this->signprefix, "Â§9[ Â§3".$pla." / 16 Â§9]", "Â§aÂ§5InGame", "Â§8map: Â§7".$this->map);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //$p->sendMessage("Arena is in_game");
+                    }
+                }
+            }
+        }
+    }   
 }
