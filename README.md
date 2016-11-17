@@ -42,7 +42,7 @@ __TestServer:__
 
 _Private_
 
-_website: http://PocketPlay.ML_ &  http://McPECz.TK
+_website: **http://McPECz.TK_**
 
 
 __Releases:__
