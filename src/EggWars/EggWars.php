@@ -14,13 +14,18 @@ use pocketmine\tile\Sign;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\scheduler\PluginTask;
+use pocketmine\Player;
+use pocketmine\event\player\PlayerQuitEvent as QE;
+use pocketmine\event\block\BlockPlaceEvent as PE;
+use pocketmine\event\block\BlockBreakEvent as BE;
 
 class EggWars extends PB implements L {
     
     public $prefix;
     public $mode = 0;
-    public $developer;
+    public $developer = "";
     public $ingame;
+    public $levels = array();
     public $cfg;
     public $msg;
     public $map;
@@ -32,56 +37,77 @@ class EggWars extends PB implements L {
         $this->getServer()->getPluginManager()->registerEvents($this ,$this);
         @mkdir($this->getDataFolder());
         @mkdir($this->getDataFolder()."arenas");
-        /*$config = new Config($this->getDataFolder() . "/config.yml", Config::YAML);
-        if($config->get("arenas")!=null)
-        {
-            $this->arenas = $config->get("arenas");     
-        }
-        foreach($this->arenas as $arena)
-        {
-            $this->getServer()->loadLevel($arena);
-        }*/
+        @mkdir($this->getDataFolder()."languages");
+        $this->saveResource("languages/eng.yml");
+        $this->saveResource("language/ces.yml");
         $cfg = new Config($this->getDataFolder()."/config.yml", Config::YAML);
-        if($cfg->get("lang") = null)
+        if($cfg->get("arenas")!=null)
+	{
+            $this->levels = $config->get("arenas");
+            
+	}
+	foreach($this->levels as $lev)
+        {
+            $this->getServer()->loadLevel($lev);
+            $this->getLogger()->info("Loaded levels ".$lev);
+        }
+            
+        if($cfg->get("lang") == null)
         {
             $this->saveDefaultConfig();
         }
         //$cfg->save();
         
-        if($cfg->get("lang") = "eng")
+        if($cfg->get("lang") == "eng")
         {
             $msg = new Config($this->getDataFolder()."languages/eng.yml", Config::YAML);
+            $msg->save();
+            $this->saveResource($msg);
         }
-        elseif($cfg->get("lang") = "ces")
+        elseif($cfg->get("lang") == "ces")
         {
             $msg = new Config($this->getDataFolder()."languages/ces.yml", Config::YAML);
+            $msg->save();
         }
         
         $this->prefix = $cfg->get("Prefix");
     }
     
-    public function getLang()
+    public function msg()
     {
-        $cfg = $this->cfg;
+        return new Config($this->getDataFolder()."languages/eng.yml", Config::YAML);
+    }
+    
+    public function getLanguage()
+    {
+        /*$cfg = $this->cfg;
         
-        if($cfg->get("lang") = "eng")
+        if($cfg->get("lang") == "eng")
         {
             return "eng";
         }
         else
         {
             return "ces";
-        }
+        }*/
+        return "eng";
     }
     
     public function onCommand(CommandSender $s, Command $cmd, $label, array $args)
     {
         
-        $msg = $this->msg;
+        if($this->getLanguage()=="eng")
+        {
+            $msg = new Config($this->getDataFolder()."languages/eng.yml", Config::YAML);
+        }
+        else
+        {
+            $msg = new Config($this->getDataFolder()."languages/eng.yml", Config::YAML);
+        }
         
         switch($cmd->getName())
         {
-            case "EggWars":
+            case "eggwars":
                 if(!empty($args[0]))
                 {
                     if($args[0]=="help")
@@ -99,7 +125,7 @@ class EggWars extends PB implements L {
                         }
                         else
                         {
-                            $s->sendMessage($msg->get("console_help"));
+                            $s->sendMessage($this->msg()->get("console_help"));
                         }
                     }
                     elseif($args[0]=="create")
@@ -139,12 +165,12 @@ class EggWars extends PB implements L {
                             }
                             else
                             {
-                                $s->sendMessage("not_permissions");
+                                $s->sendMessage($msg->get("not_permissions"));
                             }
                         }
                         else
                         {
-                            $s->sendMessage("console_help");
+                            $s->sendMessage($msg->get("console_help"));
                         }
                     }
                     elseif($args[0]=="set")
@@ -197,7 +223,7 @@ class EggWars extends PB implements L {
                                         }
                                         elseif($args[2]=="info")
                                         {
-                                            if($this->getLang()=="eng")
+                                            if($this->getLanguage()=="eng")
                                             {
                                                 $s->sendMessage("You can setup arena only when is on server 1 player, else it can go to bugs");
                                             }
@@ -354,5 +380,5 @@ class EggWars extends PB implements L {
                 }
             }
         }
-    }   
+    }    
 }
