@@ -226,7 +226,9 @@ class Task extends PluginTask {
     }
 }
 class ItemTimer extends PluginTask {
-    public function onRun($currentTick) {
-
+    public function onRun($currentTick) {0
+           for($t=0;$t<=$x;$t++) {
+                
+           }
     }
 }
