@@ -1,20 +1,11 @@
 name: EggWars
+version: 0.1 - InDev
+api: [3.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3]
 author: GamakCZ
+description: EggWars minigame plugin
 main: EggWars\EggWars
-description: EggWars plugin (InDev)
-version: 0
-website: PocketPlay.ML & McPECz.TK
 
 commands:
-  eggwars:
-    description: EggWars Commands
-    aliases:
-      - ew
-
-permission:
-  ew.cmd.help:
-    default: true
-  ew.cmd.create
-    default: op
-  ew.cmd.set
-    default: op
+  ew:
+    description: EggWars commands
+    aliases: ["eggwars", "eggw", "ewars"]
