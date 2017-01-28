@@ -1,10 +1,12 @@
 #**EggWars**
 
+---
 
 _EggWars minigame same as on SurvivalGames MC Server_
 
 **ip: survival-games.cz**
 
+---
 
 __ToDo:__
 
@@ -22,10 +24,13 @@ __ToDo:__
 
 - [ ] _wiki:_
 
+---
 
 __Wiki:__
 
 _website: https://github.com/GamakCZ/EggWars/wiki_
+
+---
 
 __Commands:__
 
@@ -38,12 +43,13 @@ __Commands:__
 
 - __More on wiki__
 
+---
+
 __TestServer:__
 
 _Private_
 
-_website: **_http://McPECz.TK_**
-
+---
 
 __Releases:__
 
