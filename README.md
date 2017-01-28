@@ -8,19 +8,19 @@ _EggWars minigame same as on SurvivalGames MC Server_
 
 __ToDo:__
 
-- [x] _commands:_ [99%]
+- [ ] _commands:_
 
-- [ ] _messages:_ [20%]
+- [ ] _messages:_
 
-- [ ] _shop:_ [0%]
+- [ ] _shop:_
 
-- [ ] _eggwars setup system:_ [70%]
+- [ ] _eggwars setup system:_
 
-- [ ] _eggwars gameplay system:_ [20%]
+- [ ] _eggwars gameplay system:
 
-- [ ] _config:_ [40%]
+- [ ] _config:_
 
-- [ ] _wiki:_ [30%]
+- [ ] _wiki:_
 
 
 __Wiki:__
