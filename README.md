@@ -16,7 +16,7 @@ __ToDo:__
 
 - [ ] _eggwars setup system:_
 
-- [ ] _eggwars gameplay system:
+- [ ] _eggwars gameplay system:_
 
 - [ ] _config:_
 
