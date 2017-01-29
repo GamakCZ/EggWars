@@ -1,15 +1,25 @@
 <?php
+
+/**
+ *  Created by @GamakCZ
+ *  Website: gamakcz.github.io/EggWars
+ *  For MCPE Version: 1.0
+ *   - Not completed -
+ */
+
 namespace EggWars;
+
 use pocketmine\block\Block;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
-use pocketmine\math\Vector3;
+use pocketmine\level\Level;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\PluginTask;
@@ -17,16 +27,26 @@ use pocketmine\tile\Sign;
 use pocketmine\utils\Config;
 
 class EggWars extends PluginBase implements Listener {
-    
+
     public $config;
     public $levels;
     public $arenas;
 
+    public $game = [
+        "levels" => [],
+        "arenas" => [],
+        "players" => []
+    ];
+
     public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getScheduler()->scheduleRepeatingTask(new ItemTimer($this), 10);
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new PopupTask($this), 20);
+        $this->getServer()->getScheduler()->scheduleRepeatingTask(new Task($this), 20);
         $this->saveFiles();
+        $this->enableArenas();
     }
+
     public function saveFiles() {
         if(!file_exists($this->getDataFolder())) {
             @mkdir($this->getDataFolder());
@@ -90,7 +110,14 @@ class EggWars extends PluginBase implements Listener {
                     if($s instanceof Player) {
                         if($s->isOp()) {
                             switch(strtolower($args[1])) {
-
+                                case "help":
+                                    break;
+                                case "spawn":
+                                    break;
+                                case "villager":
+                                    break;
+                                case "egg":
+                                    break;
                             }
                         }
                     }
@@ -132,16 +159,17 @@ class EggWars extends PluginBase implements Listener {
                     }
                     break;
 
-                case "red":
-                    break;
-
                 case "yellow":
+                    $this->joinToTeam($s, 1);
                     break;
-
-                case "green":
+                case "red":
+                    $this->joinToTeam($s, 2);
                     break;
-
                 case "blue":
+                    $this->joinToTeam($s, 3);
+                    break;
+                case "green":
+                    $this->joinToTeam($s, 4);
                     break;
             }
         }
@@ -174,13 +202,26 @@ class EggWars extends PluginBase implements Listener {
      */
     public function inGame(Player $p) {
         $arenas = new Config($this->getDataFolder()."/arenas.yml", Config::YAML);
-        foreach($arenas->get("levels") as $level) {
+        $levels = array_push($arenas->get("levels"), $this->getWaitingLevel()->getName());
+        foreach($levels as $level) {
             if($p->getLevel()->getName() == $level) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
+        }
+    }
+
+    /**
+     * @param Player $p
+     * @return bool
+     */
+    public function inLobby(Player $p) {
+        $lobby = $this->getWaitingLevel()->getName();
+        if($p->getLevel()->getName() == $lobby) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -191,14 +232,16 @@ class EggWars extends PluginBase implements Listener {
         $this->config = new Config($this->getDataFolder()."/config.yml", Config::YAML);
         $this->arenas = $this->config->get("arenas");
         $this->levels = $this->config->get("levels");
+        $this->game["levels"] = $this->levels;
+        $this->game["arenas"] = $this->arenas;
     }
-    
+
     public function getTeamByPlayer(Player $p) {
 
     }
 
     public function getPlayersByTeam($team) {
-
+        
     }
 
     public function hasEgg(Player $p) {
@@ -207,6 +250,13 @@ class EggWars extends PluginBase implements Listener {
 
     public function joinToTeam(Player $p, $team) {
 
+    }
+
+    /**
+     * @return Level
+     */
+    public function getWaitingLevel() {
+        return $this->getServer()->getLevelByName("EggWarsLobby");
     }
 
     /**
@@ -227,11 +277,17 @@ class EggWars extends PluginBase implements Listener {
 
     public function onDeath(PlayerDeathEvent $e) {
         $p = $e->getPlayer();
-        if($p->getLastDamageCause() !== null) {
-            $entity = $p->getLastDamageCause()->getEntity();
+         $entity = $p->getLastDamageCause()->getEntity();
             if($entity instanceof Player) {
                 // death message will here
             }
+        }
+    }
+
+    public function onDamage(EntityDamageEvent $e) {
+        $p = $e->getEntity();
+        if($this->inGame($p)) {
+
         }
     }
 
@@ -303,24 +359,77 @@ class EggWars extends PluginBase implements Listener {
     }
 }
 class Task extends PluginTask {
-    
+
     /** @var EggWars */
     public $plugin;
-    
+
     public function __construct($plugin) {
         $this->plugin = $plugin;
         parent::__construct($plugin);
     }
 
     public function onRun($currentTick) {
-        
+
     }
 }
+
+class PopupTask extends PluginTask {
+
+    /** @var  EggWars */
+    public $plugin;
+    public $prefix;
+
+    public function __construct($plugin) {
+        $this->plugin = $plugin;
+        $this->prefix = $this->plugin->prefix();
+    }
+
+    public function onRun($currentTick) {
+        foreach($this->plugin->getServer()->getOnlinePlayers() as $p) {
+            if($this->plugin->inGame($p)) {
+                if($this->plugin->inLobby($p)) {
+                    $map1 = "";
+                    $map2 = "";
+                    $map3 = "";
+                    $votes1 = 0;
+                    $votes2 = 0;
+                    $votes3 = 0;
+
+                    $p->sendTip("                                 §6Voting §8| §7/vote <map>\n
+                                 §b[1] §c» §7{$map1} §7({$votes1})\n
+                                 §b[1] §c» §7{$map2} §7({$votes2})\n
+                                 §b[1] §c» §7{$map3} §7({$votes3})\n
+                                ");
+                }
+                else {
+                    $map = array();
+
+                    $true = "§a✔";
+                    $false = "§c✖";
+
+                    $yellow = $true;
+                    $red = $true;
+                    $blue = $true;
+                    $green = $true;
+
+                    $p->sendTip("                                 §7Map: §6{$map}\n
+                                 §eYellow: {$yellow}\n
+                                 §cRed: {$red}\n
+                                 §9Blue: {$blue}\n
+                                 §aGreen: {$green}");
+                }
+            }
+        }
+    }
+}
+
 class ItemTimer extends PluginTask {
-    
+
     /** @var EggWars */
     public $plugin;
-    
+
+    public $tick;
+
     public function __construct($plugin) {
         $this->plugin = $plugin;
         parent::__construct($plugin);
@@ -328,21 +437,23 @@ class ItemTimer extends PluginTask {
 
     public function onRun($currentTick) {
         // minute timer
-        $time = 0;
-        $second = $time/2;
-        if($time == 0) {
-            $time++;
+        #$tick = 0;
+        $tick = $currentTick;
+        $second = $tick/2;
+        if($tick == 0) {
+            $tick++;
         }
-        if($time == 120) {
-            $time == 0;
+        if($tick == 120) {
+            $tick == 0;
         }
+
         foreach($this->plugin->levels as $name) {
             $level = $this->plugin->getServer()->getLevelByName($name);
             foreach($level->getPlayers() as $p) {
                 if($p !== null) {
                     foreach($level->getTiles() as $tile) {
                         if($tile instanceof Sign) {
-                            
+
                         }
                     }
                 }
