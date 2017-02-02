@@ -264,8 +264,8 @@ class EggWars extends PluginBase implements Listener {
      */
     public function getBreakableBlocks() {
         $blocks = [
-                Block::SANDSTONE,
-                Block::END_STONE,
+                Block::get(Block::SANDSTONE),
+                Block::get(Block::ENDSTONE),
                 Block::OBSIDIAN,
                 Block::CHEST
                   ];
