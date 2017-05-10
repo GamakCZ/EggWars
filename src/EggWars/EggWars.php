@@ -3,7 +3,7 @@
 namespace EggWars;
 
 use EggWars\Arena\Arena;
-use EggWars\Events\EventListener;
+use EggWars\Event\EventListener;
 use EggWars\Task\Task;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
