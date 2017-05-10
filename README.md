@@ -1,8 +1,6 @@
-#EggWars
+# EggWars
 
-##This plugin is under development!
-
----
+### This plugin is under development
 
 _EggWars minigame same as on SurvivalGames MC Server_
 
