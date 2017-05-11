@@ -28,10 +28,28 @@ class Arena {
     }
 
     /**
-     * @param $name
+     * @param Level $level
+     */
+    public function addMap(Level $level) {
+        $array = $this->getData()->get("maps");
+        $this->getData()->set("maps", array_push($array, $level->getName()));
+    }
+
+    /**
+     * @param string $name
      * @return bool
      */
     public function mapExists($name) {
+        if(in_array($name, $this->getData()->get("maps"))) {
+            return true;
+        }
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function levelExists($name) {
         if(is_file($this->getWorldPath()."{$name}.yml")) {
             return true;
         }
@@ -55,11 +73,17 @@ class Arena {
     }
 
     /**
-     * @param $arena
      * @return Config
      */
-    public function getConfig($arena) {
-        return new Config($this->plugin->getDataFolder()."arenas/{$arena}.yml", Config::YAML);
+    public function getConfig() {
+        return $this->plugin->getConfig();
+    }
+
+    /**
+     * @return Config
+     */
+    public function getData() {
+        return new Config($this->plugin->getDataFolder()."/data.yml", Config::YAML);
     }
 
     /**
