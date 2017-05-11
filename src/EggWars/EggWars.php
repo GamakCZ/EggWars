@@ -80,12 +80,50 @@ class EggWars extends PluginBase{
                 case "eggwars":
                     switch (strtolower($args[0])) {
                         case "help":
-                            if(!$sender->isOp()) {
+                            if(!$sender->hasPermission("ew.cmd.help")) {
+                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                break;
+                            }
+                            if(isset($args[1]) && in_array($args[1], ["1"])) {
+                                $sender->sendMessage(self::translateMsg("cmd.help.{$args[1]}"));
+                                break;
+                            }
+                            else {
+                                $sender->sendMessage(self::translateMsg("cmd.help.1"));
+                            }
+                            break;
+                        case "addlevel":
+                            if(!$sender->hasPermission("ew.cmd.addlevel")) {
+                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                break;
+                            }
+                            if(empty($args[1])) {
+                                $sender->sendMessage(self::translateMsg("cmd.addlevel.usage"));
+                                break;
+                            }
+                            if($this->arena->levelExists($args[1])) {
+                                $sender->sendMessage(str_replace("%1",$args[1], self::translateMsg("cmd.addlevel.nolevel")));
+                                break;
+                            }
+                            $this->arena->addMap($this->getServer()->getLevelByName($args[1]));
+                            $sender->sendMessage(str_replace("%1", $args[1], self::translateMsg("cmd.addlevel.sucess")));
+                            break;
+                        case "setlevel":
+                            if(!$sender->hasPermission("ew.cmd.setlevel")) {
+                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                break;
+                            }
+                            if(empty($args[1])) {
+                                $sender->sendMessage(self::translateMsg("cmd.setlevel.usage"));
+                                break;
+                            }
+                            break;
+                        case "setlobby":
+                            if(!$sender->hasPermission("ew.cmd.setlobby")) {
                                 $sender->sendMessage(self::translateMsg("cmd.noperm"));
                                 break;
                             }
 
-                            break;
                     }
                     break;
             }
