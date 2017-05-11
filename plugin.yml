@@ -1,11 +1,24 @@
 name: EggWars
-version: 0.1 - InDev
-api: [3.0.0, 3.0.0-ALPHA1, 3.0.0-ALPHA2, 3.0.0-ALPHA3]
+api: 3.0.0-ALPHA5
+version: 0.1-DEV
 author: GamakCZ
-description: EggWars minigame plugin
 main: EggWars\EggWars
 
 commands:
-  ew:
-    description: EggWars commands
-    aliases: ["eggwars", "eggw", "ewars"]
+  eggwars:
+    aliases: [ew]
+    description: Main EggWars Command
+    
+permissions:
+  ew.cmd.help:
+    description: Permission for /ew help
+    default: op
+  ew.cmd.addlevel:
+    description: Permission for /ew addlevel
+    default: op
+  ew.cmd.setlevel:
+    description: Permission for /ew setlevel
+    default: op
+  ew.cmd.setlobby:
+    description: Permission for /ew setlobby
+    default: op
