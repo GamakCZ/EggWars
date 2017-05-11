@@ -1,1 +1,6 @@
-
+cmd.noperm: &cYou have not permissions to use this command!
+cmd.help.1: &a--- &2== &7[ &3EggWars &7] &2== &a---\n&b/ew help &eDisplays help\n&b/ew addlevel &eAdd map to playing\n&b/ew setlevel &eEggWars setlevel commands\n&b/ew <start | stop> &eEggWars montioring-game commands\n&b/ew join <arena> &eJoin To arena\n&b/ew kick <player> <arena> &eKick player from arena\n&b/ew leave &eLeave arena
+cmd.addlevel.usage: &7Usage - &6/ew addmap <level>
+cmd.addlevel.nolevel: &cLevel %1 does not exists.
+cmd.addlevel.sucess: &aLevel %1 sucessfully added.
+cmd.setlevel.usage: &7Usage - &6/ew setlevel <level>
