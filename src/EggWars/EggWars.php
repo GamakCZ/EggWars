@@ -9,6 +9,7 @@ use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\Server;
 use pocketmine\utils\Config;
 
 class EggWars extends PluginBase{
@@ -69,13 +70,13 @@ class EggWars extends PluginBase{
      * @return mixed|string
      */
     public static function translateMsg($msg, $prefix = true) {
-        $cfg = new Config(self::getDataFolder()."languages/".self::getConfig()->get("language").".yml", Config::YAML);
-        $msg = $cfg->get($msg);
+        $cfg = new Config(Server::getInstance()->getDataPath()."plugins/EggWars/config.yml", Config::YAML);
+        $data = new Config(Server::getInstance()->getDataPath()."plugins/EggWars/languages/".$cfg->get("language").".yml", Config::YAML);
+        $msg = $data->get($msg);
         $msg = str_replace("&","§",$msg);
         if($prefix == true) {
             return self::$prefix.$msg;
-        }
-        else {
+        } else {
             return $msg;
         }
     }
