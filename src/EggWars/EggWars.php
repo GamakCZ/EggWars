@@ -56,6 +56,12 @@ class EggWars extends PluginBase{
         if(!is_file($this->getDataFolder()."arenas/default.yml")) {
             $this->saveResource("/default.yml");
         }
+        if(!file_exists($this->getDataFolder()."languages")) {
+            @mkdir($this->getDataFolder()."languages");
+        }
+        if(!is_file($this->getDataFolder()."languages/{$this->getConfig()->get("language")}.yml")) {
+            $this->saveResource("languages/{$this->getConfig()->get("language")}.yml");
+        }
     }
 
     /**
@@ -78,6 +84,10 @@ class EggWars extends PluginBase{
         if($sender instanceof Player) {
             switch ($cmd->getName()) {
                 case "eggwars":
+                    if(empty($args[0])) {
+                        $sender->sendMessage(self::translateMsg("cmd.usage"));
+                        break;
+                    }
                     switch (strtolower($args[0])) {
                         case "help":
                             if(!$sender->hasPermission("ew.cmd.help")) {
