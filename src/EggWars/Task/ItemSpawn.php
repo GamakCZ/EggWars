@@ -2,13 +2,17 @@
 
 namespace EggWars\Task;
 
+use EggWars\EggWars;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\tile\Sign;
 
 class ItemSpawn extends PluginTask {
 
-    /** @var  Task */
+    /** @var  EggWars */
     public $plugin;
+
+    /** @var  Task */
+    public $task;
 
     // Tick
     private $tick;
@@ -31,14 +35,15 @@ class ItemSpawn extends PluginTask {
 
     public function __construct($plugin) {
         $this->plugin = $plugin;
-        parent::__construct($this->plugin->plugin);
+        $this->task = $this->plugin->task;
+        parent::__construct($plugin);
     }
 
     public function onRun($currentTick) {
         $this->tick = 1;
         $this->tick++;
         foreach ($this->time as $text => $time) {
-            foreach ($this->plugin->getArena()->runningLevels as $level) {
+            foreach ($this->task->getArena()->runningLevels as $level) {
                 foreach ($level->getTiles() as $tile) {
                     if($tile instanceof Sign) {
                         $text = $tile->getText();
