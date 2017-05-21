@@ -31,7 +31,7 @@ class ItemSpawn extends PluginTask {
 
     public function __construct($plugin) {
         $this->plugin = $plugin;
-        parent::__construct($this->plugin);
+        parent::__construct($this->plugin->plugin);
     }
 
     public function onRun($currentTick) {
