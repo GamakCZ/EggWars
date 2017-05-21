@@ -2,22 +2,26 @@
 
 namespace EggWars\Task;
 
+use EggWars\EggWars;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\tile\Sign;
 
 class RefreshSign extends PluginTask {
 
-    /** @var Task */
+    /** @var EggWars */
     public $plugin;
 
+    /** @var  Task */
+    public $task;
 
     public function __construct($plugin) {
         $this->plugin = $plugin;
-        parent::__construct($this->plugin->plugin);
+        $this->task = $this->plugin->task;
+        parent::__construct($plugin);
     }
 
     public function getServer() {
-        return $this->plugin->plugin->getServer();
+        return $this->plugin->getServer();
     }
 
     public function onRun($currentTick) {
@@ -25,7 +29,7 @@ class RefreshSign extends PluginTask {
             foreach ($level->getTiles() as $tile) {
                 if($tile instanceof Sign) {
                     if($tile->getText()[0] == "EW" && $tile->getText()[1] == "joinsign") {
-                        $id = $this->plugin->getArena()->addArena();
+                        $id = $this->task->getArena()->addArena();
                         $tile->setText($this->plugin->getConfig()->get("signprefix"));
                     }
                 }
