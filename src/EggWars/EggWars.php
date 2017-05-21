@@ -60,8 +60,8 @@ class EggWars extends PluginBase{
         if(!file_exists($this->getDataFolder()."languages")) {
             @mkdir($this->getDataFolder()."languages");
         }
-        if(!is_file($this->getDataFolder()."languages/{$this->getConfig()->get("language")}.yml")) {
-            $this->saveResource("languages/{$this->getConfig()->get("language")}.yml");
+        if(!is_file($this->getDataFolder()."languages/English.yml")) {
+            $this->saveResource("languages/English.yml");
         }
     }
 
