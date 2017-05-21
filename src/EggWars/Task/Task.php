@@ -16,8 +16,8 @@ class Task {
     }
 
     public function registerTasks() {
-        $this->plugin->getServer()->getScheduler()->scheduleRepeatingTask(new RefreshSign($this), 20);
-        $this->plugin->getServer()->getScheduler()->scheduleRepeatingTask(new ItemSpawn($this), 20);
+        $this->plugin->getServer()->getScheduler()->scheduleRepeatingTask(new RefreshSign($this->plugin), 20);
+        $this->plugin->getServer()->getScheduler()->scheduleRepeatingTask(new ItemSpawn($this->plugin), 20);
     }
 
     /**
