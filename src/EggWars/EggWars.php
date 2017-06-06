@@ -53,6 +53,7 @@ class EggWars extends PluginBase{
         }
         if(!is_file($this->getDataFolder()."/config.yml")) {
             $this->saveResource("/config.yml");
+            $this->getLogger()->debug("§6Saving config!");
         }
         if(!is_file($this->getDataFolder()."arenas/default.yml")) {
             $this->saveResource("/default.yml");
@@ -62,21 +63,28 @@ class EggWars extends PluginBase{
         }
         if(!is_file($this->getDataFolder()."languages/English.yml")) {
             $this->saveResource("languages/English.yml");
+
         }
     }
 
     /**
-     * @param $msg
-     * @return mixed|string
+     * @param $message
+     * @param $prefix
+     * @return bool|mixed|string
      */
-    public static function translateMsg($msg, $prefix = true) {
-        $cfg = new Config(Server::getInstance()->getDataPath()."plugins/EggWars/config.yml", Config::YAML);
-        $data = new Config(Server::getInstance()->getDataPath()."plugins/EggWars/languages/".$cfg->get("language").".yml", Config::YAML);
-        $msg = $data->get($msg);
-        $msg = str_replace("&","§",$msg);
+    public function translateMsg($message, $prefix) {
+        // config
+        $lang = new Config($this->getDataFolder()."/languages/English.yml", Config::YAML);
+        // from cofig
+        $data = $lang->get($message);
+        // message
+        $msg = str_replace("&", "§", $data);
+
         if($prefix == true) {
+            //return
             return self::$prefix.$msg;
-        } else {
+        }
+        else {
             return $msg;
         }
     }
@@ -86,52 +94,75 @@ class EggWars extends PluginBase{
             switch ($cmd->getName()) {
                 case "eggwars":
                     if(empty($args[0])) {
-                        $sender->sendMessage(self::translateMsg("cmd.usage"));
+                        $sender->sendMessage(self::$prefix."§7Usage: §c/ew help");
                         break;
                     }
                     switch (strtolower($args[0])) {
                         case "help":
                             if(!$sender->hasPermission("ew.cmd.help")) {
-                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                $sender->sendMessage("§cYou have not permissions to use this command!");
                                 break;
                             }
                             if(isset($args[1]) && in_array($args[1], ["1"])) {
-                                $sender->sendMessage(self::translateMsg("cmd.help.{$args[1]}"));
+                                $sender->sendMessage("§7----- §8[ §6EggWars §8] §7-----\n".
+                                "§2/ew help §9Displays EggWars help menu\n".
+                                "§2/ew addlevel §9Add game level\n".
+                                "§2/ew setlevel §9Set level data\n".
+                                "§2/ew setlobby §9Set waiting lobby position");
                                 break;
                             }
                             else {
-                                $sender->sendMessage(self::translateMsg("cmd.help.1"));
+                                $sender->sendMessage("§7----- §8[ §6EggWars §8] §7-----\n".
+                                    "§2/ew help §9Displays EggWars help menu\n".
+                                    "§2/ew addlevel §9Add game level\n".
+                                    "§2/ew setlevel §9Set level data\n".
+                                    "§2/ew setlobby §9Set waiting lobby position");
                             }
+                            break;
+                        case "addarena":
+                            if(!$sender->hasPermission("ew.cmd.addarena")) {
+                                $sender->sendMessage("§cYou have not permissions to use this command!");
+                                break;
+                            }
+                            if(empty($args[1])) {
+                                $sender->sendMessage(self::$prefix."§7Usage:§c /ew addarena <arena>");
+                                break;
+                            }
+                            $this->arena->addArena($args[1]);
                             break;
                         case "addlevel":
                             if(!$sender->hasPermission("ew.cmd.addlevel")) {
-                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                $sender->sendMessage("§cYou have not permissions to use this command!");
                                 break;
                             }
                             if(empty($args[1])) {
-                                $sender->sendMessage(self::translateMsg("cmd.addlevel.usage"));
+                                $sender->sendMessage(self::$prefix."§7Usage:§c /ew addlevel <level>");
                                 break;
                             }
                             if($this->arena->levelExists($args[1])) {
-                                $sender->sendMessage(str_replace("%1",$args[1], self::translateMsg("cmd.addlevel.nolevel")));
+                                $sender->sendMessage(self::$prefix."§cThis level is already added.");
+                                break;
+                            }
+                            if(!$this->getServer()->isLevelGenerated($args[1])) {
+                                $sender->sendMessage(self::$prefix."§cLevel {$args[1]} does not exists!");
                                 break;
                             }
                             $this->arena->addMap($this->getServer()->getLevelByName($args[1]));
-                            $sender->sendMessage(str_replace("%1", $args[1], self::translateMsg("cmd.addlevel.sucess")));
+                            $sender->sendMessage(self::$prefix."§aLevel added.");
                             break;
                         case "setlevel":
                             if(!$sender->hasPermission("ew.cmd.setlevel")) {
-                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                $sender->sendMessage("§cYou have not permissions to use this command!");
                                 break;
                             }
                             if(empty($args[1])) {
-                                $sender->sendMessage(self::translateMsg("cmd.setlevel.usage"));
+                                $sender->sendMessage(self::$prefix."§7Usage: §c/ew setlevel <level>");
                                 break;
                             }
                             break;
                         case "setlobby":
                             if(!$sender->hasPermission("ew.cmd.setlobby")) {
-                                $sender->sendMessage(self::translateMsg("cmd.noperm"));
+                                $sender->sendMessage("§cYou have not permissions to use this command!");
                                 break;
                             }
 
