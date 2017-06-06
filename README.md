@@ -10,7 +10,7 @@ _EggWars minigame same as on SurvivalGames MC Server_
 
 __ToDo:__
 
-- [ ] _commands:_
+- [x] _commands:_
 
 - [ ] _messages:_
 
@@ -36,9 +36,9 @@ __Commands:__
 
 - /ew help > _Help Command._
 
-- /ew create > _Command, that can create arena._
+- /ew addarena > _Command, that can create arena._
 
-- /ew set > _Command, taht can set arena._
+- /ew addmap > _Command, taht can set arena._
 
 
 - __More on wiki__
