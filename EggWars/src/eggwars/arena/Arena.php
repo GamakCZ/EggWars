@@ -74,7 +74,7 @@ class Arena {
     }
 
     public function shortStartTime(Player $player) {
-        
+
     }
 
     public function startGame() {

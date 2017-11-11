@@ -2,7 +2,7 @@ name: EggWars
 api: [3.0.0-ALPHA7]
 version: 0.1
 author: VixikCZ
-main: EggWars\EggWars
+main: eggwars\EggWars
 description: EggWars minigame plugin
 
 permissions:

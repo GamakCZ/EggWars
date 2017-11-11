@@ -57,10 +57,10 @@ class EggWars extends PluginBase{
             $fileName = basename($file);
             $this->getLogger()->info("§6Loading {$fileName} arena...");
             $config = new Config($file, Config::YAML);
-            if(!$this->getServer()->isLevelLoaded($config->get("level"))) {
-                $this->getServer()->loadLevel($config->get("level"));
+            if(!$this->getServer()->isLevelLoaded(strval($config->get("level")))) {
+                $this->getServer()->loadLevel(strval($config->get("level")));
             }
-            $this->arenas[$file] = new Arena($this, $config);
+            $this->arenas[$fileName] = new Arena($this, $config);
             $this->getLogger()->info("§aArena {$fileName} loaded!");
             $count++;
         }
