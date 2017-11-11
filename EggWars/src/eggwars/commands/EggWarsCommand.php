@@ -33,7 +33,14 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage("§a-- EggWars Help --\n".
                 "§6/ew create§e create arena\n".
                 "§6/ew set§e set arena");
-                break;
+                return;
+            case "create":
+                if(empty($args[1])) {
+                    $sender->sendMessage("§cUsage: §7/ew create <arenaName>");
+                    return;
+                }
+
+
         }
     }
 

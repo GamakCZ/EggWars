@@ -22,6 +22,22 @@ class EggWars extends PluginBase{
         self::$instance = $this;
         $this->loadArenas();
         $this->registerCommands();
+        $this->initConfig();
+    }
+
+    private function initConfig() {
+        if(!is_dir($this->getDataFolder())) {
+            @mkdir($this->getDataFolder());
+        }
+        if(!is_dir($this->getDataFolder()."arenas")) {
+            @mkdir($this->getDataFolder()."arenas");
+        }
+        if(!is_dir($this->getDataFolder()."arenas/default")) {
+            @mkdir($this->getDataFolder()."arenas/default");
+        }
+        if(!is_file($this->getDataFolder()."arenas/default/default.yml")) {
+            $this->saveResource("arenas/default/default.yml");
+        }
     }
 
     private function registerCommands() {
@@ -33,6 +49,34 @@ class EggWars extends PluginBase{
      */
     public static function getInstance(): EggWars {
         return self::$instance;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function arenaExists(string $name) {
+        $return = false;
+        foreach ($this->arenas as $arenaName => $arena) {
+            if(strval($arenaName) == strval($name)) {
+                $return = true;
+            }
+        }
+        return $return;
+    }
+
+    public function createArena(string $name, Player $player = null) {
+        if($this->arenaExists($name)) {
+            if(($player instanceof Player) || ($player !== null)) {
+                $player->sendMessage("§cArena can not be created! (Arena with same name already exists)");
+            }
+            else {
+                $this->getLogger()->critical("§cArena can not be created! (Arena with same name already exists)");
+            }
+            return;
+        }
+        file_put_contents($this->getDataFolder()."arenas", $this->getResource('arenas/default/default.yml'));
+        $this->arenas[$name] = new Arena($this, new Config($this->getDataFolder()."arenas/{$name}.yml"));
     }
 
 
@@ -54,7 +98,7 @@ class EggWars extends PluginBase{
         $count = 0;
         $time = microtime(true);
         foreach (glob($this->getDataFolder()."arenas/*.yml") as $file) {
-            $fileName = basename($file);
+            $fileName = basename($file, ".yml");
             $this->getLogger()->info("§6Loading {$fileName} arena...");
             $config = new Config($file, Config::YAML);
             if(!$this->getServer()->isLevelLoaded(strval($config->get("level")))) {
