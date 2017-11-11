@@ -2,6 +2,6 @@
 branches:
 - master
 projects:
-  EggWars-DEV:
-    path: ""
+  EggWars:
+    path: "EggWars"
 ...
