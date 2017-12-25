@@ -8,12 +8,13 @@ playersPerTeam: "2"
 level: "EggWars"
 teams:
   red:
-    players: []
+    players:
     color: "§4"
-    spawn: []
-
+    spawn:
+    egg:
   blue:
-    players: []
+    players:
     color: "§9"
-    spawn: []
+    spawn:
+    egg:
 ...

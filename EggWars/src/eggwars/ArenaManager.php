@@ -34,8 +34,8 @@ class ArenaManager extends ConfigManager {
             $this->getPlugin()->getLogger()->critical("Arena already exists!");
             return null;
         }
-        file_put_contents($this->getArenaDataFolder().$name.".yml", $this->getPlugin()->getResource('arenas/default/default.yml'));
-        return $this->arenas[$name] = new Arena($this->getPlugin(), new Config($this->getArenaDataFolder().$name.".yml", Config::YAML));
+        file_put_contents($this->getArenaDataFolder()."/".$name.".yml", $this->getPlugin()->getResource("arenas/default/default.yml"));
+        return $this->arenas[$name] = new Arena($this->getPlugin(), new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML));
     }
 
     /**
