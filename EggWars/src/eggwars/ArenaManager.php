@@ -29,13 +29,18 @@ class ArenaManager extends ConfigManager {
      * @param string $name
      * @return Arena $arena
      */
-    public function createArena(string $name):Arena {
-        if($this->arenaExists($name)) {
-            $this->getPlugin()->getLogger()->critical("Arena already exists!");
-            return null;
+    public function createArena(string $name) {
+        try {
+            if($this->arenaExists($name)) {
+                $this->getPlugin()->getLogger()->critical("Arena already exists!");
+                return null;
+            }
+            file_put_contents($this->getDataFolder()."arenas/".$name.".yml", $this->getPlugin()->getResource("arenas/default.yml"));
+            return $this->arenas[$name] = new Arena($this->getPlugin(), new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML));
         }
-        file_put_contents($this->getArenaDataFolder()."/".$name.".yml", $this->getPlugin()->getResource("arenas/default/default.yml"));
-        return $this->arenas[$name] = new Arena($this->getPlugin(), new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML));
+        catch (\Exception $exception) {
+            $this->getPlugin()->getLogger()->critical($exception->getMessage()." / ".$exception->getLine()." / ".$exception->getCode());
+        }
     }
 
     /**

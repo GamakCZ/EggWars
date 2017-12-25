@@ -46,7 +46,7 @@ class ConfigManager {
      * @return string $arenaDataFolder
      */
     public function getArenaDataFolder():string {
-        return EggWars::getInstance()->getDataFolder()."arenas";
+        return EggWars::getInstance()->getDataFolder()."arenas/";
     }
 
     /**
@@ -71,11 +71,11 @@ class ConfigManager {
         if(!is_dir($this->getDataFolder()."arenas")) {
             @mkdir($this->getDataFolder()."arenas");
         }
-        if(!is_dir($this->getArenaDataFolder()."/default")) {
-            @mkdir($this->getArenaDataFolder()."/default");
+        if(!is_dir($this->getDataFolder()."arenas/default")) {
+            @mkdir($this->getDataFolder()."arenas/default");
         }
-        if(!is_file($this->getArenaDataFolder()."/default/default.yml")) {
-            EggWars::getInstance()->saveResource("arenas/default/default.yml");
+        if(!is_file($this->getDataFolder()."arenas/default.yml")) {
+            EggWars::getInstance()->saveResource("arenas/default.yml");
         }
         if(!is_file($this->getDataFolder()."/config.yml")) {
             EggWars::getInstance()->saveResource("/config.yml");
