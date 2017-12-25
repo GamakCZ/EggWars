@@ -75,7 +75,7 @@ class Arena {
 
     private function loadTeams() {
         foreach ($this->arenaData["teams"] as $team => $data) {
-            $color = strval($team["color"]);
+            $color = strval($data["color"]);
             $this->teams[$team] = new Team($team, $color, []);
         }
     }
