@@ -63,7 +63,7 @@ class Arena {
     private function loadGame() {
         $this->loadTeams();
         $this->loadLevel();
-        $this->scheduler = new ArenaScheduler($this);
+        Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
     }
 
     private function loadLevel() {
@@ -81,6 +81,13 @@ class Arena {
             $color = strval($data["color"]);
             $this->teams[$team] = new Team($team, $color, []);
         }
+    }
+
+    /**
+     * @return int $phase
+     */
+    public function getPhase():int {
+        return $this->phase;
     }
 
     /**
