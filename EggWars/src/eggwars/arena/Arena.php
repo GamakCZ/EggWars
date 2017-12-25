@@ -128,7 +128,7 @@ class Arena {
      * @param null $team
      */
     public function joinPlayer(Player $player, $team = null) {
-        if(!is_array($this->progress["lobbyPlayers"])) {
+        if(empty($this->progress["lobbyPlayers"]) || !is_array($this->progress["lobbyPlayers"])) {
             $this->progress["lobbyPlayers"] = [];
         }
         array_push($this->progress["lobbyPlayers"], $player);
