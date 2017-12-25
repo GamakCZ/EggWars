@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace eggwars;
 
 use eggwars\commands\EggWarsCommand;
+use pocketmine\level\generator\Flat;
+use pocketmine\level\generator\Generator;
 use pocketmine\plugin\PluginBase;
 
 /**
@@ -34,7 +36,12 @@ class EggWars extends PluginBase {
         $this->arenaManager = new ArenaManager;
         $this->setupManager = new SetupManager;
         $this->getLogger()->notice("You are running dev version of EggWars");
+        $this->generateDefaultLevel();
         $this->loadTestArena();
+    }
+
+    private function generateDefaultLevel() {
+        $this->getServer()->generateLevel("EggWars", 0, Generator::getGeneratorName(Generator::getGenerator("flat")));
     }
 
     private function loadTestArena() {

@@ -4,5 +4,7 @@
 ##    - EggWars plugin created by VixikCZ
 ##
 
+default-level: "true"
+
 prefix: "§3[EggWars]"
 ...

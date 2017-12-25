@@ -29,6 +29,7 @@ class ConfigManager {
         "restartTime" => 20,
         "teamsToStart" => 2,
         "playersPerTeam" => 2,
+        "level" => "EggWars",
         "teams" => [
             "red" => [
                 "color" => "§4",
