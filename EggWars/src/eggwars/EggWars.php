@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace eggwars;
 
 use eggwars\commands\EggWarsCommand;
+use eggwars\commands\TeamCommand;
 use pocketmine\level\generator\Flat;
 use pocketmine\level\generator\Generator;
 use pocketmine\plugin\PluginBase;
@@ -54,6 +55,7 @@ class EggWars extends PluginBase {
 
     private function registerCommands() {
         $this->getServer()->getCommandMap()->register("eggwars", new EggWarsCommand);
+        $this->getServer()->getCommandMap()->register("eggwars", new TeamCommand);
     }
 
     /**

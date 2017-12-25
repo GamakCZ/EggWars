@@ -22,29 +22,21 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
     }
 
     public function execute(CommandSender $sender, string $commandLabel, array $args) {
-        if(!$sender instanceof Player) return;
-        if(!$sender->hasPermission("ew.cmd")) return;
+        if(!$sender instanceof Player) {
+            $sender->sendMessage("§cThis command can be used only in-game!");
+            return;
+        }
         if(empty($args[0])) {
-            $sender->sendMessage("§cUsage: §7/ew help");
+            $sender->sendMessage("§cUsage: §7/ew join");
             return;
         }
         switch (strtolower($args[0])) {
-            case "help":
-                $sender->sendMessage("§a-- EggWars Help --\n".
-                "§6/ew create§e create arena\n".
-                "§6/ew set§e set arena");
-                return;
-            case "create":
-                if(empty($args[1])) {
-                    $sender->sendMessage("§cUsage: §7/ew create <arenaName>");
-                    return;
-                }
-                return;
             case "join":
                 $this->getPlugin()->getArenaManager()->getArenaByName("TestArena")->joinPlayer($sender);
                 return;
-
-
+            default:
+                $sender->sendMessage("§cUsage: §7/ew join");
+                return;
         }
     }
 

@@ -30,6 +30,7 @@ class ConfigManager {
         "teamsToStart" => 2,
         "playersPerTeam" => 2,
         "level" => "EggWars",
+        "lobby" => 0, 4, 0,
         "teams" => [
             "red" => [
                 "color" => "§4",

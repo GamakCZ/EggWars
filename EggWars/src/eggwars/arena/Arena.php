@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use eggwars\position\EggWarsPosition;
 use pocketmine\event\Listener;
+use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
@@ -81,6 +84,13 @@ class Arena {
     }
 
     /**
+     * @return Team[] $teams
+     */
+    public function getAllTeams() {
+        return $this->teams;
+    }
+
+    /**
      * @param string $name
      * @return Team
      */
@@ -105,11 +115,36 @@ class Arena {
     }
 
     /**
+     * @return Level|null $level
+     */
+    public function getLevel() {
+        if(Server::getInstance()->isLevelGenerated($this->arenaData["level"])) {
+            return Server::getInstance()->getLevelByName($this->arenaData["level"]);
+        }
+    }
+
+    /**
      * @param Player $player
      * @param null $team
      */
     public function joinPlayer(Player $player, $team = null) {
+        if(!is_array($this->progress["lobbyPlayers"])) {
+            $this->progress["lobbyPlayers"] = [];
+        }
         array_push($this->progress["lobbyPlayers"], $player);
+
+        $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["level"]));
+        $player->setGamemode($player::ADVENTURE);
+        $player->setHealth(20);
+        $player->setFood(20);
+        $player->setAllowFlight(false);
+        $player->setXpProgress(0);
+
+        $count = count($this->getAllPlayers());
+        $maxCount = count($this->getAllTeams())*intval($this->arenaData["playersPerTeam"]);
+
+        $player->sendMessage(EggWars::getPrefix()."§aYou are joined the game! §7[$count/$maxCount]");
+
         if($team != null) {
             if($this->teamExists(strval($team))) {
                 $this->addPlayerToTeam($player, strval($team));
@@ -140,6 +175,9 @@ class Arena {
         $players = [];
         foreach ($this->teams as $team) {
             array_merge($players, $team->getTeamsPlayers());
+        }
+        if($this->phase <= 1) {
+            array_merge($players, $this->progress["lobbyPlayers"]);
         }
         return $players;
     }
