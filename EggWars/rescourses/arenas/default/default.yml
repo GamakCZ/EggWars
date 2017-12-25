@@ -6,15 +6,15 @@ restartTime: "20"
 teamsToStart: "2"
 playersPerTeam: "2"
 level: "EggWars"
-teams:
-  red:
-    players:
-    color: "§4"
-    spawn:
-    egg:
-  blue:
-    players:
-    color: "§9"
-    spawn:
-    egg:
+teams: []
+#  red:
+#    players:
+#    color: "§4"
+#    spawn:
+#    egg:
+#  blue:
+#    players:
+#    color: "§9"
+#    spawn:
+#    egg:
 ...
