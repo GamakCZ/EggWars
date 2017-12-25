@@ -95,9 +95,6 @@ class ConfigManager {
         if(!is_dir($this->getDataFolder()."arenas")) {
             @mkdir($this->getDataFolder()."arenas");
         }
-        if(!is_dir($this->getDataFolder()."arenas/default")) {
-            @mkdir($this->getDataFolder()."arenas/default");
-        }
         if(!is_file($this->getDataFolder()."/config.yml")) {
             EggWars::getInstance()->saveResource("/config.yml");
         }
