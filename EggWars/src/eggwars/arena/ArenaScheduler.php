@@ -35,10 +35,7 @@ class ArenaScheduler extends EggWarsTask {
      * @param int $currentTick
      */
     public function onRun(int $currentTick) {
-        $this->tick++;
-        switch ($this->arena->phase) {
-
-        }
+        $this->getArena()->progress();
     }
 
     /**

@@ -8,6 +8,7 @@ use eggwars\arena\Arena;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\Player;
+use pocketmine\Server;
 
 class SetupManager implements Listener {
 
@@ -16,6 +17,10 @@ class SetupManager implements Listener {
 
     /** @var array $setup */
     private $setup = [];
+
+    public function __construct() {
+        Server::getInstance()->getPluginManager()->registerEvents($this, EggWars::getInstance());
+    }
 
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();

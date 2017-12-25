@@ -39,11 +39,18 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     $sender->sendMessage("§cUsage: §7/ew create <arenaName>");
                     return;
                 }
+                return;
+            case "join":
+                $this->getPlugin()->getArenaManager()->getArenaByName("TestArena")->joinPlayer($sender);
+                return;
 
 
         }
     }
 
+    /**
+     * @return Plugin|EggWars $plugin
+     */
     public function getPlugin(): Plugin {
         return EggWars::getInstance();
     }
