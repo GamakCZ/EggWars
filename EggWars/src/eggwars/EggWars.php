@@ -22,23 +22,9 @@ class EggWars extends PluginBase{
         self::$instance = $this;
         $this->loadArenas();
         $this->registerCommands();
-        $this->initConfig();
     }
 
-    private function initConfig() {
-        if(!is_dir($this->getDataFolder())) {
-            @mkdir($this->getDataFolder());
-        }
-        if(!is_dir($this->getDataFolder()."arenas")) {
-            @mkdir($this->getDataFolder()."arenas");
-        }
-        if(!is_dir($this->getDataFolder()."arenas/default")) {
-            @mkdir($this->getDataFolder()."arenas/default");
-        }
-        if(!is_file($this->getDataFolder()."arenas/default/default.yml")) {
-            $this->saveResource("arenas/default/default.yml");
-        }
-    }
+
 
     private function registerCommands() {
         $this->getServer()->getCommandMap()->register("eggwars", new EggWarsCommand);
@@ -65,6 +51,10 @@ class EggWars extends PluginBase{
         return $return;
     }
 
+    /**
+     * @param string $name
+     * @param Player|null $player
+     */
     public function createArena(string $name, Player $player = null) {
         if($this->arenaExists($name)) {
             if(($player instanceof Player) || ($player !== null)) {

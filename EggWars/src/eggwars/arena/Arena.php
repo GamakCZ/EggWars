@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use pocketmine\event\Listener;
 use pocketmine\Player;
+use pocketmine\scheduler\Task;
 use pocketmine\utils\Config;
 
 /**
@@ -14,28 +16,40 @@ use pocketmine\utils\Config;
  */
 class Arena {
 
-    private $task;
+    /**
+     * @var array $arenaData
+     */
+    public $arenaData = [];
+
+    /**
+     * @var array $progress
+     */
+    private $progress = [];
+
+    /**
+     * @var int $time
+     */
+    public $time, $phase;
+
+    /**
+     * @var Player[] $players
+     */
+    public $players = [];
+
+    /**
+     * @var  Team[] $teams
+     */
+    public $teams = [];
+
+    /**
+     * @var Task $scheduler
+     */
+    private $scheduler;
+
+    /**
+     * @var Listener $listener
+     */
     private $listener;
-
-    /** @var  int $phase */
-    public $phase;
-    /** @var  int $startTime */
-    public $startTime;
-    /** @var  int $gameTime */
-    public $gameTime;
-    /** @var  int $restartTime */
-    public $restartTime;
-
-    /** @var array $arenaData */
-    public $arenaData;
-
-    /** @var EggWars $plugin */
-    public $plugin;
-
-    /** @var  Player[] $players */
-    public $players;
-    /** @var  Team[] $teams */
-    public $teams;
 
     /**
      * Arena constructor.
@@ -43,9 +57,23 @@ class Arena {
      * @param Config $config
      */
     public function __construct(EggWars $eggWars, Config $config) {
-        $this->plugin = $eggWars;
         $this->arenaData = $config->getAll();
-        $this->restart();
+        $this->loadGame();
+    }
+
+    private function loadGame() {
+        $this->loadTeams();
+    }
+
+    private function loadLevel() {
+
+    }
+
+    private function loadTeams() {
+        foreach ($this->arenaData["teams"] as $team) {
+            $color = strval($team["color"]);
+            $this->teams[$team] = new Team($team, $color, []);
+        }
     }
 
     /**
@@ -53,39 +81,12 @@ class Arena {
      * @return bool
      */
     public function inGame(Player $player) : bool {
-        return in_array($player->getName(), $this->players);
-    }
-
-    public function restart() {
-        $this->players = [];
-        $this->phase = 0;
-        $this->startTime = intval($this->arenaData["startTime"]);
-        $this->gameTime = intval($this->arenaData["maxGameTime"]);
-        $this->restartTime = intval($this->arenaData["restartTime"]);
-        $this->reloadTeams();
-    }
-
-    public function reloadTeams() {
-        $teamInt = 0;
-        foreach ($this->arenaData["teams"] as $teamName => $teamData) {
-            $this->teams[$teamName] = new Team($teamName, $teamInt, []);
-            $teamInt++;
+        $return = false;
+        foreach ($this->players as $players) {
+            if($players->getName() == $player->getName()) {
+                $return = true;
+            }
         }
-    }
-
-    public function shortStartTime(Player $player) {
-
-    }
-
-    public function startGame() {
-
-    }
-
-    public function teleportToGame(Player $player) {
-
-    }
-
-    public function unloadArena() {
-
+        return $return;
     }
 }

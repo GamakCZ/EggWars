@@ -14,9 +14,13 @@ class SetupManager implements Listener {
     /** @var Arena[] */
     private static $players = [];
 
+    /** @var array $setup */
+    private $setup = [];
+
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
-        if (isset(self::$players[strtolower($player->getName())]) && ($arena = self::$players[strtolower($player->getName())]) instanceof Arena) {
+        $arena = self::$players[strtolower($player->getName())];
+        if (isset(self::$players[strtolower($player->getName())]) && $arena instanceof Arena) {
             $args = explode(" ", $event->getMessage());
             if (empty($args[0])) {
                 $player->sendMessage("§7Use §6help §7 to display setup commands!");
@@ -48,7 +52,26 @@ class SetupManager implements Listener {
                     $arena->arenaData["playersperteam"] = intval($args[0]);
                     $player->sendMessage("§aArena updated!");
                     break;
-
+                case "addteam":
+                    if(count($args) < 3) {
+                        $player->sendMessage("§cUsage: §7addteam <teamName> <teamColor: &(color:a-f|0-9)>");
+                        break;
+                    }
+                    if(isset($arena["teams"][$args[1]])) {
+                        $player->sendMessage("§cTeam {$args[1]} already exists!");
+                        break;
+                    }
+                    $arena["teams"][$args[1]] = [
+                        "color" => str_replace("&", "§", $args[2]),
+                        "spawn" => []
+                    ];
+                    $player->sendMessage("§aTeam {$args[1]} added (color $args[2]).");
+                    break;
+                case "setspawn":
+                    if(empty($args[1])) {
+                        $player->sendMessage("§cUsage: §7setspawn <teamName>");
+                        break;
+                    }
             }
             $event->setCancelled(true);
         }

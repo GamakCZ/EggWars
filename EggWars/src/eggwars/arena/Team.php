@@ -12,27 +12,43 @@ use pocketmine\Player;
  */
 class Team {
 
-    /** @var Player[] $players */
+    /**
+     * @var Player[] $players
+     */
     public $players = [];
 
-    /** @var  string $name */
+    /**
+     * @var  string $name
+     */
     public $name;
 
-    /** @var bool $alive */
+    /**
+     * @var string $color
+     */
+    public $color;
+
+    /**
+     * @var bool $alive
+     */
     public $alive = true;
 
-    /** @var int $int */
-    public $int;
 
     /**
      * Team constructor.
      * @param string $name
      * @param Player[] $players
      */
-    public function __construct(string $name, int $int, array $players) {
+    public function __construct(string $name, string $color, array $players) {
         array_merge($this->players, $players);
         $this->name = $name;
-        $this->int = $int;
+        $this->color = $color;
+    }
+
+    /**
+     * @return string $color
+     */
+    public function getColor():string {
+        return $this->color;
     }
 
     /**
