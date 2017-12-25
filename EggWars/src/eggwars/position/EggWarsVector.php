@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace eggwars\math;
+namespace eggwars\position;
 
 use pocketmine\math\Vector3;
 
