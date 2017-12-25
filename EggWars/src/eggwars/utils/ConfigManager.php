@@ -20,6 +20,30 @@ class ConfigManager {
     private $mainConfigData = [];
 
     /**
+     * @var array $defaultArenaData
+     */
+    public $defaultArenaData = [
+        "enabled" => false,
+        "startTime" => 30,
+        "gameTime" => 600,
+        "restartTime" => 20,
+        "teamsToStart" => 2,
+        "playersPerTeam" => 2,
+        "teams" => [
+            "red" => [
+                "color" => "§4",
+                "egg" => [100, 4, 100],
+                "spawn" => [100, 5, 100],
+            ],
+            "blue" => [
+                "color" => "§9",
+                "egg" => [80, 4, 80],
+                "spawn" => [80, 5, 80]
+            ]
+        ]
+    ];
+
+    /**
      * @param mixed $k
      * @param mixed $v
      */
@@ -73,9 +97,6 @@ class ConfigManager {
         }
         if(!is_dir($this->getDataFolder()."arenas/default")) {
             @mkdir($this->getDataFolder()."arenas/default");
-        }
-        if(!is_file($this->getDataFolder()."arenas/default.yml")) {
-            EggWars::getInstance()->saveResource("arenas/default.yml");
         }
         if(!is_file($this->getDataFolder()."/config.yml")) {
             EggWars::getInstance()->saveResource("/config.yml");

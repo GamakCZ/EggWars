@@ -30,7 +30,7 @@ class ArenaManager extends ConfigManager {
      * @return Arena $arena
      */
     public function createArena(string $name) {
-        try {
+        /*try {
             if($this->arenaExists($name)) {
                 $this->getPlugin()->getLogger()->critical("Arena already exists!");
                 return null;
@@ -40,7 +40,18 @@ class ArenaManager extends ConfigManager {
         }
         catch (\Exception $exception) {
             $this->getPlugin()->getLogger()->critical($exception->getMessage()." / ".$exception->getLine()." / ".$exception->getCode(). " / ".$exception->getFile());
+        }*/
+        if($this->arenaExists($name)) {
+            $this->getPlugin()->getLogger()->critical("Arena already exists!");
+            return null;
         }
+
+        // config
+        $arenaConfig = new Config($this->getDataFolder()."arenas/$name.yml", Config::YAML, $this->defaultArenaData);
+        $arenaConfig->save();
+
+        return $arena = $this->arenas[$name] = new Arena($this->getPlugin(), $arenaConfig);
+
     }
 
     /**
