@@ -39,7 +39,7 @@ class ArenaManager extends ConfigManager {
             return $this->arenas[$name] = new Arena($this->getPlugin(), new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML));
         }
         catch (\Exception $exception) {
-            $this->getPlugin()->getLogger()->critical($exception->getMessage()." / ".$exception->getLine()." / ".$exception->getCode());
+            $this->getPlugin()->getLogger()->critical($exception->getMessage()." / ".$exception->getLine()." / ".$exception->getCode(). " / ".$exception->getFile());
         }
     }
 
