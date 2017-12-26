@@ -391,6 +391,9 @@ class Arena {
                 $this->startGame();
                 $this->phase = 2;
             }
+            else {
+                $this->phase = 1;
+            }
             foreach ($this->getAllPlayers() as $player) {
                 $player->sendTip(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
             }
@@ -410,7 +413,6 @@ class Arena {
                     $this->broadcastMessage(EggWars::getPrefix()."§7Game starts in  {$this->progress["startTime"]} sec!");
                     break;
             }
-            $this->phase = 1;
         }
         else {
             $this->phase = 0;
