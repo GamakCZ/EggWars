@@ -27,6 +27,11 @@ class EggWars extends PluginBase {
     private $arenaManager;
 
     /**
+     * @var LevelManager $levelManager
+     */
+    private $levelManager;
+
+    /**
      * @var SetupManager $setupManager
      */
     private $setupManager;
@@ -35,6 +40,7 @@ class EggWars extends PluginBase {
         self::$instance = $this;
         $this->registerCommands();
         $this->arenaManager = new ArenaManager;
+        $this->levelManager = new LevelManager;
         $this->setupManager = new SetupManager;
         $this->getLogger()->notice("You are running dev version of EggWars");
         $this->generateDefaultLevel();
@@ -58,11 +64,19 @@ class EggWars extends PluginBase {
         $this->getServer()->getCommandMap()->register("eggwars", new TeamCommand);
     }
 
+    public function getSetupManager(): SetupManager {
+        return $this->setupManager;
+    }
+
     /**
      * @return ArenaManager $arenaManager
      */
-    public function getArenaManager():ArenaManager {
+    public function getArenaManager(): ArenaManager {
         return $this->arenaManager;
+    }
+
+    public function getLevelManager(): LevelManager {
+        return $this->levelManager;
     }
 
     /**

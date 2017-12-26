@@ -29,17 +29,30 @@ class ConfigManager {
         "restartTime" => 20,
         "teamsToStart" => 2,
         "playersPerTeam" => 2,
-        "level" => "EggWars",
-        "lobby" => [0, 4, 0],
+        "lobby" => [0, 4, 0, "EggWars"],
         "builder" => "VixikCZ",
         "teams" => [
             "red" => [
-                "color" => "§4",
-                "egg" => [100, 4, 100],
-                "spawn" => [100, 5, 100],
+                "color" => "§4"
             ],
             "blue" => [
-                "color" => "§9",
+                "color" => "§9"
+            ]
+        ]
+    ];
+
+    public $defaultLevelData = [
+        "levelName" => "EggWars",
+        // custom name
+        "level" => "EggWars",
+        "lobby" => [0, 4, 0],
+        "middle" => [90, 4, 90],
+        "teams" => [
+            "red" => [
+                "egg" => [100, 4, 100],
+                "spawn" => [100, 5, 100]
+            ],
+            "blue" => [
                 "egg" => [80, 4, 80],
                 "spawn" => [80, 5, 80]
             ]
@@ -94,6 +107,9 @@ class ConfigManager {
     public function initConfig() {
         if(!is_dir($this->getDataFolder())) {
             @mkdir($this->getDataFolder());
+        }
+        if(!is_dir($this->getDataFolder()."levels")) {
+            @mkdir($this->getDataFolder()."levels");
         }
         if(!is_dir($this->getDataFolder()."arenas")) {
             @mkdir($this->getDataFolder()."arenas");

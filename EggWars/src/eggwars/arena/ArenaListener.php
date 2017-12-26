@@ -10,6 +10,7 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\level\Position;
@@ -91,6 +92,19 @@ class ArenaListener implements Listener {
             $this->getArena()->broadcastMessage($team->getColor().$team->getTeamName()."§7 egg was removed by ".$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7!");
             $team->setAlive();
             return;
+        }
+    }
+
+    /**
+     * @param PlayerExhaustEvent $event
+     */
+    public function onExhaust(PlayerExhaustEvent $event) {
+        $player = $event->getPlayer();
+        if(!$player instanceof Player) {
+            return;
+        }
+        if(($this->getArena()->getPhase() == 0 || $this->getArena()->getPhase() == 1) && $this->getArena()->inGame($player)) {
+            $event->setCancelled();
         }
     }
 

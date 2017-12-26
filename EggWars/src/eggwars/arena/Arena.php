@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use eggwars\level\EggWarsLevel;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
 use pocketmine\block\Block;
@@ -60,6 +61,16 @@ class Arena {
     private $spectators = [];
 
     /**
+     * @var EggWarsLevel $level
+     */
+    private $level = null;
+
+    /**
+     * @var VoteManager $voteManager
+     */
+    private $voteManager;
+
+    /**
      * Arena constructor.
      * @param EggWars $eggWars
      * @param Config $config
@@ -75,16 +86,17 @@ class Arena {
         $this->progress["lobbyPlayers"] = [];
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
+        $this->voteManager = new VoteManager($this->getPlugin()->get);
         #Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
     }
 
     private function loadLevel() {
-        if(!Server::getInstance()->isLevelGenerated($this->arenaData["level"])) {
+        if(!Server::getInstance()->isLevelGenerated($this->arenaData["lobby"][3])) {
             $this->getPlugin()->getLogger()->critical("Arena level not found!");
             $this->getPlugin()->getPluginLoader()->disablePlugin($this->getPlugin());
         }
         else {
-            Server::getInstance()->loadLevel($this->arenaData["level"]);
+            Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
         }
     }
 

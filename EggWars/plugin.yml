@@ -8,3 +8,17 @@ description: EggWars minigame plugin
 permissions:
   ew.cmd:
     description: Permission for ALL EggWars Commands
+    default: op
+    childern:
+      ew.cmd.help:
+        default: op
+        description: Permission to /ew help
+      ew.cmd.create:
+        default: op
+        description: Permission to /ew create
+      ew.cmd.set:
+        default: op
+        description: Permission to /ew set
+      ew.cmd.join:
+        default: true
+        description: Permission to join the test arena

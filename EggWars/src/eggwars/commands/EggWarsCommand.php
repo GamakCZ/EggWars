@@ -36,7 +36,19 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         }
         switch (strtolower($args[0])) {
             case "create":
-
+                if(empty($args[1])) {
+                    $sender->sendMessage("§cUsage: §7/ew createarena <arenaName>");
+                    return;
+                }
+                if($this->getPlugin()->getArenaManager()->arenaExists($args[1])) {
+                    $sender->sendMessage("§cArena $args[0] already exists!");
+                    return;
+                }
+                $this->getPlugin()->getArenaManager()->createArena($args[0]);
+                $sender->sendMessage(EggWars::getPrefix()."§aArena $args[0] sucessfully created!");
+                return;
+            case "addlevel":
+                return;
             case "join":
                 $this->getPlugin()->getArenaManager()->getArenaByName("TestArena")->joinPlayer($sender);
                 return;
