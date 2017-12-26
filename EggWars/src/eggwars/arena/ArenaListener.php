@@ -84,6 +84,9 @@ class ArenaListener implements Listener {
         }
         $team = $this->getArena()->getTeamEggByVector($event->getBlock()->asVector3());
         if($team instanceof Team) {
+            if($this->getArena()->getTeamByPlayer($player)->getTeamName() == $this->getArena()->getTeamEggByVector($event->getBlock()->asVector3())->getTeamName()) {
+                return;
+            }
             $event->setDrops([]);
             $this->getArena()->broadcastMessage($team->getColor().$team->getTeamName()."§7 egg was removed by ".$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7!");
             $team->setAlive();
