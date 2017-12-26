@@ -191,11 +191,6 @@ class Arena {
 
         $this->progress["lobbyPlayers"][$player->getName()] = $player;
 
-        ob_start();
-        var_dump($this->getAllPlayers());
-        var_dump($this->progress["lobbyPlayers"]);
-        $this->getPlugin()->getLogger()->notice(ob_get_clean());
-
         $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["level"]));
         $player->setGamemode($player::ADVENTURE);
         $player->setHealth(20);
@@ -237,10 +232,10 @@ class Arena {
     public function getAllPlayers():array {
         $players = [];
         foreach ($this->teams as $team) {
-            array_merge($players, $team->getTeamsPlayers());
+            $players = array_merge($players, $team->getTeamsPlayers());
         }
         if($this->phase <= 1 && isset($this->progress["lobbyPlayers"])) {
-            array_merge($players, $this->progress["lobbyPlayers"]);
+            $players = array_merge($players, $this->progress["lobbyPlayers"]);
         }
         return $players;
     }
