@@ -188,7 +188,13 @@ class Arena {
         if(empty($this->progress["lobbyPlayers"]) || !is_array($this->progress["lobbyPlayers"])) {
             $this->progress["lobbyPlayers"] = [];
         }
-        array_push($this->progress["lobbyPlayers"], $player);
+
+        $this->progress["lobbyPlayers"][$player->getName()] = $player;
+
+        ob_start();
+        var_dump($this->getAllPlayers());
+        var_dump($this->progress["lobbyPlayers"]);
+        $this->getPlugin()->getLogger()->notice(ob_get_clean());
 
         $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["level"]));
         $player->setGamemode($player::ADVENTURE);
