@@ -31,6 +31,7 @@ class ConfigManager {
         "playersPerTeam" => 2,
         "lobby" => [0, 4, 0, "EggWars"],
         "builder" => "VixikCZ",
+        "teamsCount" => 2,
         "teams" => [
             "red" => [
                 "color" => "§4"

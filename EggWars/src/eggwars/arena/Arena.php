@@ -86,7 +86,7 @@ class Arena {
         $this->progress["lobbyPlayers"] = [];
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
-        $this->voteManager = new VoteManager($this->getPlugin()->get);
+        $this->voteManager = new VoteManager($this, $this->getPlugin()->getLevelManager()->getLevelsForArena($this->arenaData["teamsCount"]));
         #Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
     }
 
