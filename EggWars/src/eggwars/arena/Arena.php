@@ -7,6 +7,7 @@ namespace eggwars\arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
+use pocketmine\block\Block;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -144,6 +145,14 @@ class Arena {
             }
         }
         return $team;
+    }
+
+    /**
+     * @param string $team
+     * @return Vector3
+     */
+    public function getTeamEggVector(string $team): Vector3 {
+        return EggWarsVector::__fromArray($this->arenaData[$team]["egg"])->asVector3();
     }
 
     /**
@@ -335,6 +344,9 @@ class Arena {
             if($this->progress["startTime"] <= 0) {
                 $this->startGame();
             }
+            foreach ($this->getAllPlayers() as $player) {
+                $player->sendTip(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
+            }
             switch ($this->progress["startTime"]) {
                 case 120:
                 case 90:
@@ -356,7 +368,7 @@ class Arena {
         else {
             $this->phase = 0;
             foreach ($this->getAllPlayers() as $player) {
-                $player->sendMessage(EggWars::getPrefix()." §7|| §cYou need more players!");
+                $player->sendTip(EggWars::getPrefix()." §7|| §cYou need more players!");
             }
         }
     }
@@ -372,6 +384,10 @@ class Arena {
                     }
                 }
             }
+        }
+
+        foreach ($this->getAllTeams() as $team) {
+            $this->getLevel()->setBlock($this->getTeamEggVector($team->getTeamName()), Block::get(Block::DRAGON_EGG));
         }
 
         // DATA
