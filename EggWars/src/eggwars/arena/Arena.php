@@ -259,19 +259,15 @@ class Arena {
         if($this->getPhase() == 0 || $this->getPhase() == 1) {
             foreach ($this->getAllTeams() as $team) {
                 foreach ($team->getTeamsPlayers() as $player) {
-                    foreach ($returnPlayers as $returnPlayer) {
-                        if($returnPlayer->getName() !== $player->getName()) {
-                            array_push($returnPlayers, $player);
-                        }
+                    if(empty($returnPlayers[$player->getName()])) {
+                        $returnPlayers[$player->getName()] = $player;
                     }
                 }
             }
-            foreach ($returnPlayers as $returnPlayer) {
-                /** @var Player $player */
-                foreach ($this->progress["lobbyPlayers"] as $player) {
-                    if($returnPlayer->getName() !== $player->getName()) {
-                        array_push($returnPlayers, $player);
-                    }
+            /** @var Player $player */
+            foreach ($this->progress["lobbyPlayers"] as $player) {
+                if(empty($returnPlayers[$player->getName()])) {
+                    $returnPlayers[$player->getName()] = $player;
                 }
             }
         }
