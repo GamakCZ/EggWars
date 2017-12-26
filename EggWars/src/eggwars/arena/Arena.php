@@ -226,7 +226,7 @@ class Arena {
         $maxCount = count($this->getAllTeams())*intval($this->arenaData["playersPerTeam"]);
 
         $player->sendMessage(EggWars::getPrefix()."§aYou are joined the game!");
-        $this->broadcastMessage(EggWars::getPrefix()."§a{$player} joined EggWars game §7[$count/$maxCount]!");
+        $this->broadcastMessage(EggWars::getPrefix()."§a{$player->getName()} joined EggWars game §7[$count/$maxCount]!");
 
         if($team != null) {
             if($this->teamExists(strval($team))) {

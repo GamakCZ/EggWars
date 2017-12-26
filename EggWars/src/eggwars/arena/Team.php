@@ -63,7 +63,7 @@ class Team {
      * @return bool $return
      */
     public function isFull():bool {
-        return boolval(count($this->getTeamsPlayers()) >= $this->getArena());
+        return boolval(count($this->getTeamsPlayers()) >= $this->getArena()->arenaData["playersPerTeam"]);
     }
 
     /**
