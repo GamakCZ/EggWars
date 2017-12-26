@@ -38,29 +38,10 @@ class GeneratorScheduler extends EggWarsTask {
     }
 
     private function spawn() {
-        $level = $this->level;
-        foreach ($level->getTiles() as $tile) {
-            switch ($level->getBlock($tile->add(0, -1, 0))->getId()) {
-                case Block::IRON_BLOCK:
-                    break;
-                case Block::GOLD_BLOCK:
-                    break;
-                case Block::DIAMOND_BLOCK:
-                    break;
-            }
-        }
     }
 
 
     private function checkSigns() {
-        $level = $this->level;
-        foreach ($level->getTiles() as $tile) {
-            if($tile instanceof Sign) {
-                if($tile->getText()[0] == "spawn" && is_numeric($tile->getText()[1])) {
-                    $tile->setText("§3[EggWars]", "§6Level: {$tile->getText()[1]}§7", "", "§o§bclick to update");
-                }
-            }
-        }
     }
 
     /**

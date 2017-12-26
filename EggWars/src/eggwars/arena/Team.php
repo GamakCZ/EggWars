@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace eggwars\arena;
 
+use eggwars\EggWars;
 use pocketmine\Player;
 
 /**
@@ -32,16 +33,44 @@ class Team {
      */
     public $alive = true;
 
+    /**
+     * @var Arena $arena
+     */
+    public $arena;
 
     /**
      * Team constructor.
      * @param string $name
      * @param Player[] $players
      */
-    public function __construct(string $name, string $color, array $players) {
+    public function __construct(Arena $arena, string $name, string $color, array $players) {
         array_merge($this->players, $players);
         $this->name = $name;
         $this->color = $color;
+        $this->arena = $arena;
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function addPlayer(Player $player) {
+        if(!$this->isFull()) {
+            array_push($this->players, $player);
+        }
+    }
+
+    /**
+     * @return bool $return
+     */
+    public function isFull():bool {
+        return boolval(count($this->getTeamsPlayers()) >= $this->getArena());
+    }
+
+    /**
+     * @return bool $alive
+     */
+    public function isAlive(): bool {
+        return $this->alive;
     }
 
     /**
@@ -76,5 +105,19 @@ class Team {
         if(count($this->getTeamsPlayers()) <= 0) {
             $this->setAlive(false);
         }
+    }
+
+    /**
+     * @return EggWars $eggWars
+     */
+    public function getPlugin(): EggWars {
+        return EggWars::getInstance();
+    }
+
+    /**
+     * @return Arena $arena
+     */
+    public function getArena(): Arena {
+        return $this->arena;
     }
 }

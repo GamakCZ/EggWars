@@ -31,6 +31,7 @@ class ConfigManager {
         "playersPerTeam" => 2,
         "level" => "EggWars",
         "lobby" => [0, 4, 0],
+        "builder" => "VixikCZ",
         "teams" => [
             "red" => [
                 "color" => "§4",
