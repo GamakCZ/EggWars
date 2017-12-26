@@ -4,7 +4,17 @@
 
 _EggWars minigame for PocketMine_
 
+### Commands:
 
+- /ew join command:
+    - usage: /ew join
+    - description: Join to test arena
+    - op: false
+
+- /team command:
+    - usage: /team <team>
+    - description: Select your team
+    - op: false
 
 ---
 

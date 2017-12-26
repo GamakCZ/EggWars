@@ -30,7 +30,13 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
             $sender->sendMessage("§cUsage: §7/ew join");
             return;
         }
+        if(!$sender->hasPermission("ew.cmd.$args[0]")) {
+            $sender->sendMessage("§cYou have not permissions to use this command.");
+            return;
+        }
         switch (strtolower($args[0])) {
+            case "create":
+
             case "join":
                 $this->getPlugin()->getArenaManager()->getArenaByName("TestArena")->joinPlayer($sender);
                 return;

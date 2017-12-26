@@ -93,9 +93,15 @@ class ArenaManager extends ConfigManager {
          * @var Arena $arena
          */
         foreach ($this->arenas as $name => $arena) {
-            $config = new Config($this->getArenaDataFolder().$name.".yml", Config::YAML);
-            $config->setAll($arena->arenaData);
-            $config->save();
+            if(is_file($this->getArenaDataFolder()."/".$name.".yml")) {
+                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML);
+                $config->setAll($arena->arenaData);
+                $config->save();
+            }
+            else {
+                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML, $arena->arenaData);
+                $config->save();
+            }
             $this->getPlugin()->getLogger()->notice("Arena {$name} is successfully saved!");
         }
     }

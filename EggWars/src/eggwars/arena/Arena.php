@@ -121,7 +121,12 @@ class Arena {
      * @param string $teamName
      */
     public function addPlayerToTeam(Player $player, string $teamName) {
-        array_push($this->getTeamByName($teamName)->players, $player);
+        //array_push($this->getTeamByName($teamName)->players, $player);
+        $team = $this->getTeamByName($teamName);
+        if(($lastTeam = $this->getTeamByPlayer($player)) instanceof Team) {
+            unset($lastTeam->players[intval(array_search($player, $lastTeam->players)-1)]);
+        }
+        $team->addPlayer($player);
     }
 
     /**
@@ -149,10 +154,18 @@ class Arena {
 
     /**
      * @param string $team
-     * @return Vector3
+     * @return Vector3 $egg
      */
     public function getTeamEggVector(string $team): Vector3 {
-        return EggWarsVector::__fromArray($this->arenaData[$team]["egg"])->asVector3();
+        return EggWarsVector::__fromArray($this->arenaData["teams"][$team]["egg"])->asVector3();
+    }
+
+    /**
+     * @param string $team
+     * @return Vector3 $spawn
+     */
+    public function getTeamSpawnVector(string $team): Vector3{
+        return EggWarsVector::__fromArray($this->arenaData["teams"][$team]["spawn"])->asVector3();
     }
 
     /**
@@ -206,11 +219,13 @@ class Arena {
         $player->setFood(20);
         $player->setAllowFlight(false);
         $player->setXpProgress(0);
+        $player->getInventory()->clearAll();
 
         $count = count($this->getAllPlayers());
         $maxCount = count($this->getAllTeams())*intval($this->arenaData["playersPerTeam"]);
 
-        $player->sendMessage(EggWars::getPrefix()."§aYou are joined the game! §7[$count/$maxCount]");
+        $player->sendMessage(EggWars::getPrefix()."§aYou are joined the game!");
+        $this->broadcastMessage(EggWars::getPrefix()."§a{$player} joined EggWars game §7[$count/$maxCount]!");
 
         if($team != null) {
             if($this->teamExists(strval($team))) {
@@ -238,15 +253,34 @@ class Arena {
     /**
      * @return Player[] $players
      */
-    public function getAllPlayers():array {
-        $players = [];
-        foreach ($this->teams as $team) {
-            $players = array_merge($players, $team->getTeamsPlayers());
+    public function getAllPlayers(): array {
+        /** @var Player[] $returnPlayers */
+        $returnPlayers = [];
+        if($this->getPhase() == 0 || $this->getPhase() == 1) {
+            foreach ($this->getAllTeams() as $team) {
+                foreach ($team->getTeamsPlayers() as $player) {
+                    foreach ($returnPlayers as $returnPlayer) {
+                        if($returnPlayer->getName() !== $player->getName()) {
+                            array_push($returnPlayers, $player);
+                        }
+                    }
+                }
+            }
+            foreach ($returnPlayers as $returnPlayer) {
+                /** @var Player $player */
+                foreach ($this->progress["lobbyPlayers"] as $player) {
+                    if($returnPlayer->getName() !== $player->getName()) {
+                        array_push($returnPlayers, $player);
+                    }
+                }
+            }
         }
-        if($this->phase <= 1 && isset($this->progress["lobbyPlayers"])) {
-            $players = array_merge($players, $this->progress["lobbyPlayers"]);
+        else {
+            foreach ($this->getAllTeams() as $team) {
+                $returnPlayers = array_merge($returnPlayers, $team->getTeamsPlayers());
+            }
         }
-        return $players;
+        return $returnPlayers;
     }
 
     /**
@@ -398,6 +432,8 @@ class Arena {
             $player->setMaxHealth(20);
             $player->getInventory()->clearAll();
             $player->addTitle("§6Game started!", "map builded by: ".$this->arenaData["builder"]);
+            $player->teleport($vec = $this->getTeamSpawnVector($this->getTeamByPlayer($player)->getTeamName()));
+            $player->setSpawn(Position::fromObject($vec, $this->getLevel()));
         }
         $this->phase = 2;
 
@@ -409,9 +445,18 @@ class Arena {
 
         // CHECK END
         if($this->getFillTeamsCount() <= 1) {
-            foreach ($this->getAllPlayers() as $player) {
-                $this->getTeamByPlayer($player);
+            /** @var Team|null $lastTeam */
+            $lastTeam = null;
+            while ($lastTeam == null) {
+                foreach ($this->getAllPlayers() as $player) {
+                    $lastTeam = $this->getTeamByPlayer($player);
+                }
+            }
 
+            $players = array_merge($this->getAllPlayers(), $this->spectators);
+            /** @var Player $player */
+            foreach ($players as $player) {
+                $player->addTitle("§aTeam ".$lastTeam->getColor().$lastTeam->getTeamName()." won the game!");
             }
         }
 
