@@ -42,7 +42,7 @@ class EggWars extends PluginBase {
     }
 
     private function generateDefaultLevel() {
-        $this->getServer()->generateLevel("EggWars", 0, Generator::getGeneratorName(Generator::getGenerator("flat")));
+        $this->getServer()->generateLevel("EggWars", 0, Generator::getGeneratorName(Flat::class));
     }
 
     private function loadTestArena() {

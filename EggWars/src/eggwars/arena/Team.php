@@ -55,7 +55,7 @@ class Team {
      */
     public function addPlayer(Player $player) {
         if(!$this->isFull()) {
-            array_push($this->players, $player);
+            $this->players[$player->getName()] = $player;
         }
     }
 

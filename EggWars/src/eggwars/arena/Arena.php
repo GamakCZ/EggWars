@@ -103,6 +103,20 @@ class Arena {
     }
 
     /**
+     * @param Player $player
+     */
+    public function addSpectator(Player $player) {
+        $this->spectators[$player->getName()] = $player;
+    }
+
+    /**
+     * @return Player[] $spectators
+     */
+    public function getSpectators(): array {
+        return $this->spectators;
+    }
+
+    /**
      * @return Team[] $teams
      */
     public function getAllTeams() {
@@ -124,8 +138,9 @@ class Arena {
     public function addPlayerToTeam(Player $player, string $teamName) {
         //array_push($this->getTeamByName($teamName)->players, $player);
         $team = $this->getTeamByName($teamName);
-        if(($lastTeam = $this->getTeamByPlayer($player)) instanceof Team) {
-            unset($lastTeam->players[intval(array_search($player, $lastTeam->players)-1)]);
+        $lastTeam = $this->getTeamByPlayer($player);
+        if($lastTeam instanceof Team) {
+            unset($lastTeam->players[$player->getName()]);
         }
         $team->addPlayer($player);
     }
@@ -367,13 +382,14 @@ class Arena {
             if($this->phase == 0) {
                 $this->progress["startTime"] = $startTime = intval($this->arenaData["startTime"]);
                 foreach ($this->getAllPlayers() as $player) {
-                    $player->sendMessage("§aGame starts in $startTime!");
+                    $player->sendMessage(EggWars::getPrefix()."§7Game starts in $startTime sec!");
                 }
 
             }
             $this->progress["startTime"]--;
             if($this->progress["startTime"] <= 0) {
                 $this->startGame();
+                $this->phase = 2;
             }
             foreach ($this->getAllPlayers() as $player) {
                 $player->sendTip(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
