@@ -2,6 +2,8 @@ language: php
 php: ["7.2"]
 sudo: false
 dist: trusty
+notifications:
+  email: false
 
 install:
 - "wget -O - https://poggit.pmmp.io/res/travisInstall.sh | bash -s - || true"

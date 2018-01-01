@@ -39,8 +39,8 @@ class EggWars extends PluginBase {
     public function onEnable() {
         self::$instance = $this;
         $this->registerCommands();
-        $this->arenaManager = new ArenaManager;
         $this->levelManager = new LevelManager;
+        $this->arenaManager = new ArenaManager;
         $this->setupManager = new SetupManager;
         $this->getLogger()->notice("You are running dev version of EggWars");
         $this->generateDefaultLevel();

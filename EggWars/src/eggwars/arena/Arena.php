@@ -77,16 +77,28 @@ class Arena {
      */
     public function __construct(EggWars $eggWars, Config $config) {
         $this->arenaData = $config->getAll();
-        $this->loadGame();
+        if(boolval($this->arenaData["enabled"])) {
+            $this->loadGame();
+        }
     }
 
     private function loadGame() {
+
+        $levels = $this->getPlugin()->getLevelManager()->getLevelsForArena($this);
+        if(!$levels) {
+            $this->arenaData["enabled"] = false;
+            $this->getPlugin()->getLogger()->critical("Cloud not load levels for arena {$this->getName()}");
+            return;
+        }
+        $this->phase = 0;
         $this->loadTeams();
         $this->loadLevel();
         $this->progress["lobbyPlayers"] = [];
+        Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
-        $this->voteManager = new VoteManager($this, $this->getPlugin()->getLevelManager()->getLevelsForArena($this->arenaData["teamsCount"]));
+
+        $this->voteManager = new VoteManager($this, $levels);
         #Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
     }
 
@@ -105,6 +117,13 @@ class Arena {
             $color = strval($data["color"]);
             $this->teams[$team] = new Team($this, $team, $color, []);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string {
+        return $this->arenaData["name"];
     }
 
     /**
@@ -235,13 +254,16 @@ class Arena {
      * @param null $team
      */
     public function joinPlayer(Player $player, $team = null) {
+        if(!boolval($this->arenaData["enabled"])) {
+            return;
+        }
         if(empty($this->progress["lobbyPlayers"]) || !is_array($this->progress["lobbyPlayers"])) {
             $this->progress["lobbyPlayers"] = [];
         }
 
         $this->progress["lobbyPlayers"][$player->getName()] = $player;
 
-        $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["level"]));
+        $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["lobby"][3]));
         $player->setGamemode($player::ADVENTURE);
         $player->setHealth(20);
         $player->setFood(20);
@@ -389,6 +411,9 @@ class Arena {
     }
 
     private function lobby() {
+        foreach ($this->getAllPlayers() as $player) {
+            $player->sendTip($this->voteManager->getBarFormat());
+        }
         if($this->getFillTeamsCount() >= intval($this->arenaData["teamsToStart"])) {
             // first check
             if($this->phase == 0) {
@@ -407,7 +432,7 @@ class Arena {
                 $this->phase = 1;
             }
             foreach ($this->getAllPlayers() as $player) {
-                $player->sendTip(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
+                $player->sendPopup(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
             }
             switch ($this->progress["startTime"]) {
                 case 120:
@@ -429,7 +454,7 @@ class Arena {
         else {
             $this->phase = 0;
             foreach ($this->getAllPlayers() as $player) {
-                $player->sendTip(EggWars::getPrefix()." §7|| §cYou need more players!");
+                $player->sendPopup(EggWars::getPrefix()." §7|| §cYou need more players!");
             }
         }
     }

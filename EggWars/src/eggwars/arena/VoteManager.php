@@ -24,23 +24,29 @@ class VoteManager {
     public $arena;
 
     /**
+     * @var EggWarsLevel[] $levels
+     */
+    private $levels = [];
+
+    /**
      * VoteManager constructor.
      * @param Arena $arena
      * @param array $levels
      */
     public function __construct(Arena $arena, array $levels) {
         $this->arena = $arena;
+        $this->levels = $levels;
         $this->maps = [$levels[0]->getLevelName() =>
             [
-                "customName" => $levels[0]->getName(),
+                "customName" => $levels[0]->getCustomName(),
                 "votes" => []
             ],
             $levels[1]->getLevelName() => [
-                "customName" => $levels[1]->getName(),
+                "customName" => $levels[1]->getCustomName(),
                 "votes" => []
             ],
             $levels[2]->getLevelName() => [
-                "customName" => $levels[2]->getName(),
+                "customName" => $levels[2]->getCustomName(),
                 "votes" => []
             ]];
     }
@@ -61,7 +67,8 @@ class VoteManager {
      * @return string $name
      */
     public function getMapName(int $map): string {
-        return $this->maps[intval($map-1)]["customName"];
+        #return $this->maps[intval($map-1)]["customName"];
+        return $this->maps[$this->levels[intval($map-1)]->getLevelName()]["customName"];
     }
 
     /**
@@ -69,9 +76,12 @@ class VoteManager {
      * @return int $votes
      */
     public function getVotes(int $map): int {
-        return count($this->maps[intval($map-1)]["votes"]);
+        return count($this->maps[$this->levels[intval($map-1)]->getLevelName()]["votes"]);
     }
 
+    /**
+     * @return EggWarsLevel
+     */
     public function getMap() {
         sort($array = [$this->maps[0]["customName"] => count($this->maps[0]["votes"]),
             $this->maps[1]["customName"] => count($this->maps[1]["votes"]),
