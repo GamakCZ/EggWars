@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace eggwars;
 
+use eggwars\arena\Arena;
 use eggwars\level\EggWarsLevel;
 use eggwars\utils\ConfigManager;
 use pocketmine\level\Level;
@@ -20,6 +21,8 @@ class LevelManager extends ConfigManager {
      */
     private $levels = [];
 
+    private $defaultLevels = true;
+
     /**
      * LevelManager constructor.
      */
@@ -27,30 +30,34 @@ class LevelManager extends ConfigManager {
         $this->loadLevels();
     }
 
+
     /**
-     * @param int $teamsCount
-     * @return array|bool
+     * @param Arena $arena
+     * @return array|bool $levels
      */
-    public function getLevelsForArena(int $teamsCount) {
+    public function getLevelsForArena(Arena $arena) {
         $levels = [];
-        foreach ($this->levels as $level) {
-            if($level->getTeamsCount() == $teamsCount) {
+        foreach($this->levels as $level) {
+            if(in_array($arena->getName(), (array)$level->data["arenas"])) {
                 array_push($levels, $level);
             }
         }
-        shuffle($levels);
+        check:
         if(count($levels) < 3) {
-            if(count($levels) !== 0) {
-                return [$levels[0], $levels[0], $levels[0]];
-            }
-            else {
-                return false;
-            }
+            if(count($levels) === 0) return false;
+            array_push($levels, $levels[0]);
+            goto check;
         }
-        return [$levels[0], $levels[1], $levels[2]];
+        return $levels;
     }
 
     public function loadLevels() {
+        if($this->defaultLevels) {
+            $this->levels["ew-test"] = new EggWarsLevel($this->defaultLevelData);
+            $this->levels["EW_1"] = new EggWarsLevel($this->defaultLevelData);
+            $this->levels["VixikEW"] = new EggWarsLevel($this->defaultLevelData);
+        }
+
         foreach (glob($this->getDataFolder()."levels/*.yml") as $file) {
             $this->levels[basename($file, ".yml")] = EggWarsLevel::loadFromConfig(new Config($file, Config::YAML));
         }
