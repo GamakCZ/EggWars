@@ -96,15 +96,9 @@ class Arena {
         $this->loadTeams();
         $this->loadLevel();
         $this->progress["lobbyPlayers"] = [];
-<<<<<<< HEAD
-<<<<<<< HEAD
         $this->teams = [];
-=======
         Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
->>>>>>> c4ad309019b8b62beb546a8aff007f85c40f47bd
-=======
         Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
->>>>>>> c4ad309019b8b62beb546a8aff007f85c40f47bd
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
 
