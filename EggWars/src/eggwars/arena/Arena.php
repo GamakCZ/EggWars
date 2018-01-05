@@ -98,12 +98,10 @@ class Arena {
         $this->progress["lobbyPlayers"] = [];
         $this->teams = [];
         Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
-        Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
 
         $this->voteManager = new VoteManager($this, $levels);
-        #Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
     }
 
     private function loadLevel() {
