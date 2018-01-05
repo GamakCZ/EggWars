@@ -8,8 +8,10 @@ use eggwars\EggWars;
 use eggwars\level\EggWarsLevel;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
+use eggwars\utils\ColorIds;
 use pocketmine\block\Block;
 use pocketmine\event\Listener;
+use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -94,7 +96,15 @@ class Arena {
         $this->loadTeams();
         $this->loadLevel();
         $this->progress["lobbyPlayers"] = [];
+<<<<<<< HEAD
+<<<<<<< HEAD
+        $this->teams = [];
+=======
         Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
+>>>>>>> c4ad309019b8b62beb546a8aff007f85c40f47bd
+=======
+        Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
+>>>>>>> c4ad309019b8b62beb546a8aff007f85c40f47bd
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
 
@@ -270,6 +280,9 @@ class Arena {
         $player->setAllowFlight(false);
         $player->setXpProgress(0);
         $player->getInventory()->clearAll();
+        foreach ($this->teams as $team) {
+            $color = "";
+        }
 
         $count = count($this->getAllPlayers());
         $maxCount = count($this->getAllTeams())*intval($this->arenaData["playersPerTeam"]);
@@ -466,7 +479,7 @@ class Arena {
                 foreach ($this->getAllTeams() as $team) {
                     if(!$team->isFull()) {
                         $team->addPlayer($player);
-                        $player->sendMessage(EggWars::getPrefix()."§7You are joined ".$team->getColor().$team->getTeamName()."§7 team!");
+                        $player->sendMessage(EggWars::getPrefix()."§7You are joined ".$team->getMinecraftColor().$team->getTeamName()."§7 team!");
                     }
                 }
             }
@@ -508,7 +521,7 @@ class Arena {
             $players = array_merge($this->getAllPlayers(), $this->spectators);
             /** @var Player $player */
             foreach ($players as $player) {
-                $player->addTitle("§aTeam ".$lastTeam->getColor().$lastTeam->getTeamName()." won the game!");
+                $player->addTitle("§aTeam ".$lastTeam->getMinecraftColor().$lastTeam->getTeamName()." won the game!");
             }
         }
 
@@ -516,7 +529,7 @@ class Arena {
         $m = "\n".str_repeat(" ", 50);
         $t = $m;
         foreach ($this->teams as $teams) {
-            $t = $teams->getColor().$teams->getTeamName().$teams->isAlive() ? "§a✔" : "§4✖".$m;
+            $t = $teams->getMinecraftColor().$teams->getTeamName().$teams->isAlive() ? "§a✔" : "§4✖".$m;
         }
         $format = $m."§3EggWars §7|| §6".$this->calculateTime($this->arenaData["gameTime"]-$this->progress["gameTime"]).$m.$t;
         foreach ($this->getAllPlayers() as $player) {
