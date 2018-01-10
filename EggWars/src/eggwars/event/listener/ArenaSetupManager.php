@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace eggwars;
+namespace eggwars\event\listener;
 
 use eggwars\arena\Arena;
+use eggwars\EggWars;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class SetupManager implements Listener {
+/**
+ * Class ArenaSetupManager
+ * @package eggwars
+ */
+class ArenaSetupManager implements Listener {
 
     /** @var Arena[] */
     private static $players = [];
@@ -18,14 +23,20 @@ class SetupManager implements Listener {
     /** @var array $setup */
     private $setup = [];
 
+    /**
+     * ArenaSetupManager constructor.
+     */
     public function __construct() {
         Server::getInstance()->getPluginManager()->registerEvents($this, EggWars::getInstance());
     }
 
+    /**
+     * @param PlayerChatEvent $event
+     */
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
-        $arena = self::$players[strtolower($player->getName())];
-        if (isset(self::$players[strtolower($player->getName())]) && $arena instanceof Arena) {
+        $arena = self::$players[$player->getName()];
+        if (isset(self::$players[$player->getName()]) && $arena instanceof Arena) {
             $args = explode(" ", $event->getMessage());
             if (empty($args[0])) {
                 $player->sendMessage("§7Use §6help §7 to display setup commands!");
@@ -37,11 +48,9 @@ class SetupManager implements Listener {
                     $player->sendMessage("§aEggWars Setup Help:\n" .
                         "§2playersperteam §6Set players per team count\n" .
                         "§2addteam §6Add new team\n" .
-                        "§2setspawn §6Set team spawn\n" .
-                        "§2setegg §6Set team egg\n" .
                         "§2setlobby §6Set waiting lobby\n" .
                         "§2setsign §6Set spawning sign\n" .
-                        "§2setupinfo §6Displays setuped info\n" .
+                        "§2help §6Displays help\n" .
                         "§2settime §6Set game times\n" .
                         "§2setshopsign §6Set the shop sign");
                     break;

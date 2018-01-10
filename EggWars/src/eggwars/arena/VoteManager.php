@@ -55,7 +55,7 @@ class VoteManager {
      * @return string $format
      */
     public function getBarFormat(): string {
-        $m = "\n".str_repeat(" ", 50);
+        $m = "\n".str_repeat(" ", 60);
         return "§7Voting §f| §6/vote <map>".$m.
             "§b[1] §7{$this->getMapName(1)} §c» §a{$this->getVotes(1)} Votes".$m.
             "§b[2] §7{$this->getMapName(2)} §c» §a{$this->getVotes(2)} Votes".$m.

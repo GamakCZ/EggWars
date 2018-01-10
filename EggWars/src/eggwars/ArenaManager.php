@@ -74,6 +74,17 @@ class ArenaManager extends ConfigManager {
     }
 
     /**
+     * @return string $list
+     */
+    public function getListArenasInString(): string {
+        $list = [];
+        foreach ($this->arenas as $name => $arena) {
+            array_push($list, $name);
+        }
+        return implode(", ", $list);
+    }
+
+    /**
      * @param bool $force
      */
     public function saveArenas($force = false) {

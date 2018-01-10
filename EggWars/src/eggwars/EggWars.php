@@ -6,6 +6,7 @@ namespace eggwars;
 
 use eggwars\commands\EggWarsCommand;
 use eggwars\commands\TeamCommand;
+use eggwars\event\listener\ArenaSetupManager;
 use pocketmine\level\generator\Flat;
 use pocketmine\level\generator\Generator;
 use pocketmine\plugin\PluginBase;
@@ -32,7 +33,7 @@ class EggWars extends PluginBase {
     private $levelManager;
 
     /**
-     * @var SetupManager $setupManager
+     * @var ArenaSetupManager $setupManager
      */
     private $setupManager;
 
@@ -41,7 +42,7 @@ class EggWars extends PluginBase {
         $this->registerCommands();
         $this->levelManager = new LevelManager;
         $this->arenaManager = new ArenaManager;
-        $this->setupManager = new SetupManager;
+        $this->setupManager = new ArenaSetupManager;
         $this->getLogger()->notice("You are running dev version of EggWars");
         $this->generateDefaultLevel();
         $this->loadTestArena();
@@ -64,7 +65,7 @@ class EggWars extends PluginBase {
         $this->getServer()->getCommandMap()->register("eggwars", new TeamCommand);
     }
 
-    public function getSetupManager(): SetupManager {
+    public function getSetupManager(): ArenaSetupManager {
         return $this->setupManager;
     }
 

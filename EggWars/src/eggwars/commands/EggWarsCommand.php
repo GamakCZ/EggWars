@@ -8,7 +8,6 @@ use eggwars\EggWars;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 
 /**
@@ -17,44 +16,31 @@ use pocketmine\plugin\Plugin;
  */
 class EggWarsCommand extends Command implements PluginIdentifiableCommand {
 
+    /** @var SubCommand $subCommand */
+    private $subCommand;
+
+    /**
+     * EggWarsCommand constructor.
+     */
     public function __construct() {
         parent::__construct("eggwars", "EggWars commands", null, ["ew"]);
     }
 
+    /**
+     * @param CommandSender $sender
+     * @param string $commandLabel
+     * @param array $args
+     * @return mixed|void
+     */
     public function execute(CommandSender $sender, string $commandLabel, array $args) {
-        if(!$sender instanceof Player) {
-            $sender->sendMessage("§cThis command can be used only in-game!");
-            return;
-        }
         if(empty($args[0])) {
-            $sender->sendMessage("§cUsage: §7/ew join");
+            if($sender->hasPermission("ew.cmd.help")) {
+                $sender->sendMessage("§cUsage: §7/ew help");
+            }
+            else {
+                $sender->sendMessage("§cUsage: §7/ew join §8| §7/ew leave");
+            }
             return;
-        }
-        if(!$sender->hasPermission("ew.cmd.$args[0]")) {
-            $sender->sendMessage("§cYou have not permissions to use this command.");
-            return;
-        }
-        switch (strtolower($args[0])) {
-            case "create":
-                if(empty($args[1])) {
-                    $sender->sendMessage("§cUsage: §7/ew createarena <arenaName>");
-                    return;
-                }
-                if($this->getPlugin()->getArenaManager()->arenaExists($args[1])) {
-                    $sender->sendMessage("§cArena $args[0] already exists!");
-                    return;
-                }
-                $this->getPlugin()->getArenaManager()->createArena($args[0]);
-                $sender->sendMessage(EggWars::getPrefix()."§aArena $args[0] sucessfully created!");
-                return;
-            case "addlevel":
-                return;
-            case "join":
-                $this->getPlugin()->getArenaManager()->getArenaByName("TestArena")->joinPlayer($sender);
-                return;
-            default:
-                $sender->sendMessage("§cUsage: §7/ew join");
-                return;
         }
     }
 

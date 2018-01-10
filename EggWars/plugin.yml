@@ -1,5 +1,5 @@
 name: EggWars
-api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9, 3.0.0-ALPHA10]
+api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9, 3.0.0-ALPHA10, 3.0.0-ALPHA11]
 version: 0.1
 author: VixikCZ
 main: eggwars\EggWars
@@ -16,9 +16,22 @@ permissions:
       ew.cmd.create:
         default: op
         description: Permission to /ew create
+      ew.cmd.arenas:
+        default: op
+        description: Permission to /ew arenas
       ew.cmd.set:
         default: op
         description: Permission to /ew set
-      ew.cmd.join:
+      ew.cmd.info:
         default: true
-        description: Permission to join the test arena
+        description: Permission to /ew info
+      ew.cmd.level:
+        default: op
+        description: Permissions for level commands
+        children:
+          ew.cmd.level.add:
+            default: op
+            description: Permission to /ew level add
+          ew.cmd.level.set:
+            default: op
+            description: Permission to /ew level set
