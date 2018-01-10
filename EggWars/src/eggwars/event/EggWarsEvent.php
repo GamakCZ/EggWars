@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace event;
+namespace eggwars\event;
 
 use eggwars\EggWars;
 use pocketmine\event\plugin\PluginEvent;

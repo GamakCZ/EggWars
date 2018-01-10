@@ -1,6 +1,6 @@
 # EggWars
 
-### This plugin is under development (progress: 50%)
+### This plugin is under development (progress: 51%)
 
 _EggWars minigame for PocketMine_
 

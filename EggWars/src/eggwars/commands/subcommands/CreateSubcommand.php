@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace eggwars\commands\subcommands;
 
+use eggwars\commands\EggWarsCommand;
 use eggwars\EggWars;
 use pocketmine\command\CommandSender;
 
@@ -11,13 +12,18 @@ use pocketmine\command\CommandSender;
  * Class CreateSubcommand
  * @package eggwars\commands\subcommands
  */
-class CreateSubcommand extends SubCommand {
+class CreateSubcommand extends EggWarsCommand {
+
+    public function __construct()
+    {
+    }
 
     /**
      * @param CommandSender $sender
      * @param array $args
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
+        if($name != "create") return;
         if(!$this->checkPermission($sender, $name)) return;
         if(empty($args[0])) {
             $sender->sendMessage("§cUsage: §7/ew create <arenaName>");

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace eggwars\commands;
 
+use eggwars\commands\subcommands\ArenasSubcommand;
+use eggwars\commands\subcommands\CreateSubcommand;
+use eggwars\commands\subcommands\HelpSubcommand;
+use eggwars\commands\subcommands\SetSubcommand;
+use eggwars\commands\subcommands\SubCommand;
 use eggwars\EggWars;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -16,15 +21,39 @@ use pocketmine\plugin\Plugin;
  */
 class EggWarsCommand extends Command implements PluginIdentifiableCommand {
 
-    /** @var SubCommand $subCommand */
-    private $subCommand;
+    /** @var EggWarsCommand[] */
+    public $subCommands = [];
 
     /**
      * EggWarsCommand constructor.
      */
     public function __construct() {
         parent::__construct("eggwars", "EggWars commands", null, ["ew"]);
+        $this->registerSub("help", new HelpSubcommand);
+        $this->registerSub("create", new CreateSubcommand);
+        $this->registerSub("arenas", new ArenasSubcommand);
+        $this->registerSub("set", new SetSubcommand);
     }
+
+    public function registerSub($name, EggWarsCommand $sub) {
+        $this->subCommands[$name] = $sub;
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param string $subcommandName
+     * @return bool
+     */
+    public function checkPermission(CommandSender $sender, string $subcommandName) {
+        return $sender->hasPermission("ew.cmd.$subcommandName");
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param array $args
+     * @param string $name
+     */
+    public function executeSub(CommandSender $sender, array $args, string $name) {}
 
     /**
      * @param CommandSender $sender
@@ -42,6 +71,13 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
             }
             return;
         }
+        $name = $args[0];
+        if(empty($this->subCommands[$name])) {
+            $sender->sendMessage("§cUsage: §7/ew help");
+            return;
+        }
+        array_shift($args);
+        $this->subCommands[$name]->executeSub($sender, $args, $name);
     }
 
     /**

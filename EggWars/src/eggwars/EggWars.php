@@ -7,6 +7,7 @@ namespace eggwars;
 use eggwars\commands\EggWarsCommand;
 use eggwars\commands\TeamCommand;
 use eggwars\event\listener\ArenaSetupManager;
+use eggwars\event\listener\LevelSetupManager;
 use pocketmine\level\generator\Flat;
 use pocketmine\level\generator\Generator;
 use pocketmine\plugin\PluginBase;
@@ -35,17 +36,23 @@ class EggWars extends PluginBase {
     /**
      * @var ArenaSetupManager $setupManager
      */
-    private $setupManager;
+    private $arenaSetupManager;
+
+    /**
+     * @var LevelSetupManager $levelSetupManager
+     */
+    private $levelSetupManager;
 
     public function onEnable() {
         self::$instance = $this;
         $this->registerCommands();
         $this->levelManager = new LevelManager;
         $this->arenaManager = new ArenaManager;
-        $this->setupManager = new ArenaSetupManager;
+        $this->arenaSetupManager = new ArenaSetupManager;
+        $this->levelSetupManager = new LevelSetupManager;
         $this->getLogger()->notice("You are running dev version of EggWars");
-        $this->generateDefaultLevel();
-        $this->loadTestArena();
+        #$this->generateDefaultLevel();
+        #$this->loadTestArena();
     }
 
     private function generateDefaultLevel() {
@@ -65,8 +72,18 @@ class EggWars extends PluginBase {
         $this->getServer()->getCommandMap()->register("eggwars", new TeamCommand);
     }
 
+    /**
+     * @return ArenaSetupManager $arenaSetupManager
+     */
     public function getSetupManager(): ArenaSetupManager {
-        return $this->setupManager;
+        return $this->arenaSetupManager;
+    }
+
+    /**
+     * @return LevelSetupManager $levelSetupManager
+     */
+    public function getLevelSetupManager(): LevelSetupManager {
+        return $this->levelSetupManager;
     }
 
     /**
@@ -76,6 +93,9 @@ class EggWars extends PluginBase {
         return $this->arenaManager;
     }
 
+    /**
+     * @return LevelManager $levelManager
+     */
     public function getLevelManager(): LevelManager {
         return $this->levelManager;
     }

@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace eggwars\commands\subcommands;
 
+use eggwars\commands\EggWarsCommand;
 use pocketmine\command\CommandSender;
 
 /**
  * Class HelpSubcommand
  * @package eggwars\commands\subcommands
  */
-class HelpSubcommand extends SubCommand {
+class HelpSubcommand extends EggWarsCommand {
+
+    public function __construct()
+    {
+    }
 
     /**
      * @param CommandSender $sender
@@ -18,6 +23,7 @@ class HelpSubcommand extends SubCommand {
      * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
+        if($name != "help") return;
         if(!$this->checkPermission($sender, $name)) return;
         $sender->sendMessage("§7--- == §8[ §6EggWars §8] §7== ---\n".
         "§9/ew help §7Displays all EggWars commands\n".

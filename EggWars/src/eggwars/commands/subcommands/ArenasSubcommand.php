@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace eggwars\commands\subcommands;
 
+use eggwars\commands\EggWarsCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
@@ -11,7 +12,11 @@ use pocketmine\Player;
  * Class ListSubcommand
  * @package eggwars\commands\subcommands
  */
-class ArenasSubcommand extends SubCommand {
+class ArenasSubcommand extends EggWarsCommand {
+
+    public function __construct()
+    {
+    }
 
     /**
      * @param CommandSender $sender
@@ -19,6 +24,7 @@ class ArenasSubcommand extends SubCommand {
      * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
+        if($name != "arenas") return;
         if($this->checkPermission($sender, $name)) return;
         if(!$sender instanceof Player) {
             $sender->sendMessage("§cThis command can be used only in-game!");

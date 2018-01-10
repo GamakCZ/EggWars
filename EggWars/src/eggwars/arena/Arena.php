@@ -122,6 +122,13 @@ class Arena {
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled(): bool {
+        return boolval($this->arenaData["enabled"]);
+    }
+
+    /**
      * @return string
      */
     public function getName(): string {

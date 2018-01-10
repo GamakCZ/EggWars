@@ -79,6 +79,7 @@ class ArenaManager extends ConfigManager {
     public function getListArenasInString(): string {
         $list = [];
         foreach ($this->arenas as $name => $arena) {
+            $name = $arena->isEnabled() ? "§a$name" : "§c$name";
             array_push($list, $name);
         }
         return implode(", ", $list);

@@ -4,6 +4,8 @@ version: 0.1
 author: VixikCZ
 main: eggwars\EggWars
 description: EggWars minigame plugin
+website: https://github.com/GamakCZ/EggWars
+load: STARTUP
 
 permissions:
   ew.cmd:

@@ -20,8 +20,6 @@ class ArenaSetupManager implements Listener {
     /** @var Arena[] */
     private static $players = [];
 
-    /** @var array $setup */
-    private $setup = [];
 
     /**
      * ArenaSetupManager constructor.
@@ -35,8 +33,10 @@ class ArenaSetupManager implements Listener {
      */
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
-        $arena = self::$players[$player->getName()];
-        if (isset(self::$players[$player->getName()]) && $arena instanceof Arena) {
+
+
+        if (isset(self::$players[$player->getName()])) {
+            $arena = self::$players[$player->getName()];
             $args = explode(" ", $event->getMessage());
             if (empty($args[0])) {
                 $player->sendMessage("§7Use §6help §7 to display setup commands!");
@@ -81,17 +81,17 @@ class ArenaSetupManager implements Listener {
                     ];
                     $player->sendMessage("§aTeam {$args[1]} added (color $args[2]).");
                     break;
-                case "setspawn":
-                    if(empty($args[1])) {
-                        $player->sendMessage("§cUsage: §7setspawn <teamName>");
-                        break;
-                    }
             }
             $event->setCancelled(true);
         }
     }
 
+    /**
+     * @param Player $player
+     * @param Arena $arena
+     */
     public static function addPlayer(Player $player, Arena $arena) {
-        self::$players[strtolower($player->getName())] = $arena;
+        self::$players[$player->getName()] = $arena;
+        $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help.");
     }
 }
