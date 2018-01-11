@@ -12,11 +12,12 @@ use pocketmine\command\CommandSender;
  * Class CreateSubcommand
  * @package eggwars\commands\subcommands
  */
-class CreateSubcommand extends EggWarsCommand {
+class CreateSubcommand extends EggWarsCommand implements SubCommand {
 
-    public function __construct()
-    {
-    }
+    /**
+     * CreateSubcommand constructor.
+     */
+    public function __construct(){}
 
     /**
      * @param CommandSender $sender

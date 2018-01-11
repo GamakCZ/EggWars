@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace eggwars\level;
 
+use eggwars\EggWars;
 use pocketmine\level\Level;
 use pocketmine\Server;
 use pocketmine\utils\Config;
@@ -34,10 +35,16 @@ class EggWarsLevel {
      * @param array $data
      */
     public function __construct(array $data) {
-        if(!Server::getInstance()->isLevelLoaded($data["levelName"])) {
+        /*if(!Server::getInstance()->isLevelLoaded($data["levelName"])) {
             Server::getInstance()->loadLevel($data["levelName"]);
+        }*/
+        if(Server::getInstance()->isLevelGenerated($data["levelName"])) {
+            Server::getInstance()->loadLevel($data["levelName"]);
+            $this->level = Server::getInstance()->getLevelByName($data["levelName"]);
         }
-        $this->level = Server::getInstance()->getLevelByName($data["levelName"]);
+        else {
+            EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["levelName"]}!");
+        }
         $this->data = $data;
         $this->teamsCount = count($data["teams"]);
     }

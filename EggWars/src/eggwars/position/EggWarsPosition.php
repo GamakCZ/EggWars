@@ -18,7 +18,7 @@ class EggWarsPosition extends Position {
      * @param string $level
      * @return EggWarsPosition
      */
-    public static function __fromArray(array $array, string $level) {
+    public static function fromArray(array $array, string $level) {
         return new EggWarsPosition($array[0], $array[1], $array[2], Server::getInstance()->getLevelByName($level));
     }
 }

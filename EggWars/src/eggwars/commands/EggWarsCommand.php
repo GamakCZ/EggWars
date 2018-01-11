@@ -6,6 +6,7 @@ namespace eggwars\commands;
 
 use eggwars\commands\subcommands\ArenasSubcommand;
 use eggwars\commands\subcommands\CreateSubcommand;
+use eggwars\commands\subcommands\DeleteSubcommand;
 use eggwars\commands\subcommands\HelpSubcommand;
 use eggwars\commands\subcommands\SetSubcommand;
 use eggwars\commands\subcommands\SubCommand;
@@ -21,7 +22,7 @@ use pocketmine\plugin\Plugin;
  */
 class EggWarsCommand extends Command implements PluginIdentifiableCommand {
 
-    /** @var EggWarsCommand[] */
+    /** @var SubCommand[] */
     public $subCommands = [];
 
     /**
@@ -33,9 +34,14 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         $this->registerSub("create", new CreateSubcommand);
         $this->registerSub("arenas", new ArenasSubcommand);
         $this->registerSub("set", new SetSubcommand);
+        $this->registerSub("delete", new DeleteSubcommand);
     }
 
-    public function registerSub($name, EggWarsCommand $sub) {
+    /**
+     * @param $name
+     * @param SubCommand $sub
+     */
+    public function registerSub($name, SubCommand $sub) {
         $this->subCommands[$name] = $sub;
     }
 
@@ -48,12 +54,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         return $sender->hasPermission("ew.cmd.$subcommandName");
     }
 
-    /**
-     * @param CommandSender $sender
-     * @param array $args
-     * @param string $name
-     */
-    public function executeSub(CommandSender $sender, array $args, string $name) {}
+    #public function executeSub(CommandSender $sender, array $args, string $name) {}
 
     /**
      * @param CommandSender $sender

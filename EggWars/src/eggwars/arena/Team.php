@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 /**
@@ -27,6 +28,11 @@ class Team {
      * @var string $color
      */
     public $color;
+
+    /**
+     * @var
+     */
+    public $spawn;
 
     /**
      * @var bool $alive
@@ -85,6 +91,13 @@ class Team {
      */
     public function setAlive($alive = false) {
         $this->alive = $alive;
+    }
+
+    /**
+     * @param Vector3 $vector3
+     */
+    public function setSpawn(Vector3 $vector3) {
+        $this->spawn = $vector3;
     }
 
     /**

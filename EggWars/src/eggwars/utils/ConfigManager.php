@@ -23,7 +23,7 @@ class ConfigManager {
      * @var array $defaultArenaData
      */
     public $defaultArenaData = [
-        "enabled" => true,
+        "enabled" => false,
         "name" => "EW-1",
         "startTime" => 30,
         "gameTime" => 600,
@@ -31,6 +31,7 @@ class ConfigManager {
         "teamsToStart" => 2,
         "playersPerTeam" => 2,
         "lobby" => [0, 4, 0, "EggWars"],
+        "sign" => [],
         "builder" => "VixikCZ",
         "teamsCount" => 2,
         "teams" => [
@@ -52,7 +53,7 @@ class ConfigManager {
         "level" => "EggWars",
         "lobby" => [0, 4, 0],
         "middle" => [90, 4, 90],
-        "arenas" => ["EW-1"],
+        "arenas" => [],
         "teams" => [
             "red" => [
                 "egg" => [100, 4, 100],

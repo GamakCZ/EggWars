@@ -24,6 +24,7 @@ interface ColorIds {
     const BROWN = ["§6", "Brown", "35:12", [120, 110, 0]];
     const GREEN = ["§2", "Green", "35:13", [0, 225, 0]];
     const RED = ["§4", "Red", "35:14", [225, 0, 0]];
+    const LIGHT_RED = ["§c", "Red", "35:14", [225, 0, 0]];
     const BLACK = ["§0", "Black", "35:15", [0, 0, 0]];
 
     const ALL = [self::WHITE,

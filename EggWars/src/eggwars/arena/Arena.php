@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use eggwars\event\listener\LevelSetupManager;
 use eggwars\level\EggWarsLevel;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
-use eggwars\utils\ColorIds;
 use pocketmine\block\Block;
 use pocketmine\event\Listener;
-use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
@@ -63,7 +62,7 @@ class Arena {
     private $spectators = [];
 
     /**
-     * @var EggWarsLevel $level
+     * @var Level $level
      */
     private $level = null;
 
@@ -85,7 +84,7 @@ class Arena {
     }
 
     private function loadGame() {
-
+        $this->getPlugin()->getLogger()->debug("§aLoading game {$this->getName()}! ...");
         $levels = $this->getPlugin()->getLevelManager()->getLevelsForArena($this);
         if(!$levels) {
             $this->arenaData["enabled"] = false;
@@ -96,18 +95,15 @@ class Arena {
         $this->loadTeams();
         $this->loadLevel();
         $this->progress["lobbyPlayers"] = [];
-        $this->teams = [];
-        Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
         Server::getInstance()->getPluginManager()->registerEvents($this->listener = new ArenaListener($this), $this->getPlugin());
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
-
         $this->voteManager = new VoteManager($this, $levels);
     }
 
     private function loadLevel() {
         if(!Server::getInstance()->isLevelGenerated($this->arenaData["lobby"][3])) {
             $this->getPlugin()->getLogger()->critical("Arena level not found!");
-            $this->getPlugin()->getPluginLoader()->disablePlugin($this->getPlugin());
+            $this->arenaData["enabled"] = false;
         }
         else {
             Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
@@ -117,7 +113,11 @@ class Arena {
     private function loadTeams() {
         foreach ($this->arenaData["teams"] as $team => $data) {
             $color = strval($data["color"]);
-            $this->teams[$team] = new Team($this, $team, $color, []);
+            $t = new Team($this, $team, $color, []);
+            if(isset($data["spawn"])) {
+                $t->setSpawn(EggWarsVector::fromArray($data["spawn"])->asVector3());
+            }
+            $this->teams[$team] = $t;
         }
     }
 
@@ -200,7 +200,7 @@ class Arena {
     public function getTeamEggByVector(Vector3 $vector3) {
         $team = null;
         foreach ($this->arenaData["teams"] as $teamName => $teamData) {
-            $teamVec = EggWarsVector::__fromArray($teamData["egg"]);
+            $teamVec = EggWarsVector::fromArray($teamData["egg"]);
             if($teamVec->equals($vector3)) {
                 $team = $this->getTeamByName($teamName);
             }
@@ -213,7 +213,7 @@ class Arena {
      * @return Vector3 $egg
      */
     public function getTeamEggVector(string $team): Vector3 {
-        return EggWarsVector::__fromArray($this->arenaData["teams"][$team]["egg"])->asVector3();
+        return EggWarsVector::fromArray($this->arenaData["teams"][$team]["egg"])->asVector3();
     }
 
     /**
@@ -221,7 +221,7 @@ class Arena {
      * @return Vector3 $spawn
      */
     public function getTeamSpawnVector(string $team): Vector3{
-        return EggWarsVector::__fromArray($this->arenaData["teams"][$team]["spawn"])->asVector3();
+        return EggWarsVector::fromArray($this->arenaData["teams"][$team]["spawn"])->asVector3();
     }
 
     /**
@@ -244,6 +244,9 @@ class Arena {
      * @return Level|null $level
      */
     public function getLevel() {
+        if($this->level != null) {
+            return $this->level;
+        }
         if(Server::getInstance()->isLevelGenerated($this->arenaData["level"])) {
             return Server::getInstance()->getLevelByName($this->arenaData["level"]);
         }
@@ -272,7 +275,7 @@ class Arena {
 
         $this->progress["lobbyPlayers"][$player->getName()] = $player;
 
-        $player->teleport(EggWarsPosition::__fromArray($this->arenaData["lobby"], $this->arenaData["lobby"][3]));
+        $player->teleport(EggWarsPosition::fromArray($this->arenaData["lobby"], $this->arenaData["lobby"][3]));
         $player->setGamemode($player::ADVENTURE);
         $player->setHealth(20);
         $player->setFood(20);
@@ -500,6 +503,8 @@ class Arena {
             $player->setSpawn(Position::fromObject($vec, $this->getLevel()));
         }
         $this->phase = 2;
+
+        $this->level = $this->voteManager->getMap()->getLevel();
 
         // GAMETIME
         $this->progress["gameTime"] = $this->arenaData["gameTime"];

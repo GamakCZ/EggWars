@@ -11,11 +11,12 @@ use pocketmine\command\CommandSender;
  * Class HelpSubcommand
  * @package eggwars\commands\subcommands
  */
-class HelpSubcommand extends EggWarsCommand {
+class HelpSubcommand extends EggWarsCommand implements SubCommand {
 
-    public function __construct()
-    {
-    }
+    /**
+     * HelpSubcommand constructor.
+     */
+    public function __construct(){}
 
     /**
      * @param CommandSender $sender
@@ -28,6 +29,7 @@ class HelpSubcommand extends EggWarsCommand {
         $sender->sendMessage("§7--- == §8[ §6EggWars §8] §7== ---\n".
         "§9/ew help §7Displays all EggWars commands\n".
         "§9/ew create §7Create new arena\n".
+        "§9/ew delete §7Delete arena\n".
         "§9/ew arenas §7Displays list arenas\n".
         "§9/ew level §7EggWars level manager\n".
         "§9/ew set §7Set arena");

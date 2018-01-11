@@ -64,7 +64,7 @@ class EggWars extends PluginBase {
     }
 
     public function onDisable() {
-        $this->arenaManager->saveArenas();
+        $this->getArenaManager()->saveArenas();
     }
 
     private function registerCommands() {

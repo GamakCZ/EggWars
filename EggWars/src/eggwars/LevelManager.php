@@ -21,7 +21,7 @@ class LevelManager extends ConfigManager {
      */
     private $levels = [];
 
-    private $defaultLevels = true;
+    private $defaultLevels = false;
 
     /**
      * LevelManager constructor.

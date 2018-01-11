@@ -43,6 +43,14 @@ class ArenaManager extends ConfigManager {
 
     }
 
+    public function removeArena(string $name) {
+        if(!$this->arenaExists($name)) {
+            return;
+        }
+        unset($this->arenas[$name]);
+        unlink($this->getDataFolder()."arenas/$name.yml");
+    }
+
     /**
      * @param string $name
      * @return bool $bool
