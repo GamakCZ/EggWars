@@ -58,7 +58,7 @@ class RefreshSignScheduler extends EggWarsTask {
                 $this->getArena()->isEnabled()) $line2 = self::SIGN_JOIN;
             if($this->getArena()->getPhase() == 0 &&
                 $this->getArena()->isEnabled() &&
-                count($this->getArena()->getAllPlayers()) > count($this->getArena()->arenaData["teams"])*$this->getArena()) $line2 = self::SIGN_FULL;
+                count($this->getArena()->getAllPlayers()) > count($this->getArena()->arenaData["teams"])*$this->getArena()->arenaData["playersPerTeam"]) $line2 = self::SIGN_FULL;
 
             //line 3
             $text = self::SIGN_STATUS;

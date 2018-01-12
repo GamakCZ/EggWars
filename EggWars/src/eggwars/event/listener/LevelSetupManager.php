@@ -6,6 +6,8 @@ namespace eggwars\event\listener;
 
 use eggwars\EggWars;
 use eggwars\level\EggWarsLevel;
+use eggwars\utils\Color;
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\Player;
@@ -56,7 +58,7 @@ class LevelSetupManager implements Listener {
                 break;
             case "addarena":
                 if(empty($args[1])) {
-                    $player->sendMessage("§cUsage: §7/ew addarena <arena>");
+                    $player->sendMessage("§cUsage: §7addarena <arena>");
                     break;
                 }
                 if(!EggWars::getInstance()->getArenaManager()->arenaExists($args[1])) {
@@ -72,11 +74,56 @@ class LevelSetupManager implements Listener {
                 $player->sendMessage("§aArena $args[1] added!");
                 break;
             case "setspawn":
+                if(empty($args[1])) {
+                    $player->sendMessage("§cUsage: §7setspawn <team>");
+                    break;
+                }
+                /*if(empty($level->data["teams"][$args[1]])) {
+                    $player->sendMessage("§cTeam $args[1] does not found!");
+                    break;
+                }*/
+                $level->setSpawnVector($args[1], $player->asVector3());
+                $player->sendMessage("§aTeam spawn updated!");
                 break;
             case "setegg":
+                if(empty($args[1])) {
+                    $player->sendMessage("§cUsage: §7setegg <team>");
+                    break;
+                }
+                /*if(empty($level->data["teams"][$args[1]])) {
+                    $player->sendMessage("§cTeam $args[1] does not found!");
+                    break;
+                }*/
+                $this->b[$player->getName()] = [0, $args[1], $level];
+                $player->sendMessage("§aDestroy the egg to update it!");
                 break;
+            case "done":
+                unset(self::$players[$player->getName()]);
+                $player->sendMessage("§aYou are leaved setup mode.");
+                break;
+            default:
+                $player->sendMessage("§aType §chelp §afor help, §cdone §afor exit.");
         }
         $event->setCancelled(true);
+    }
+
+    /**
+     * @param BlockBreakEvent $event
+     */
+    public function onBreak(BlockBreakEvent $event) {
+        if(isset($this->b[$event->getPlayer()->getName()])) {
+            $d = $this->b[$event->getPlayer()->getName()];
+            /** @var EggWarsLevel $level */
+            $level = $d[2];
+            switch ($d[0]) {
+                case 0:
+                    $level->setEggVector($d[1], $event->getBlock()->asVector3());
+                    $event->getPlayer()->sendMessage("§a$d[1] team egg updated!");
+                    unset($this->b[$event->getPlayer()->getName()]);
+                    $event->setCancelled(true);
+                    break;
+            }
+        }
     }
 
     /**
@@ -91,5 +138,9 @@ class LevelSetupManager implements Listener {
         else {
             $player->sendMessage("§cYou are already in setup mode.");
         }
+    }
+
+    public function getPlugin() {
+        return EggWars::getInstance();
     }
 }

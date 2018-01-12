@@ -137,7 +137,7 @@ class ArenaSetupManager implements Listener {
                     $player->sendMessage("§aYou are leaved setup mode.");
                     break;
                 case "enable":
-                    $arena->arenaData["enable"] = true;
+                    $arena->arenaData["enabled"] = true;
                     $player->sendMessage("§aArena enabled!");
                     break;
                 case "teams":

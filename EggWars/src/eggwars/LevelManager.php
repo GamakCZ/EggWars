@@ -51,6 +51,26 @@ class LevelManager extends ConfigManager {
         return $levels;
     }
 
+
+    public function saveLevels() {
+        /**
+         * @var string $name
+         * @var EggWarsLevel $level
+         */
+        foreach ($this->levels as $name => $level) {
+            if(is_file($this->getArenaDataFolder()."/".$name.".yml")) {
+                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML);
+                $config->setAll($level->data);
+                $config->save();
+            }
+            else {
+                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML, $level->data);
+                $config->save();
+            }
+            EggWars::getInstance()->getLogger()->notice("Arena {$name} is successfully saved!");
+        }
+    }
+
     public function loadLevels() {
         if($this->defaultLevels) {
             $this->levels["ew-test"] = new EggWarsLevel($this->defaultLevelData);
