@@ -17,9 +17,11 @@ use pocketmine\Server;
  */
 class LevelSetupManager implements Listener {
 
-    /** @var EggWarsLevel[] */
+    /** @var EggWarsLevel[] $players */
     private static $players = [];
 
+    /** @var array $b */
+    private $b = [];
 
     /**
      * ArenaSetupManager constructor.
@@ -47,6 +49,31 @@ class LevelSetupManager implements Listener {
         }
         switch (strtolower($args[0])) {
             case "help":
+                $player->sendMessage("§aEggWars Level Setup Help:\n" .
+                    "§2addarena §6Add the arena, in there level can be used\n" .
+                    "§2setspawn §6Set the team spawn\n".
+                    "§2setegg §6Set the team egg");
+                break;
+            case "addarena":
+                if(empty($args[1])) {
+                    $player->sendMessage("§cUsage: §7/ew addarena <arena>");
+                    break;
+                }
+                if(!EggWars::getInstance()->getArenaManager()->arenaExists($args[1])) {
+                    $player->sendMessage("§cArena $args[1] does not found!");
+                    break;
+                }
+                $arena = EggWars::getInstance()->getArenaManager()->getArenaByName($args[1]);
+                if(count($arena->arenaData["teams"]) != $level->getTeamsCount()) {
+                    $player->sendMessage("§cCount of teams are not equals.");
+                    break;
+                }
+                array_push($level->data["arenas"], $args[1]);
+                $player->sendMessage("§aArena $args[1] added!");
+                break;
+            case "setspawn":
+                break;
+            case "setegg":
                 break;
         }
         $event->setCancelled(true);
@@ -57,7 +84,12 @@ class LevelSetupManager implements Listener {
      * @param EggWarsLevel $level
      */
     public static function addPlayer(Player $player, EggWarsLevel $level) {
-        self::$players[$player->getName()] = $level;
-        $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help.");
+        if(empty(self::$players[$player->getName()])) {
+            self::$players[$player->getName()] = $level;
+            $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help, §cdone §afor exit.");
+        }
+        else {
+            $player->sendMessage("§cYou are already in setup mode.");
+        }
     }
 }

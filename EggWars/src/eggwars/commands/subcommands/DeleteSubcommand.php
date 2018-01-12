@@ -24,7 +24,6 @@ class DeleteSubcommand extends EggWarsCommand implements SubCommand {
      * @param array $args
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
-        if($name != "delete") return;
         if(!$this->checkPermission($sender, $name)) return;
         if(empty($args[0])) {
             $sender->sendMessage("§cUsage: §7/ew delete <arenaName>");

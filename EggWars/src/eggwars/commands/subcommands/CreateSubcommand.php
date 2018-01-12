@@ -22,9 +22,9 @@ class CreateSubcommand extends EggWarsCommand implements SubCommand {
     /**
      * @param CommandSender $sender
      * @param array $args
+     * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
-        if($name != "create") return;
         if(!$this->checkPermission($sender, $name)) return;
         if(empty($args[0])) {
             $sender->sendMessage("§cUsage: §7/ew create <arenaName>");

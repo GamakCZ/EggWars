@@ -24,7 +24,6 @@ class HelpSubcommand extends EggWarsCommand implements SubCommand {
      * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
-        if($name != "help") return;
         if(!$this->checkPermission($sender, $name)) return;
         $sender->sendMessage("§7--- == §8[ §6EggWars §8] §7== ---\n".
         "§9/ew help §7Displays all EggWars commands\n".

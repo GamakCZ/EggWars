@@ -50,7 +50,7 @@ class ArenaSetupManager implements Listener {
             }
             switch (strtolower($args[0])) {
                 case "help":
-                    $player->sendMessage("§aEggWars Setup Help:\n" .
+                    $player->sendMessage("§aEggWars Arena Setup Help:\n" .
                         "§2playersperteam §6Set players per team count\n" .
                         "§2addteam §6Add new team\n" .
                         "§2setteam §6Set team\n" .
@@ -117,7 +117,7 @@ class ArenaSetupManager implements Listener {
                     }
                     break;
                 case "delteam":
-                    if(empty($args[2])) {
+                    if(empty($args[1])) {
                         $player->sendMessage("§cUsage: §7delteam <team>");
                         break;
                     }
@@ -181,7 +181,12 @@ class ArenaSetupManager implements Listener {
      * @param Arena $arena
      */
     public static function addPlayer(Player $player, Arena $arena) {
-        self::$players[$player->getName()] = $arena;
-        $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help, §cdone §afor exit.");
+        if(empty(self::$players[$player->getName()])) {
+            self::$players[$player->getName()] = $arena;
+            $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help, §cdone §afor exit.");
+        }
+        else {
+            $player->sendMessage("§cYou are already in setup mode!");
+        }
     }
 }

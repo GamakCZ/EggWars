@@ -27,7 +27,6 @@ class SetSubcommand extends EggWarsCommand implements SubCommand {
      * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
-        if($name != "set") return;
         if(!$this->checkPermission($sender, $name)) return;
         if(!$sender instanceof Player) {
             $sender->sendMessage("§cThis command can be used only in-game!");

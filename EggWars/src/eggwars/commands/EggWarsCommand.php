@@ -8,6 +8,7 @@ use eggwars\commands\subcommands\ArenasSubcommand;
 use eggwars\commands\subcommands\CreateSubcommand;
 use eggwars\commands\subcommands\DeleteSubcommand;
 use eggwars\commands\subcommands\HelpSubcommand;
+use eggwars\commands\subcommands\LevelSubcommand;
 use eggwars\commands\subcommands\SetSubcommand;
 use eggwars\commands\subcommands\SubCommand;
 use eggwars\EggWars;
@@ -35,6 +36,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         $this->registerSub("arenas", new ArenasSubcommand);
         $this->registerSub("set", new SetSubcommand);
         $this->registerSub("delete", new DeleteSubcommand);
+        $this->registerSub("level", new LevelSubcommand);
     }
 
     /**

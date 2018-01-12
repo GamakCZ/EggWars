@@ -72,11 +72,30 @@ class LevelManager extends ConfigManager {
     }
 
     /**
+     * @return string $list
+     */
+    public function getListLevelsInString(): string {
+        $list = [];
+        foreach ($this->levels as $name => $level) {
+            array_push($list, $name);
+        }
+        return implode(", ", $list);
+    }
+
+    /**
      * @param string $name
      * @return bool
      */
     public function levelExists(string $name): bool {
         return isset($this->levels[$name]);
+    }
+
+    /**
+     * @param string $levelName
+     */
+    public function removeLevel(string $levelName) {
+        unset($this->levels[$levelName]);
+        unlink($this->getDataFolder()."levels/$levelName.yml");
     }
 
     /**

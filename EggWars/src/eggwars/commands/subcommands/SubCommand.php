@@ -21,7 +21,7 @@ interface SubCommand {
      * @param CommandSender $sender
      * @param array $args
      * @param string $name
-     * @return mixed
+     * @return void
      */
     public function executeSub(CommandSender $sender, array $args, string $name);
 }

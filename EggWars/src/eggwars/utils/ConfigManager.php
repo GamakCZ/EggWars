@@ -51,7 +51,6 @@ class ConfigManager {
         "levelName" => "EggWars",
         "customName" => "EW1level",
         "level" => "EggWars",
-        "lobby" => [0, 4, 0],
         "middle" => [90, 4, 90],
         "arenas" => [],
         "teams" => [

@@ -38,7 +38,7 @@ class Arena {
     /**
      * @var int $time
      */
-    public $time, $phase;
+    public $time, $phase = 0;
 
     /**
      * @var  Team[] $teams
@@ -69,7 +69,7 @@ class Arena {
     /**
      * @var VoteManager $voteManager
      */
-    private $voteManager;
+    public $voteManager;
 
     /**
      * Arena constructor.
@@ -78,12 +78,13 @@ class Arena {
      */
     public function __construct(EggWars $eggWars, Config $config) {
         $this->arenaData = $config->getAll();
+        $this->getPlugin()->getServer()->getScheduler()->scheduleRepeatingTask(new RefreshSignScheduler($this), 20*5);
         if(boolval($this->arenaData["enabled"])) {
             $this->loadGame();
         }
     }
 
-    private function loadGame() {
+    public function loadGame() {
         $this->getPlugin()->getLogger()->debug("§aLoading game {$this->getName()}! ...");
         $levels = $this->getPlugin()->getLevelManager()->getLevelsForArena($this);
         if(!$levels) {
@@ -329,10 +330,12 @@ class Arena {
                     }
                 }
             }
-            /** @var Player $player */
-            foreach ($this->progress["lobbyPlayers"] as $player) {
-                if(empty($returnPlayers[$player->getName()])) {
-                    $returnPlayers[$player->getName()] = $player;
+            if(isset($this->progress["lobbyPlayers"])) {
+                /** @var Player $player */
+                foreach ($this->progress["lobbyPlayers"] as $player) {
+                    if(empty($returnPlayers[$player->getName()])) {
+                        $returnPlayers[$player->getName()] = $player;
+                    }
                 }
             }
         }

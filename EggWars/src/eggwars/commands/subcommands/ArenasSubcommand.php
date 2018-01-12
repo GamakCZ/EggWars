@@ -26,7 +26,6 @@ class ArenasSubcommand extends EggWarsCommand implements SubCommand {
      * @param string $name
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
-        if($name != "arenas") return;
         if(!$this->checkPermission($sender, $name)) return;
         if(!$sender instanceof Player) {
             $sender->sendMessage("§cThis command can be used only in-game!");

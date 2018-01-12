@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace eggwars\level;
 
 use eggwars\EggWars;
+use eggwars\position\EggWarsVector;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 
@@ -56,6 +58,49 @@ class EggWarsLevel {
     public static function loadFromConfig(Config $config) {
         return new EggWarsLevel($config->getAll());
     }
+
+    /**
+     * @param string $teamName
+     * @return \pocketmine\math\Vector3|null
+     */
+    public function getEggVector(string $teamName) {
+        if(isset($this->data[$teamName])) {
+            return EggWarsVector::fromArray($this->data[$teamName]["egg"])->asVector3();
+        }
+        return null;
+    }
+
+    /**
+     * @param string $teamName
+     * @param Vector3 $vector3
+     */
+    public function setEggVector(string $teamName, Vector3 $vector3) {
+        if(isset($this->data[$teamName])) {
+            $this->data[$teamName]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        }
+    }
+
+    /**
+     * @param string $teamName
+     * @return \pocketmine\math\Vector3|null
+     */
+    public function getSpawnVector(string $teamName) {
+        if(isset($this->data[$teamName])) {
+            return EggWarsVector::fromArray($this->data[$teamName]["spawn"])->asVector3();
+        }
+        return null;
+    }
+
+    /**
+     * @param string $teamName
+     * @param Vector3 $vector3
+     */
+    public function setSpawnVector(string $teamName, Vector3 $vector3) {
+        if(isset($this->data[$teamName])) {
+            $this->data[$teamName]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        }
+    }
+
 
     /**
      * @return string $customName

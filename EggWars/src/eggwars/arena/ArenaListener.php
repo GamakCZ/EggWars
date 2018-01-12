@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace eggwars\arena;
 
 use eggwars\EggWars;
+use eggwars\position\EggWarsPosition;
+use eggwars\position\EggWarsVector;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -15,6 +17,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\level\Position;
 use pocketmine\Player;
+use pocketmine\tile\Sign;
 
 /**
  * Class ArenaListener
@@ -32,6 +35,18 @@ class ArenaListener implements Listener {
      */
     public function __construct(Arena $arena) {
         $this->arena = $arena;
+    }
+
+    /**
+     * @param PlayerInteractEvent $event
+     */
+    public function onTouch(PlayerInteractEvent $event) {
+        $signPos = EggWarsPosition::fromArray($this->getArena()->arenaData["sign"],  $this->getArena()->arenaData["sign"][3]);
+        if($sign = ($signPos->getLevel()->getTile($signPos->asVector3()) instanceof Sign)) {
+            if($event->getBlock()->asVector3()->equals($event->getBlock()->asVector3())) {
+                $this->getArena()->joinPlayer($event->getPlayer());
+            }
+        }
     }
 
     public function onDeath(PlayerDeathEvent $event) {

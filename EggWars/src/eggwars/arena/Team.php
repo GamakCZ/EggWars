@@ -30,7 +30,7 @@ class Team {
     public $color;
 
     /**
-     * @var
+     * @var Vector3 $spawn
      */
     public $spawn;
 
