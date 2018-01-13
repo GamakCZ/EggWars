@@ -107,7 +107,9 @@ class Arena {
             $this->arenaData["enabled"] = false;
         }
         else {
-            Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
+            if(!Server::getInstance()->isLevelLoaded($this->arenaData["lobby"][3])) {
+                Server::getInstance()->loadLevel($this->arenaData["lobby"][3]);
+            }
         }
     }
 
@@ -115,7 +117,7 @@ class Arena {
         foreach ($this->arenaData["teams"] as $team => $data) {
             $color = strval($data["color"]);
             $t = new Team($this, $team, $color, []);
-            if(isset($data["spawn"])) {
+            if(isset($data["spawn"]) && count($data["spawn"]) >= 3) {
                 $t->setSpawn(EggWarsVector::fromArray($data["spawn"])->asVector3());
             }
             $this->teams[$team] = $t;
@@ -294,13 +296,34 @@ class Arena {
         $this->broadcastMessage(EggWars::getPrefix()."§a{$player->getName()} joined EggWars game §7[$count/$maxCount]!");
 
         if($team != null) {
-            if($this->teamExists(strval($team))) {
-                $this->addPlayerToTeam($player, strval($team));
+            if($this->teamExists(strval($team->getTeamName()))) {
+                $this->addPlayerToTeam($player, strval($team->getTeamName()));
             }
             else {
-                $this->getPlugin()->getLogger()->critical("Team {$team} was not found.");
+                $this->getPlugin()->getLogger()->critical("Team {$team->getTeamName()} was not found.");
             }
         }
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function disconnectPlayer(Player $player) {
+        if($this->getTeamByPlayer($player) instanceof Team) {
+            unset($this->getTeamByPlayer($player)->players[$player->getName()]);
+        }
+        if(isset($this->progress["lobbyPlayers"][$player->getName()])) {
+            unset($this->progress["lobbyPlayers"][$player->getName()]);
+        }
+        if(isset($this->progress["spectators"][$player->getName()])) {
+            unset($this->progress["spectators"][$player->getName()]);
+        }
+        $player->setGamemode($this->getPlugin()->getServer()->getDefaultGamemode());
+        $player->setHealth(20);
+        $player->setFood(20);
+        $player->getInventory()->clearAll();
+        $player->teleport($this->getPlugin()->getServer()->getDefaultLevel()->getSpawnLocation()->asPosition());
+        $player->sendMessage(EggWars::getPrefix()."§aYou are successfully leaved arena!");
     }
 
     /**

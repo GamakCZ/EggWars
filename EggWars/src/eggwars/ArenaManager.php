@@ -69,10 +69,10 @@ class ArenaManager extends ConfigManager {
 
     /**
      * @param Player $player
-     * @return Arena
+     * @return Arena|bool
      */
-    public function getArenaByPlayer(Player $player):Arena {
-        $arena = null;
+    public function getArenaByPlayer(Player $player) {
+        $arena = false;
         foreach ($this->arenas as $arenas) {
             if($arenas->inGame($player)) {
                 $arena = $arenas;

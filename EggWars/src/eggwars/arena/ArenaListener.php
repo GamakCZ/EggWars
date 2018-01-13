@@ -42,8 +42,9 @@ class ArenaListener implements Listener {
      */
     public function onTouch(PlayerInteractEvent $event) {
         $signPos = EggWarsPosition::fromArray($this->getArena()->arenaData["sign"],  $this->getArena()->arenaData["sign"][3]);
-        if($sign = ($signPos->getLevel()->getTile($signPos->asVector3()) instanceof Sign)) {
-            if($event->getBlock()->asVector3()->equals($event->getBlock()->asVector3())) {
+        $sign = $signPos->getLevel()->getTile($signPos->asVector3());
+        if($sign instanceof Sign) {
+            if($event->getBlock()->asVector3()->equals($signPos->asVector3())) {
                 $this->getArena()->joinPlayer($event->getPlayer());
             }
         }

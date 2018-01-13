@@ -6,6 +6,7 @@ namespace eggwars;
 
 use eggwars\commands\EggWarsCommand;
 use eggwars\commands\TeamCommand;
+use eggwars\commands\VoteCommand;
 use eggwars\event\listener\ArenaSetupManager;
 use eggwars\event\listener\LevelSetupManager;
 use pocketmine\level\generator\Flat;
@@ -71,6 +72,7 @@ class EggWars extends PluginBase {
     private function registerCommands() {
         $this->getServer()->getCommandMap()->register("eggwars", new EggWarsCommand);
         $this->getServer()->getCommandMap()->register("eggwars", new TeamCommand);
+        $this->getServer()->getCommandMap()->register("eggwars", new VoteCommand);
     }
 
     /**

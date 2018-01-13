@@ -5,13 +5,19 @@ author: VixikCZ
 main: eggwars\EggWars
 description: EggWars minigame plugin
 website: https://github.com/GamakCZ/EggWars
-load: STARTUP
+load: POSTWORLD
 
 permissions:
   ew.cmd:
     description: Permission for ALL EggWars Commands
     default: op
     childern:
+      ew.cmd.vote:
+        default: true
+        description: Permission for /vote
+      ew.cmd.team:
+        default: true
+        description: Permission for /team
       ew.cmd.help:
         default: op
         description: Permission to /ew help

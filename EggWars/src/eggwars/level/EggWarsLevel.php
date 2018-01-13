@@ -108,7 +108,7 @@ class EggWarsLevel {
      * (CustomName)
      */
     public function getCustomName(): string {
-        return $this->data["customName"];
+        return $this->data["name"];
     }
 
     /**

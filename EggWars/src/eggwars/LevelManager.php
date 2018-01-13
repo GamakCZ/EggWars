@@ -21,6 +21,9 @@ class LevelManager extends ConfigManager {
      */
     private $levels = [];
 
+    /**
+     * @var bool $defaultLevels
+     */
     private $defaultLevels = false;
 
     /**
@@ -38,16 +41,19 @@ class LevelManager extends ConfigManager {
     public function getLevelsForArena(Arena $arena) {
         $levels = [];
         foreach($this->levels as $level) {
-            if(in_array($arena->getName(), (array)$level->data["arenas"])) {
+            if(in_array($arena->getName(), $level->data["arenas"])) {
                 array_push($levels, $level);
             }
         }
         check:
         if(count($levels) < 3) {
-            if(count($levels) === 0) return false;
+            if(count($levels) === 0) {
+                return false;
+            }
             array_push($levels, $levels[0]);
             goto check;
         }
+        shuffle($levels);
         return $levels;
     }
 
@@ -58,16 +64,16 @@ class LevelManager extends ConfigManager {
          * @var EggWarsLevel $level
          */
         foreach ($this->levels as $name => $level) {
-            if(is_file($this->getArenaDataFolder()."/".$name.".yml")) {
-                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML);
+            if(is_file($this->getDataFolder()."levels/".$name.".yml")) {
+                $config = new Config($this->getDataFolder()."levels/".$name.".yml", Config::YAML);
                 $config->setAll($level->data);
                 $config->save();
             }
             else {
-                $config = new Config($this->getArenaDataFolder()."/".$name.".yml", Config::YAML, $level->data);
+                $config = new Config($this->getDataFolder()."levels/".$name.".yml", Config::YAML, $level->data);
                 $config->save();
             }
-            EggWars::getInstance()->getLogger()->notice("Arena {$name} is successfully saved!");
+            EggWars::getInstance()->getLogger()->notice("Level {$name} is successfully saved!");
         }
     }
 
