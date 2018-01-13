@@ -64,8 +64,8 @@ class EggWarsLevel {
      * @return \pocketmine\math\Vector3|null
      */
     public function getEggVector(string $teamName) {
-        if(isset($this->data[$teamName])) {
-            return EggWarsVector::fromArray($this->data[$teamName]["egg"])->asVector3();
+        if(isset($this->data["teams"][$teamName])) {
+            return EggWarsVector::fromArray($this->data["teams"][$teamName]["egg"])->asVector3();
         }
         return null;
     }
@@ -75,9 +75,10 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setEggVector(string $teamName, Vector3 $vector3) {
-        if(isset($this->data[$teamName])) {
-            $this->data[$teamName]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        if(empty($this->data["teams"][$teamName])) {
+            $this->data["teams"][$teamName] = [];
         }
+        $this->data["teams"][$teamName]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
     /**
@@ -85,8 +86,8 @@ class EggWarsLevel {
      * @return \pocketmine\math\Vector3|null
      */
     public function getSpawnVector(string $teamName) {
-        if(isset($this->data[$teamName])) {
-            return EggWarsVector::fromArray($this->data[$teamName]["spawn"])->asVector3();
+        if(isset($this->data["teams"][$teamName])) {
+            return EggWarsVector::fromArray($this->data["teams"][$teamName]["spawn"])->asVector3();
         }
         return null;
     }
@@ -96,9 +97,10 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setSpawnVector(string $teamName, Vector3 $vector3) {
-        if(isset($this->data[$teamName])) {
-            $this->data[$teamName]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        if(empty($this->data["teams"][$teamName])) {
+            $this->data["teams"][$teamName] = [];
         }
+        $this->data["teams"][$teamName]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
 

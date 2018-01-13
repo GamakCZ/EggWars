@@ -47,7 +47,7 @@ class TeamCommand extends Command implements PluginIdentifiableCommand {
         }
         if($arena->teamExists($args[0])) {
             $arena->addPlayerToTeam($sender, $args[0]);
-            $sender->sendMessage(EggWars::getPrefix()."§aYou are joined to ".$arena->getTeamByName($args[0])->getColor().$arena->getTeamByName($args[0])->getTeamName()."§7!");
+            $sender->sendMessage(EggWars::getPrefix()."§aYou are joined to ".$arena->getTeamByName($args[0])->getMinecraftColor().$arena->getTeamByName($args[0])->getTeamName()."§7!");
         }
         else {
             $sender->sendMessage(EggWars::getPrefix()."§7Team $args[0] does not exists!");

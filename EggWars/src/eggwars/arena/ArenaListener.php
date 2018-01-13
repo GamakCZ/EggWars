@@ -7,6 +7,7 @@ namespace eggwars\arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
+use eggwars\utils\Color;
 use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -40,7 +41,7 @@ class ArenaListener implements Listener {
     /**
      * @param PlayerInteractEvent $event
      */
-    public function onTouch(PlayerInteractEvent $event) {
+    public function onArenaJoin(PlayerInteractEvent $event) {
         $signPos = EggWarsPosition::fromArray($this->getArena()->arenaData["sign"],  $this->getArena()->arenaData["sign"][3]);
         $sign = $signPos->getLevel()->getTile($signPos->asVector3());
         if($sign instanceof Sign) {
@@ -48,6 +49,24 @@ class ArenaListener implements Listener {
                 $this->getArena()->joinPlayer($event->getPlayer());
             }
         }
+    }
+
+    public function onTeamJoin(PlayerInteractEvent $event) {
+        if(!$this->getArena()->inGame($event->getPlayer())) {
+            return;
+        }
+        if($event->getAction() !== $event::RIGHT_CLICK_AIR) {
+            return;
+        }
+        $item = $event->getPlayer()->getInventory()->getItemInHand();
+        if($item->getId() == 0) {
+            return;
+        }
+        if(!is_string($mc = Color::getMCFromId("{$item->getId()}"))) {
+            return;
+        }
+        $team = $this->getArena()->getTeamByMinecraftColor($mc);
+        $team->addPlayer($event->getPlayer());
     }
 
     public function onDeath(PlayerDeathEvent $event) {
@@ -61,14 +80,14 @@ class ArenaListener implements Listener {
         if($lastDmg instanceof EntityDamageByEntityEvent) {
             $damager = $lastDmg->getDamager();
             if($damager instanceof Player && $this->getArena()->inGame($damager)) {
-                $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7 was killed by ".$this->getArena()->getTeamByPlayer($player)->getColor().$damager->getName()."§7!");
+                $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$player->getName()."§7 was killed by ".$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$damager->getName()."§7!");
             }
             else {
-                $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7 death.");
+                $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$player->getName()."§7 death.");
             }
         }
         else {
-            $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7 death.");
+            $this->getArena()->broadcastMessage(EggWars::getPrefix().$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$player->getName()."§7 death.");
         }
     }
 
@@ -105,7 +124,7 @@ class ArenaListener implements Listener {
                 return;
             }
             $event->setDrops([]);
-            $this->getArena()->broadcastMessage($team->getColor().$team->getTeamName()."§7 egg was removed by ".$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7!");
+            $this->getArena()->broadcastMessage($team->getMinecraftColor().$team->getTeamName()."§7 egg was removed by ".$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$player->getName()."§7!");
             $team->setAlive();
             return;
         }
@@ -139,7 +158,7 @@ class ArenaListener implements Listener {
         $team = $this->getArena()->getTeamEggByVector($event->getBlock()->asVector3());
         if($team instanceof Team) {
             $event->getBlock()->getLevel()->setBlock($event->getBlock()->asVector3(), Block::get(Block::AIR));
-            $this->getArena()->broadcastMessage($team->getColor().$team->getTeamName()."§7 was removed by ".$this->getArena()->getTeamByPlayer($player)->getColor().$player->getName()."§7!");
+            $this->getArena()->broadcastMessage($team->getMinecraftColor().$team->getTeamName()."§7 was removed by ".$this->getArena()->getTeamByPlayer($player)->getMinecraftColor().$player->getName()."§7!");
             $team->setAlive();
             return;
         }

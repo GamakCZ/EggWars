@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace eggwars\utils;
+use pocketmine\item\Item;
 
 /**
  * Class Color
@@ -24,6 +25,35 @@ class Color implements ColorIds {
             }
         }
         return $name;
+    }
+
+    /**
+     * @param string $id
+     * @return string
+     */
+    public static function getMCFromId(string $id) {
+        $mc = null;
+        foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $idFormat, $htmlArray]) {
+            if($id == $idFormat) {
+                $mc = $mcFormat;
+            }
+        }
+        return $mc;
+    }
+
+    /**
+     * @param string $mc
+     * @return Item $item
+     */
+    public static function getWoolFormMC(string $mc) {
+        /** @var Item $item */
+        $item = null;
+        foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $id, $htmlArray]) {
+            if($mc == $mcFormat) {
+                $item = Item::fromString($id);
+            }
+        }
+        return $item;
     }
 
     /**

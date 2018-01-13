@@ -49,7 +49,7 @@ class ConfigManager {
      */
     public $defaultLevelData = [
         "levelName" => "EggWars",
-        "customName" => "EW1level",
+        "name" => "EW1level",
         "level" => "EggWars",
         "middle" => [90, 4, 90],
         "arenas" => [],

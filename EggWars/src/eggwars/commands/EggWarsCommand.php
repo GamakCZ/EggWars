@@ -11,6 +11,7 @@ use eggwars\commands\subcommands\HelpSubcommand;
 use eggwars\commands\subcommands\LeaveSubcommand;
 use eggwars\commands\subcommands\LevelSubcommand;
 use eggwars\commands\subcommands\SetSubcommand;
+use eggwars\commands\subcommands\StartSubcommand;
 use eggwars\commands\subcommands\SubCommand;
 use eggwars\EggWars;
 use pocketmine\command\Command;
@@ -39,6 +40,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         $this->registerSub("delete", new DeleteSubcommand);
         $this->registerSub("level", new LevelSubcommand);
         $this->registerSub("leave", new LeaveSubcommand);
+        $this->registerSub("start", new StartSubcommand);
     }
 
     /**

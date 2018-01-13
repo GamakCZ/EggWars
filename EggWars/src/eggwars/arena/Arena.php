@@ -9,6 +9,7 @@ use eggwars\event\listener\LevelSetupManager;
 use eggwars\level\EggWarsLevel;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
+use eggwars\utils\Color;
 use pocketmine\block\Block;
 use pocketmine\event\Listener;
 use pocketmine\level\Level;
@@ -62,7 +63,7 @@ class Arena {
     private $spectators = [];
 
     /**
-     * @var Level $level
+     * @var EggWarsLevel $level
      */
     private $level = null;
 
@@ -175,6 +176,20 @@ class Arena {
     }
 
     /**
+     * @param string $mc
+     * @return Team|null
+     */
+    public function getTeamByMinecraftColor(string $mc) {
+        $rteam = null;
+        foreach ($this->teams as $name => $team) {
+            if($team->getMinecraftColor() == $mc) {
+                $rteam = $team;
+            }
+        }
+        return $rteam;
+    }
+
+    /**
      * @param Player $player
      * @param string $teamName
      */
@@ -183,7 +198,8 @@ class Arena {
         $team = $this->getTeamByName($teamName);
         $lastTeam = $this->getTeamByPlayer($player);
         if($lastTeam instanceof Team) {
-            unset($lastTeam->players[$player->getName()]);
+            // testing :D
+            //unset($lastTeam->players[$player->getName()]);
         }
         $team->addPlayer($player);
     }
@@ -216,7 +232,7 @@ class Arena {
      * @return Vector3 $egg
      */
     public function getTeamEggVector(string $team): Vector3 {
-        return EggWarsVector::fromArray($this->arenaData["teams"][$team]["egg"])->asVector3();
+        return $this->level->getEggVector($team);
     }
 
     /**
@@ -224,7 +240,7 @@ class Arena {
      * @return Vector3 $spawn
      */
     public function getTeamSpawnVector(string $team): Vector3{
-        return EggWarsVector::fromArray($this->arenaData["teams"][$team]["spawn"])->asVector3();
+        return $this->level->getSpawnVector($team);
     }
 
     /**
@@ -248,7 +264,7 @@ class Arena {
      */
     public function getLevel() {
         if($this->level != null) {
-            return $this->level;
+            return $this->level->getLevel();
         }
         if(Server::getInstance()->isLevelGenerated($this->arenaData["level"])) {
             return Server::getInstance()->getLevelByName($this->arenaData["level"]);
@@ -285,8 +301,11 @@ class Arena {
         $player->setAllowFlight(false);
         $player->setXpProgress(0);
         $player->getInventory()->clearAll();
+
+        $t = 0;
         foreach ($this->teams as $team) {
-            $color = "";
+            $player->getInventory()->setItem($t, Color::getWoolFormMC($team->getMinecraftColor())->setCustomName("§7Join ".$team->getMinecraftColor().$team->getTeamName()));
+            $t++;
         }
 
         $count = count($this->getAllPlayers());
@@ -439,75 +458,78 @@ class Arena {
     public function progress() {
         switch ($this->phase) {
             case 0:
-            case 1:
                 $this->lobby();
                 break;
-            case 2:
+            case 1:
                 $this->game();
                 break;
-            case 3:
+            case 2:
                 $this->restart();
                 break;
         }
     }
 
-    private function lobby() {
+    public function lobby() {
+
         foreach ($this->getAllPlayers() as $player) {
             $player->sendTip($this->voteManager->getBarFormat());
         }
+
+        // if game is ready to start
         if($this->getFillTeamsCount() >= intval($this->arenaData["teamsToStart"])) {
-            // first check
-            if($this->phase == 0) {
+
+            // check for start
+            if(empty($this->progress["startTime"]) || !is_numeric($this->progress["startTime"])) {
                 $this->progress["startTime"] = $startTime = intval($this->arenaData["startTime"]);
                 foreach ($this->getAllPlayers() as $player) {
                     $player->sendMessage(EggWars::getPrefix()."§7Game starts in $startTime sec!");
                 }
+            }
 
-            }
+
             $this->progress["startTime"]--;
-            if($this->progress["startTime"] <= 0) {
+
+            // start
+            if(intval($this->progress["startTime"]) <= 0) {
                 $this->startGame();
-                $this->phase = 2;
-            }
-            else {
                 $this->phase = 1;
             }
+
             foreach ($this->getAllPlayers() as $player) {
                 $player->sendPopup(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
             }
+
+            if($this->progress["startTime"] == 5) {
+                $map = $this->voteManager->getMap();
+                $this->level = $map;
+                $this->broadcastMessage(EggWars::getPrefix()."§e{$map->getCustomName()} §6chosen.");
+            }
+
             switch ($this->progress["startTime"]) {
-                case 120:
-                case 90:
-                case 60:
-                case 45:
-                case 30:
-                case 20:
-                case 15:
-                case 10:
-                case 5:
-                case 3:
-                case 2:
-                case 1:
+                case 120:case 90:case 60:case 45:case 30:case 20:case 15:case 10:case 5:case 3:case 2:case 1:
                     $this->broadcastMessage(EggWars::getPrefix()."§7Game starts in  {$this->progress["startTime"]} sec!");
                     break;
             }
         }
         else {
-            $this->phase = 0;
             foreach ($this->getAllPlayers() as $player) {
                 $player->sendPopup(EggWars::getPrefix()." §7|| §cYou need more players!");
             }
         }
     }
 
-    private function startGame() {
+    public function startGame() {
         // ADD PLAYERS TO TEAMS
         foreach ($this->getAllPlayers() as $player) {
             if($this->getTeamByPlayer($player) == null) {
                 foreach ($this->getAllTeams() as $team) {
+                    choose:
                     if(!$team->isFull()) {
                         $team->addPlayer($player);
                         $player->sendMessage(EggWars::getPrefix()."§7You are joined ".$team->getMinecraftColor().$team->getTeamName()."§7 team!");
+                    }
+                    else {
+                        goto choose;
                     }
                 }
             }
@@ -528,12 +550,12 @@ class Arena {
             $player->teleport($vec = $this->getTeamSpawnVector($this->getTeamByPlayer($player)->getTeamName()));
             $player->setSpawn(Position::fromObject($vec, $this->getLevel()));
         }
-        $this->phase = 2;
-
-        $this->level = $this->voteManager->getMap()->getLevel();
+        $this->phase = 1;
 
         // GAMETIME
         $this->progress["gameTime"] = $this->arenaData["gameTime"];
+
+        $this->genScheduler = new GeneratorScheduler($this);
     }
 
     private function game() {

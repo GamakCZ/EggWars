@@ -17,7 +17,7 @@ abstract class EggWarsTask extends Task {
     /**
      * @return EggWars $eggWars
      */
-    abstract function getPlugin():EggWars;
+    abstract function getPlugin(): EggWars;
 
     /**
      * @return Arena $arena

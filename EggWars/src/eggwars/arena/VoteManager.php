@@ -84,14 +84,30 @@ class VoteManager {
         return count($this->maps[$this->levels[intval($map-1)]->getCustomName()]["votes"]);
     }
 
+
     /**
      * @return EggWarsLevel
      */
     public function getMap() {
-        sort($array = [$this->maps[0]["customName"] => count($this->maps[0]["votes"]),
-            $this->maps[1]["customName"] => count($this->maps[1]["votes"]),
-            $this->maps[2]["customName"] => count($this->maps[2]["votes"])]);
-        return new EggWarsLevel($this->getArena()->getPlugin()->getLevelManager()->getLevelByName($array[0]));
+        $maps = [
+            $this->getMapName(1) => $this->getVotes(1),
+            $this->getMapName(2) => $this->getVotes(2),
+            $this->getMapName(3) => $this->getVotes(3)
+        ];
+
+        asort($maps);
+
+        array_shift($maps);
+        array_shift($maps);
+
+        $result = null;
+
+        foreach ($maps as $map => $votes) {
+            $result = $map;
+        }
+
+
+        return $this->getArena()->getPlugin()->getLevelManager()->getLevelByName($result);
     }
 
     /**
