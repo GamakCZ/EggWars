@@ -1,6 +1,6 @@
 # EggWars
 
-### This plugin is under development (progress: 60%)
+### This plugin is under development (progress: 65%)
 
 _EggWars minigame for PocketMine_
 
@@ -28,17 +28,19 @@ _EggWars minigame for PocketMine_
     - [x] Voting
 
 - [ ] Shop:
-    - [ ] Simple shop without config
+    - [ ] Simple shop without config - INDEV
     - [ ] Config import
 
-- [ ] Gameplay system:
+- [ ] Gameplay system: - INDEV
     - [x] Join signs
-    - [ ] Generators
-    - [ ] Joining to arena - INDEV
-    - [ ] Task - INDEV
+    - [x] Generators - INDEV
+    - [x] Joining to arena - INDEV (need fix)
+    - [x] Task - INDEV (need fix)
     - [x] Custom teams
-    - [ ] Working deaths / respawns
+    - [x] Working deaths / respawns
     - [x] Arena restart
+
+- [ ] Bug fixing:
 
 - [ ] Documentation:
     - [ ] README.md

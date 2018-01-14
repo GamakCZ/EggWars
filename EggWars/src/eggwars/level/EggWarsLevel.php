@@ -64,8 +64,8 @@ class EggWarsLevel {
      * @return \pocketmine\math\Vector3|null
      */
     public function getEggVector(string $teamName) {
-        if(isset($this->data["teams"][$teamName])) {
-            return EggWarsVector::fromArray($this->data["teams"][$teamName]["egg"])->asVector3();
+        if(isset($this->data["teams"][strtolower($teamName)])) {
+            return EggWarsVector::fromArray($this->data["teams"][strtolower($teamName)]["egg"])->asVector3();
         }
         return null;
     }
@@ -75,10 +75,10 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setEggVector(string $teamName, Vector3 $vector3) {
-        if(empty($this->data["teams"][$teamName])) {
-            $this->data["teams"][$teamName] = [];
+        if(empty($this->data["teams"][strtolower($teamName)])) {
+            $this->data["teams"][strtolower($teamName)] = [];
         }
-        $this->data["teams"][$teamName]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        $this->data["teams"][strtolower($teamName)]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
     /**
@@ -86,8 +86,8 @@ class EggWarsLevel {
      * @return \pocketmine\math\Vector3|null
      */
     public function getSpawnVector(string $teamName) {
-        if(isset($this->data["teams"][$teamName])) {
-            return EggWarsVector::fromArray($this->data["teams"][$teamName]["spawn"])->asVector3();
+        if(isset($this->data["teams"][strtolower($teamName)])) {
+            return EggWarsVector::fromArray($this->data["teams"][strtolower($teamName)]["spawn"])->asVector3();
         }
         return null;
     }
@@ -97,10 +97,10 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setSpawnVector(string $teamName, Vector3 $vector3) {
-        if(empty($this->data["teams"][$teamName])) {
-            $this->data["teams"][$teamName] = [];
+        if(empty($this->data["teams"][strtolower($teamName)])) {
+            $this->data["teams"][strtolower($teamName)] = [];
         }
-        $this->data["teams"][$teamName]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        $this->data["teams"][strtolower($teamName)]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
 

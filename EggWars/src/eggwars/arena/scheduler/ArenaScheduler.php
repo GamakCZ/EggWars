@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace eggwars\arena;
+namespace eggwars\arena\scheduler;
 
+use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\scheduler\EggWarsTask;
 

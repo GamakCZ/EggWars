@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace eggwars\arena;
+namespace eggwars\arena\scheduler;
 
+use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsPosition;
 use eggwars\scheduler\EggWarsTask;
@@ -11,7 +12,7 @@ use pocketmine\tile\Sign;
 
 /**
  * Class RefreshSignScheduler
- * @package eggwars\arena
+ * @package eggwars\arena\scheduler
  */
 class RefreshSignScheduler extends EggWarsTask {
 
@@ -23,9 +24,7 @@ class RefreshSignScheduler extends EggWarsTask {
     const SIGN_STATUS = "§9[§b%1 / %2§9]";
     const SIGN_LAST = "§8---";
 
-    /**
-     * @var Arena $arena
-     */
+    /** @var Arena $arena */
     private $arena;
 
     /**

@@ -79,7 +79,7 @@ class ArenaSetupManager implements Listener {
                     $player->sendMessage("§cCount must be numeric!");
                     break;
                 }
-                $arena->arenaData["playersperteam"] = intval($args[0]);
+                $arena->arenaData["playersPerTeam"] = intval($args[1]);
                 $player->sendMessage("§aPlayers per team updated!");
                 break;
             case "addteam":

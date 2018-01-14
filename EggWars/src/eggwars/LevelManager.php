@@ -16,15 +16,8 @@ use pocketmine\utils\Config;
  */
 class LevelManager extends ConfigManager {
 
-    /**
-     * @var EggWarsLevel[] $levels
-     */
+    /** @var EggWarsLevel[] $level */
     private $levels = [];
-
-    /**
-     * @var bool $defaultLevels
-     */
-    private $defaultLevels = false;
 
     /**
      * LevelManager constructor.
@@ -78,12 +71,6 @@ class LevelManager extends ConfigManager {
     }
 
     public function loadLevels() {
-        if($this->defaultLevels) {
-            $this->levels["ew-test"] = new EggWarsLevel($this->defaultLevelData);
-            $this->levels["EW_1"] = new EggWarsLevel($this->defaultLevelData);
-            $this->levels["VixikEW"] = new EggWarsLevel($this->defaultLevelData);
-        }
-
         foreach (glob($this->getDataFolder()."levels/*.yml") as $file) {
             $this->levels[basename($file, ".yml")] = EggWarsLevel::loadFromConfig(new Config($file, Config::YAML));
         }
@@ -93,8 +80,8 @@ class LevelManager extends ConfigManager {
      * @param $name
      * @return EggWarsLevel $name
      */
-    public function getLevelByName($name): EggWarsLevel {
-        return $this->levels[$name];
+    public function getLevelByName($name) {
+        return isset($this->levels[$name]) ? $this->levels[$name] : null;
     }
 
     /**

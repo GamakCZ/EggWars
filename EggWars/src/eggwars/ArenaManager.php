@@ -35,8 +35,11 @@ class ArenaManager extends ConfigManager {
             return null;
         }
 
+        $data = $this->defaultArenaData;
+        $data["name"] = $name;
+
         // config
-        $arenaConfig = new Config($this->getDataFolder()."arenas/$name.yml", Config::YAML, $this->defaultArenaData);
+        $arenaConfig = new Config($this->getDataFolder()."arenas/$name.yml", Config::YAML, $data);
         $arenaConfig->save();
 
         return $arena = $this->arenas[$name] = new Arena($this->getPlugin(), $arenaConfig);

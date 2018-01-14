@@ -2,8 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace eggwars\arena;
+namespace eggwars\arena\team;
 
+use eggwars\arena\Arena;
 use eggwars\EggWars;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
@@ -40,20 +41,20 @@ class Team {
     public $alive = true;
 
     /**
-     * @var Arena $arena
+     * @var TeamManager $teamManager
      */
-    public $arena;
+    public $teamManager;
 
     /**
      * Team constructor.
      * @param string $name
      * @param Player[] $players
      */
-    public function __construct(Arena $arena, string $name, string $color, array $players) {
+    public function __construct(TeamManager $teamManager, string $name, string $color, array $players) {
         array_merge($this->players, $players);
         $this->name = $name;
         $this->color = $color;
-        $this->arena = $arena;
+        $this->teamManager = $teamManager;
     }
 
     /**
@@ -77,6 +78,27 @@ class Team {
      */
     public function isAlive(): bool {
         return $this->alive;
+    }
+
+    /**
+     * @param Player $player
+     * @return bool
+     */
+    public function inTeam(Player $player): bool {
+        $return = false;
+        foreach ($this->getTeamsPlayers() as $teamsPlayer) {
+            if($player->getName() == $teamsPlayer->getName()) {
+                $return = true;
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDisplayName(): string {
+        return $this->color.$this->name;
     }
 
     /**
@@ -108,6 +130,13 @@ class Team {
     }
 
     /**
+     * @return int
+     */
+    public function getPlayersCount(): int {
+        return intval(count($this->players));
+    }
+
+    /**
      * @return string
      */
     public function getTeamName() {
@@ -128,9 +157,16 @@ class Team {
     }
 
     /**
+     * @return TeamManager $teamManager
+     */
+    public function getTeamManager(): TeamManager {
+        return $this->teamManager;
+    }
+
+    /**
      * @return Arena $arena
      */
     public function getArena(): Arena {
-        return $this->arena;
+        return $this->getTeamManager()->getArena();
     }
 }

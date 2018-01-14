@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace eggwars\arena;
+namespace eggwars\arena\voting;
 
-use eggwars\EggWars;
+use eggwars\arena\Arena;
 use eggwars\level\EggWarsLevel;
 use pocketmine\Player;
 
 /**
  * Class VoteManager
- * @package eggwars\arena
+ * @package eggwars\arena\voting
  */
 class VoteManager {
 
@@ -106,6 +106,9 @@ class VoteManager {
             $result = $map;
         }
 
+        if($result == null) {
+            $result = $this->getMapName(1);
+        }
 
         return $this->getArena()->getPlugin()->getLevelManager()->getLevelByName($result);
     }

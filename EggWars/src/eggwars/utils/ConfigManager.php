@@ -31,7 +31,7 @@ class ConfigManager {
         "teamsToStart" => 2,
         "playersPerTeam" => 2,
         "lobby" => [0, 4, 0, "EggWars"],
-        "sign" => [],
+        "sign" => [0, 100, 0, "world"],
         "builder" => "VixikCZ",
         "teamsCount" => 2,
         "teams" => [
@@ -50,7 +50,6 @@ class ConfigManager {
     public $defaultLevelData = [
         "levelName" => "EggWars",
         "name" => "EW1level",
-        "level" => "EggWars",
         "middle" => [90, 4, 90],
         "arenas" => [],
         "teams" => [

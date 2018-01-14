@@ -66,10 +66,10 @@ class LevelSetupManager implements Listener {
                     break;
                 }
                 $arena = EggWars::getInstance()->getArenaManager()->getArenaByName($args[1]);
-                if(count($arena->arenaData["teams"]) != $level->getTeamsCount()) {
+                /*if(count($arena->arenaData["teams"]) != $level->getTeamsCount()) {
                     $player->sendMessage("§cCount of teams are not equals.");
                     break;
-                }
+                }*/
                 array_push($level->data["arenas"], $args[1]);
                 $player->sendMessage("§aArena $args[1] added!");
                 break;
