@@ -1,5 +1,14 @@
 <?php
 
+/*
+ *    _____                  __        __
+ *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
+ *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
+ *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
+ *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
+ *           |___/   |___/
+ */
+
 declare(strict_types=1);
 
 namespace eggwars\arena;
@@ -8,6 +17,7 @@ use eggwars\arena\listener\ArenaListener;
 use eggwars\arena\scheduler\ArenaScheduler;
 use eggwars\arena\scheduler\GeneratorScheduler;
 use eggwars\arena\scheduler\RefreshSignScheduler;
+use eggwars\arena\shop\ShopManager;
 use eggwars\arena\team\Team;
 use eggwars\arena\team\TeamManager;
 use eggwars\arena\voting\VoteManager;
@@ -64,6 +74,9 @@ class Arena {
     /** @var TeamManager $teamManager */
     public $teamManager;
 
+    /** @var ShopManager $shopManager */
+    public $shopManager;
+
     /**
      * Arena constructor.
      * @param EggWars $eggWars
@@ -90,6 +103,7 @@ class Arena {
         // managers
         $this->voteManager = new VoteManager($this, $levels);
         $this->teamManager = new TeamManager($this);
+        $this->shopManager = new ShopManager($this);
 
         // data
         $this->phase = 0;

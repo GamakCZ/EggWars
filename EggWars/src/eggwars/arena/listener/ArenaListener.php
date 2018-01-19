@@ -1,10 +1,20 @@
 <?php
 
+/*
+ *    _____                  __        __
+ *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
+ *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
+ *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
+ *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
+ *           |___/   |___/
+ */
+
 declare(strict_types=1);
 
 namespace eggwars\arena\listener;
 
 use eggwars\arena\Arena;
+use eggwars\arena\shop\CustomChestInventory;
 use eggwars\arena\team\Team;
 use eggwars\EggWars;
 use eggwars\position\EggWarsPosition;
@@ -14,6 +24,7 @@ use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -108,6 +119,76 @@ class ArenaListener implements Listener {
             return;
         }
         $this->deathManager->onBasicDeath($entity);
+    }
+
+    /**
+     * @param PlayerInteractEvent $event
+     */
+    public function onVillagerClick(PlayerInteractEvent $event) {
+        $villager = $event->getPlayer()->getTargetEntity();
+        if($villager instanceof Villager) {
+            $this->getArena()->shopManager->openShop($event->getPlayer(), $this->getArena()->getTeamByPlayer($event->getPlayer()));
+        }
+    }
+
+    /**
+     * @param InventoryTransactionEvent $event
+     */
+    public function onTransaction(InventoryTransactionEvent $event) {
+
+        $transaction = $event->getTransaction();
+        $chestInventory = null;
+
+        foreach($transaction->getInventories() as $inventory) {
+            if($inventory instanceof CustomChestInventory) {
+                $chestInventory = $inventory;
+            }
+        }
+
+        if($chestInventory === null) {
+            return;
+        }
+
+        /** @var Player $player */
+        $player = null;
+
+        foreach ($inventory->getViewers() as $viewer) {
+            if($viewer instanceof Player) {
+                $player = $viewer;
+            }
+        }
+
+        $targetItem = null;
+
+        foreach ($transaction->getActions() as $inventoryAction) {
+            $targetItem = $inventoryAction->getTargetItem();
+        }
+
+        if($targetItem === null || $targetItem->getId() == 0) {
+            $event->setCancelled(true);
+            return;
+        }
+
+        $team = $this->getArena()->getTeamByPlayer($player);
+
+        $slot = 0;
+        foreach ($chestInventory->getContents() as $chestSlot => $chestItem) {
+            if($chestItem->equals($targetItem, false, false)) {
+                $slot = $chestSlot;
+            }
+        }
+
+        // BROWSING
+        if($slot <= 8) {
+            $this->getArena()->shopManager->onBrowseTransaction($player, $slot);
+        }
+
+        // BUYING
+        else {
+            $this->getArena()->shopManager->onBuyTransaction($player, $targetItem, $slot);
+        }
+
+        $event->setCancelled(true);
     }
 
 

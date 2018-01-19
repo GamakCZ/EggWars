@@ -1,6 +1,6 @@
 # EggWars
 
-### This plugin is under development (progress: 65%)
+### This plugin is under development (progress: 68%)
 
 _EggWars minigame for PocketMine_
 
@@ -19,26 +19,33 @@ _EggWars minigame for PocketMine_
     - [x] Level command
     - [ ] Other commands
 
-- [x] Setup Mode:
+- [ ] Setup Mode:
     - [x] Level setup mode
     - [x] Arenas setup mode
+    - [ ] Advanced settings
     
 - [x] Voting:
     - [x] World choosing
     - [x] Voting
 
 - [ ] Shop:
-    - [ ] Simple shop without config - INDEV
+    - [x] Simple shop without config - INDEV (needs test, fix)
     - [ ] Config import
 
-- [ ] Gameplay system: - INDEV
+- [ ] Gameplay system:
     - [x] Join signs
-    - [x] Generators - INDEV
-    - [x] Joining to arena - INDEV (need fix)
-    - [x] Task - INDEV (need fix)
+    - [x] Generators - INDEV (needs fix - probably PMMP bug)
+    - [x] Joining to arena - INDEV (needs fix)
+    - [ ] Joining to teams - INDEV (needs fix)
+    - [x] Task - INDEV (needs fix, test)
     - [x] Custom teams
     - [x] Working deaths / respawns
-    - [x] Arena restart
+    - [x] Arena restart (need test)
+
+
+- [ ] Config:
+    - [ ] Prefix import
+    - [ ] Multi-Language system
 
 - [ ] Bug fixing:
 
