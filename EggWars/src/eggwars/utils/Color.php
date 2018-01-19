@@ -78,4 +78,16 @@ class Color implements ColorIds {
         }
         return $html;
     }
+
+    /**
+     * @param string $mc
+     * @return bool
+     */
+    public static function mcColorExists(string $mc): bool {
+        $exists = false;
+        foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $id, $htmlArray]) {
+            if($mc == $mcFormat) $exists = true;
+        }
+        return $exists;
+    }
 }

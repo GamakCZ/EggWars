@@ -35,7 +35,12 @@ class LevelManager extends ConfigManager {
         $levels = [];
         foreach($this->levels as $level) {
             if(in_array($arena->getName(), $level->data["arenas"])) {
-                array_push($levels, $level);
+                if($level->isValid()) {
+                    array_push($levels, $level);
+                }
+                else {
+                    EggWars::getInstance()->getLogger()->critical("§cLevel {$level->getCustomName()} is not valid!");
+                }
             }
         }
         check:

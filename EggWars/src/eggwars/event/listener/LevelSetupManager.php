@@ -20,7 +20,7 @@ use pocketmine\Server;
 class LevelSetupManager implements Listener {
 
     /** @var EggWarsLevel[] $players */
-    private static $players = [];
+    public static $players = [];
 
     /** @var array $b */
     private $b = [];
@@ -51,49 +51,56 @@ class LevelSetupManager implements Listener {
         }
         switch (strtolower($args[0])) {
             case "help":
-                $player->sendMessage("§aEggWars Level Setup Help:\n" .
-                    "§2addarena §6Add the arena, in there level can be used\n" .
-                    "§2setspawn §6Set the team spawn\n".
-                    "§2setegg §6Set the team egg");
+                $player->sendMessage("§9--- §6§lEggWars level setup help§l 1/1§r§9 ---§r§f\n" .
+                    "§2add §bAdd the arena, in there level can be used\n" .
+                    "§2spawn §bSet the team spawn\n".
+                    "§2egg §bSet the team egg");
                 break;
-            case "addarena":
+            case "add":
                 if(empty($args[1])) {
-                    $player->sendMessage("§cUsage: §7addarena <arena>");
+                    $player->sendMessage("§cUsage: §7add <arena>");
                     break;
                 }
                 if(!EggWars::getInstance()->getArenaManager()->arenaExists($args[1])) {
                     $player->sendMessage("§cArena $args[1] does not found!");
                     break;
                 }
+                if(in_array($args[1], $level->data["arenas"])) {
+                    $player->sendMessage("§cArena is already added!");
+                    break;
+                }
                 $arena = EggWars::getInstance()->getArenaManager()->getArenaByName($args[1]);
-                /*if(count($arena->arenaData["teams"]) != $level->getTeamsCount()) {
-                    $player->sendMessage("§cCount of teams are not equals.");
-                    break;
-                }*/
                 array_push($level->data["arenas"], $args[1]);
-                $player->sendMessage("§aArena $args[1] added!");
+                $player->sendMessage("§aArena $args[1] added! §bImporting teams...");
+                foreach($arena->arenaData["teams"] as $team => ["color" => $color]) {
+                    $player->sendMessage("§a{$color}{$team} team imported!");
+                    $level->data["teams"][$team] = [
+                        "spawn" => [],
+                        "egg" => []
+                    ];
+                }
                 break;
-            case "setspawn":
+            case "spawn":
                 if(empty($args[1])) {
-                    $player->sendMessage("§cUsage: §7setspawn <team>");
+                    $player->sendMessage("§cUsage: §7spawn <team>");
                     break;
                 }
-                /*if(empty($level->data["teams"][$args[1]])) {
-                    $player->sendMessage("§cTeam $args[1] does not found!");
+                if(empty($level->data["teams"][$args[1]])) {
+                    $player->sendMessage("§cTeam {$args[1]} does not found, you can import it adding new arena!");
                     break;
-                }*/
+                }
                 $level->setSpawnVector($args[1], $player->asVector3());
-                $player->sendMessage("§aTeam spawn updated!");
+                $player->sendMessage("§a{$args[1]} §ateam spawn updated!");
                 break;
-            case "setegg":
+            case "egg":
                 if(empty($args[1])) {
-                    $player->sendMessage("§cUsage: §7setegg <team>");
+                    $player->sendMessage("§cUsage: §7egg <team>");
                     break;
                 }
-                /*if(empty($level->data["teams"][$args[1]])) {
-                    $player->sendMessage("§cTeam $args[1] does not found!");
+                if(empty($level->data["teams"][$args[1]])) {
+                    $player->sendMessage("§cTeam {$args[1]} does not found, you can import it adding new arena!");
                     break;
-                }*/
+                }
                 $this->b[$player->getName()] = [0, $args[1], $level];
                 $player->sendMessage("§aDestroy the egg to update it!");
                 break;
@@ -131,6 +138,10 @@ class LevelSetupManager implements Listener {
      * @param EggWarsLevel $level
      */
     public static function addPlayer(Player $player, EggWarsLevel $level) {
+        if(isset(LevelSetupManager::$players[$player->getName()])) {
+            $player->sendMessage("§cLeave ArenaSetupMode first!");
+            return;
+        }
         if(empty(self::$players[$player->getName()])) {
             self::$players[$player->getName()] = $level;
             $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help, §cdone §afor exit.");
@@ -140,7 +151,7 @@ class LevelSetupManager implements Listener {
         }
     }
 
-    public function getPlugin() {
+    public function getPlugin(): EggWars {
         return EggWars::getInstance();
     }
 }

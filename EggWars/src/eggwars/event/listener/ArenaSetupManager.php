@@ -21,7 +21,7 @@ use pocketmine\Server;
 class ArenaSetupManager implements Listener {
 
     /** @var Arena[] */
-    private static $players = [];
+    public static $players = [];
 
     /** @var array $b */
     private $b = [];
@@ -53,26 +53,26 @@ class ArenaSetupManager implements Listener {
         switch (strtolower($args[0])) {
             case "help":
                 if (isset($args[1]) && $args[1] == "2") {
-                    $player->sendMessage("§aEggWars Arena Setup Help (2/2):\n" .
-                        "§2enable §6Enable arena\n" .
-                        "§2joinsign §6Set join sign\n" .
-                        "§2gametime §6Set max gametime\n" .
-                        "§2starttime §6Set start time\n" .
-                        "§2teamstostart §6Set count of teams to start\n");
+                    $player->sendMessage("§9--- §6§lEggWars setup help§l 2/2§9 ---§r§f\n" .
+                        "§2enable §bEnable arena\n" .
+                        "§2joinsign §bSet join sign\n" .
+                        "§2gametime §bSet max gametime\n" .
+                        "§2starttime §bSet start time\n" .
+                        "§2teamstostart §bSet count of teams to start\n");
                     break;
                 }
-                $player->sendMessage("§aEggWars Arena Setup Help (1/2):\n" .
-                    "§2players §6Set players per team count\n" .
-                    "§2addteam §6Add new team\n" .
-                    "§2setteam §6Set team\n" .
-                    "§2delteam §6Remove team\n" .
-                    "§2teams §6Displays list of teams\n" .
-                    "§2lobby §6Set waiting lobby\n" .
-                    "§2help §6Displays help\n");
+                $player->sendMessage("§9--- §6§lEggWars setup help§l 1/2§9 ---§r§f\n" .
+                    "§2players §bSet players per team count\n" .
+                    "§2addteam §bAdd new team\n" .
+                    "§2setteam §bSet team\n" .
+                    "§2delteam §bRemove team\n" .
+                    "§2teams §bDisplays list of teams\n" .
+                    "§2lobby §bSet waiting lobby\n" .
+                    "§2help §bDisplays help\n");
                 break;
             case "players":
                 if (empty($args[1])) {
-                    $player->sendMessage("§cUsage: §7playersperteam <count>");
+                    $player->sendMessage("§cUsage: §7players <count>");
                     break;
                 }
                 if (!is_numeric($args[1])) {
@@ -91,11 +91,15 @@ class ArenaSetupManager implements Listener {
                     $player->sendMessage("§cTeam {$args[1]} already exists!");
                     break;
                 }
+                if(!Color::mcColorExists(str_replace("&", "§", $args[2]))) {
+                    $player->sendMessage("§cColor {$args[1]} does not found!");
+                    break;
+                }
                 $arena->arenaData["teams"][$args[1]] = [
-                    "color" => str_replace("&", "§", $args[2]),
+                    "color" => $color = str_replace("&", "§", $args[2]),
                     "spawn" => []
                 ];
-                $player->sendMessage("§aTeam {$args[1]} added (color $args[2]).");
+                $player->sendMessage("§aTeam {$color}{$args[1]} added.");
                 break;
             case "setteam":
                 if (count($args) < 3) {
@@ -114,6 +118,9 @@ class ArenaSetupManager implements Listener {
                         }
                         $arena->arenaData["teams"][$args[2]]["color"] = $c = str_replace("&", "§", $args[3]);
                         $player->sendMessage("§aTeam color was changed to $c" . Color::getColorNameFormMC($c) . "§a.");
+                        break;
+                    default:
+                        $player->sendMessage("§cUsage: §7setteam color");
                         break;
                 }
                 break;
@@ -146,7 +153,11 @@ class ArenaSetupManager implements Listener {
                 foreach ($arena->arenaData["teams"] as $team => $teamData) {
                     array_push($teams, $teamData["color"] . $team);
                 }
-                $player->sendMessage("§aTeams: " . implode(", ", $teams) . ".");
+                if(count($teams) == 0) {
+                    $player->sendMessage("§cThere are no teams.");
+                    break;
+                }
+                $player->sendMessage("§aTeams (".count($teams)."): " . implode(", ", $teams) . ".");
                 break;
             case "joinsign":
                 $player->sendMessage("§aDestroy the block to set joinsign!");
@@ -206,6 +217,10 @@ class ArenaSetupManager implements Listener {
      * @param Arena $arena
      */
     public static function addPlayer(Player $player, Arena $arena) {
+        if(isset(LevelSetupManager::$players[$player->getName()])) {
+            $player->sendMessage("§cLeave LevelSetupMode first!");
+            return;
+        }
         if(empty(self::$players[$player->getName()])) {
             self::$players[$player->getName()] = $arena;
             $player->sendMessage("§aYou are now in setup system. Type §chelp §afor help, §cdone §afor exit.");

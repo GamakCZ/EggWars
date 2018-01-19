@@ -37,9 +37,6 @@ class EggWarsLevel {
      * @param array $data
      */
     public function __construct(array $data) {
-        /*if(!Server::getInstance()->isLevelLoaded($data["levelName"])) {
-            Server::getInstance()->loadLevel($data["levelName"]);
-        }*/
         if(Server::getInstance()->isLevelGenerated($data["levelName"])) {
             Server::getInstance()->loadLevel($data["levelName"]);
             $this->level = Server::getInstance()->getLevelByName($data["levelName"]);
@@ -49,6 +46,19 @@ class EggWarsLevel {
         }
         $this->data = $data;
         $this->teamsCount = count($data["teams"]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool {
+        $valid = true;
+        foreach ($this->data["teams"] as $team => ["spawn" => $spawnArgs, "egg" => $eggArgs]) {
+            if(count($spawnArgs) !== 3 || count($eggArgs) !== 3) {
+                $valid = false;
+            }
+        }
+        return $valid;
     }
 
     /**
@@ -64,8 +74,14 @@ class EggWarsLevel {
      * @return \pocketmine\math\Vector3|null
      */
     public function getEggVector(string $teamName) {
-        if(isset($this->data["teams"][strtolower($teamName)])) {
-            return EggWarsVector::fromArray($this->data["teams"][strtolower($teamName)]["egg"])->asVector3();
+        if(isset($this->data["teams"][$teamName])) {
+            $vec =  EggWarsVector::fromArray($this->data["teams"][$teamName]["egg"])->asVector3();
+            if($vec instanceof Vector3) {
+                return $vec;
+            }
+            else {
+                EggWars::getInstance()->getLogger()->critical("§cCloud not found egg for ($teamName)!");
+            }
         }
         return null;
     }
@@ -75,19 +91,25 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setEggVector(string $teamName, Vector3 $vector3) {
-        if(empty($this->data["teams"][strtolower($teamName)])) {
-            $this->data["teams"][strtolower($teamName)] = [];
+        if(empty($this->data["teams"][$teamName])) {
+            $this->data["teams"][$teamName] = [];
         }
-        $this->data["teams"][strtolower($teamName)]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        $this->data["teams"][$teamName]["egg"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
     /**
      * @param string $teamName
-     * @return \pocketmine\math\Vector3|null
+     * @return \pocketmine\math\Vector3|void
      */
     public function getSpawnVector(string $teamName) {
-        if(isset($this->data["teams"][strtolower($teamName)])) {
-            return EggWarsVector::fromArray($this->data["teams"][strtolower($teamName)]["spawn"])->asVector3();
+        if(isset($this->data["teams"][$teamName])) {
+            $vec =  EggWarsVector::fromArray($this->data["teams"][$teamName]["spawn"])->asVector3();
+            if($vec instanceof Vector3) {
+                return $vec;
+            }
+            else {
+                EggWars::getInstance()->getLogger()->critical("§cCloud not found spawn for ($teamName)!");
+            }
         }
         return null;
     }
@@ -97,10 +119,10 @@ class EggWarsLevel {
      * @param Vector3 $vector3
      */
     public function setSpawnVector(string $teamName, Vector3 $vector3) {
-        if(empty($this->data["teams"][strtolower($teamName)])) {
-            $this->data["teams"][strtolower($teamName)] = [];
+        if(empty($this->data["teams"][$teamName])) {
+            $this->data["teams"][$teamName] = [];
         }
-        $this->data["teams"][strtolower($teamName)]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
+        $this->data["teams"][$teamName]["spawn"] = [$vector3->getX(), $vector3->getY(), $vector3->getZ()];
     }
 
 
