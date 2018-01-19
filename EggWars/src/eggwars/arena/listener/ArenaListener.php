@@ -68,7 +68,7 @@ class ArenaListener implements Listener {
         if($item->getId() == 0) {
             return;
         }
-        if(!is_string($mc = Color::getMCFromId("{$item->getId()}"))) {
+        if(!is_string($mc = Color::getMCFromId("{$item->getId()}:{$item->getDamage()}"))) {
             return;
         }
         $team = $this->getArena()->getTeamByMinecraftColor($mc);
@@ -120,7 +120,7 @@ class ArenaListener implements Listener {
         if(!$player instanceof Player) {
             return;
         }
-        if(($this->getArena()->getPhase() == 0 || $this->getArena()->getPhase() == 1) && $this->getArena()->inGame($player)) {
+        if(($this->getArena()->getPhase() == 0) && $this->getArena()->inGame($player)) {
             $event->setCancelled();
         }
     }
