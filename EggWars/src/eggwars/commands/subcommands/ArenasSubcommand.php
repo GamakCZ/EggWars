@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -40,6 +40,6 @@ class ArenasSubcommand extends EggWarsCommand implements SubCommand {
             $sender->sendMessage("§cThis command can be used only in-game!");
             return;
         }
-        $sender->sendMessage(EggWars::getPrefix()."§7Arenas: §9".$this->getPlugin()->getArenaManager()->getListArenasInString());
+        $sender->sendMessage(EggWars::getPrefix().$this->getPlugin()->getArenaManager()->getListArenasInString());
     }
 }

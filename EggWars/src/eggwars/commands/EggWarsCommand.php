@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -42,6 +42,10 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
      */
     public function __construct() {
         parent::__construct("eggwars", "EggWars commands", null, ["ew"]);
+        $this->registerSubcommands();
+    }
+
+    private function registerSubcommands() {
         $this->registerSub("help", new HelpSubcommand);
         $this->registerSub("create", new CreateSubcommand);
         $this->registerSub("arenas", new ArenasSubcommand);
@@ -69,13 +73,12 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         return $sender->hasPermission("ew.cmd.$subcommandName");
     }
 
-    #public function executeSub(CommandSender $sender, array $args, string $name) {}
 
     /**
      * @param CommandSender $sender
      * @param string $commandLabel
      * @param array $args
-     * @return mixed|void
+     * @return void
      */
     public function execute(CommandSender $sender, string $commandLabel, array $args) {
         if(empty($args[0])) {

@@ -46,12 +46,12 @@ class EggWarsLevel {
      * @param array $data
      */
     public function __construct(array $data) {
-        if(Server::getInstance()->isLevelGenerated($data["levelName"])) {
-            Server::getInstance()->loadLevel($data["levelName"]);
-            $this->level = Server::getInstance()->getLevelByName($data["levelName"]);
+        if(Server::getInstance()->isLevelGenerated($data["folderName"])) {
+            Server::getInstance()->loadLevel($data["folderName"]);
+            $this->level = Server::getInstance()->getLevelByName($data["folderName"]);
         }
         else {
-            EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["levelName"]}!");
+            EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["folderName"]}!");
         }
         $this->data = $data;
         $this->teamsCount = count($data["teams"]);

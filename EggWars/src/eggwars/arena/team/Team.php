@@ -159,6 +159,15 @@ class Team {
     }
 
     /**
+     * @param string $msg
+     */
+    public function broadcastMessage(string $msg) {
+        foreach ($this->getTeamsPlayers() as $player) {
+            $player->sendMessage($msg);
+        }
+    }
+
+    /**
      * @return EggWars $eggWars
      */
     public function getPlugin(): EggWars {

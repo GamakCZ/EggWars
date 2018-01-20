@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -99,10 +99,13 @@ class ArenaManager extends ConfigManager {
     public function getListArenasInString(): string {
         $list = [];
         foreach ($this->arenas as $name => $arena) {
-            $name = $arena->isEnabled() ? "§a$name" : "§c$name";
+            $name = $arena->isEnabled() ? "§b$name §aENABLED" : "§b$name §cDISABLED";
             array_push($list, $name);
         }
-        return implode(", ", $list);
+        if(count($list) == 0) {
+            return "§cThere are no arenas";
+        }
+        return "§aArenas (".count($list)."):\n".implode("\n", $list);
     }
 
     /**

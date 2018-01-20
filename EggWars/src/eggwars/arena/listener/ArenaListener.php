@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -26,6 +26,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
@@ -63,6 +64,33 @@ class ArenaListener implements Listener {
                 $this->getArena()->joinPlayer($event->getPlayer());
             }
         }
+    }
+
+    /**
+     * @param PlayerChatEvent $event
+     */
+    public function onChat(PlayerChatEvent $event) {
+        $player = $event->getPlayer();
+        if(!$this->getArena()->inGame($player)) {
+            return;
+        }
+        $msg = $event->getMessage();
+        if(!$this->getArena()->getTeamByPlayer($player) instanceof Team) {
+            $this->getArena()->broadcastMessage("§8[§5Lobby§8]§7 {$player->getName()}: $msg");
+            $event->setCancelled(true);
+            return;
+        }
+        $team = $this->getArena()->getTeamByPlayer($player);
+        $args = str_split($msg);
+        if($args[0] == "!") {
+            array_shift($args);
+            $this->getArena()->broadcastMessage($team->getMinecraftColor()."[ALL] §7".$player->getName().": ".implode("", $args));
+            $event->setCancelled(true);
+            return;
+        }
+        $team->broadcastMessage($team->getMinecraftColor()."[Team] §7".$player->getName().": ".$msg);
+        $event->setCancelled(true);
+        return;
     }
 
     /**

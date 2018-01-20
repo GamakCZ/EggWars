@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -104,9 +104,12 @@ class LevelManager extends ConfigManager {
     public function getListLevelsInString(): string {
         $list = [];
         foreach ($this->levels as $name => $level) {
-            array_push($list, $name);
+            array_push($list, "§b$name");
         }
-        return implode(", ", $list);
+        if(count($list) == 0) {
+            return "§cThere are no levels";
+        }
+        return "§aLevels (".count($list)."): ".implode("\n", $list);
     }
 
     /**
@@ -133,6 +136,7 @@ class LevelManager extends ConfigManager {
     public function addLevel(Level $level, string $levelName, $data = null) {
         $data = is_array($data) ? $data : $this->defaultLevelData;
         $data["levelName"] = $level->getName();
+        $data["folderName"] = $level->getFolderName();
         $data["name"] = $levelName;
         $this->levels[$levelName] = new EggWarsLevel($data);
     }

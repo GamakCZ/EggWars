@@ -1,12 +1,12 @@
 <?php
 
 /*
- *    _____                  __        __
- *   | ____|   __ _    __ _  \ \      / /   __ _   _ __   ___
- *   |  _|    / _` |  / _` |  \ \ /\ / /   / _` | | '__| / __|
- *   | |___  | (_| | | (_| |   \ V  V /   | (_| | | |    \__ \
- *   |_____|  \__, |  \__, |    \_/\_/     \__,_| |_|    |___/
- *           |___/   |___/
+ *    _____                __        __
+ *   | ____|  __ _    __ _ \ \      / /__ _  _ __  ___
+ *   |  _|   / _` | / _` |  \ \ /\ / // _` || '__|/ __|
+ *   | |___ | (_| || (_| |   \ V  V /| (_| || |   \__ \
+ *   |_____| \__, | \__, |    \_/\_/  \__,_||_|   |___/
+ *           |___/  |___/
  */
 
 declare(strict_types=1);
@@ -59,7 +59,7 @@ class TeamCommand extends Command implements PluginIdentifiableCommand {
             $sender->sendMessage(EggWars::getPrefix()."§aYou are joined to ".$arena->getTeamByName($args[0])->getMinecraftColor().$arena->getTeamByName($args[0])->getTeamName()."§7!");
         }
         else {
-            $sender->sendMessage(EggWars::getPrefix()."§7Team $args[0] does not exists!");
+            $sender->sendMessage(EggWars::getPrefix()."§7Team $args[0] does not found!");
         }
         return false;
     }
