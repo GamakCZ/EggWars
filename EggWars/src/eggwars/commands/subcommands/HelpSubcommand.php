@@ -34,12 +34,13 @@ class HelpSubcommand extends EggWarsCommand implements SubCommand {
      */
     public function executeSub(CommandSender $sender, array $args, string $name) {
         if(!$this->checkPermission($sender, $name)) return;
-        $sender->sendMessage("§7--- == §8[ §6EggWars §8] §7== ---\n".
-        "§9/ew help §7Displays all EggWars commands\n".
-        "§9/ew create §7Create new arena\n".
-        "§9/ew delete §7Delete arena\n".
-        "§9/ew arenas §7Displays list arenas\n".
-        "§9/ew level §7EggWars level manager\n".
-        "§9/ew set §7Set arena");
+        $msg = "§9--- §c§lEggWars help§l§9 ---§r§f\n";
+        if($this->checkPermission($sender, "help")) $msg .= "§2/ew help §fDisplays all EggWars commands\n";
+        if($this->checkPermission($sender, "create")) $msg .= "§2/ew create §fCreate new arena\n";
+        if($this->checkPermission($sender, "set")) $msg .= "§2/ew set §fSet arena\n";
+        if($this->checkPermission($sender, "delete")) $msg .= "§2/ew delete §fDelete arena\n";
+        if($this->checkPermission($sender, "arenas")) $msg .= "§2/ew arenas §fDisplays list arenas\n";
+        if($this->checkPermission($sender, "level")) $msg .= "§2/ew leavel §fManage levels";
+        $sender->sendMessage($msg);
     }
 }
