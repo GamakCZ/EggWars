@@ -80,6 +80,11 @@ class DeathManager {
      * @param Player $player
      */
     public function respawn(Player $player) {
+        if(!$this->arenaListener->getArena()->getTeamByPlayer($player)->isAlive()) {
+            $this->arenaListener->getArena()->disconnectPlayer($player);
+            $player->addTitle("§cYOU LOST!");
+            return;
+        }
         $player->setHealth(20);
         $player->setFood(20);
         $player->setGamemode($player::SURVIVAL);

@@ -85,6 +85,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         if(!$this->getArena()->getLevel() instanceof Level) return;
         $this->tick++;
         if($this->getArena()->getPhase() == 1) {
+            if(!$this->getArena()->isEnabled()) return;
             $this->spawn();
         }
     }
@@ -146,31 +147,30 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             $level = intval(str_replace("§0Level ", "", $sign->getText()[2]));
             switch (strval($level)) {
                 case "1":
-                    // 1.5 sec
-                    if($this->tick%30 == 0) {
+                    // 3 sec
+                    if($this->tick%60 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
                     }
                     break;
                 case "2":
+                    // 2 sec
+                    if($this->tick%40 == 0) {
+                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
+                    }
+                    break;
+                case "3":
                     // 1 sec
                     if($this->tick%20 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
                     }
                     break;
-                case "3":
+                case "5":
                     // 0.5 sec
                     if($this->tick%10 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
                     }
                     break;
-                case "5":
-                    // 0.25 sec
-                    if($this->tick%5 == 0) {
-                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
-                    }
-                    break;
                 default:
-                    $this->debug($level);
                     break;
             }
         }
@@ -182,31 +182,30 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             $level = strval(str_replace("§0Level ", "", $sign->getText()[2]));
             switch (strval($level)) {
                 case "1":
+                    // 5 sec
+                    if($this->tick%100 == 0) {
+                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
+                    }
+                    break;
+                case "2":
+                    // 3 sec
+                    if($this->tick%60 == 0) {
+                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
+                    }
+                    break;
+                case "3":
                     // 2.5 sec
                     if($this->tick%50 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
                     }
                     break;
-                case "2":
+                case "4":
                     // 2 sec
                     if($this->tick%40 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
                     }
                     break;
-                case "3":
-                    // 1.5 sec
-                    if($this->tick%30 == 0) {
-                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
-                    }
-                    break;
-                case "4":
-                    // 1 sec
-                    if($this->tick%20 == 0) {
-                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
-                    }
-                    break;
                 default:
-                    $this->debug($level);
                     break;
             }
         }
@@ -218,25 +217,24 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             $level = intval(str_replace("§0Level ", "", $sign->getText()[2]));
             switch (strval($level)) {
                 case "1":
+                    // 20 sec
+                    if($this->tick%400 == 0) {
+                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
+                    }
+                    break;
+                case "2":
+                    // 15 sec
+                    if($this->tick%300 == 0) {
+                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
+                    }
+                    break;
+                case "3":
                     // 10 sec
                     if($this->tick%200 == 0) {
                         $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
                     }
                     break;
-                case "2":
-                    // 7 sec
-                    if($this->tick%140 == 0) {
-                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
-                    }
-                    break;
-                case "3":
-                    // 4 sec
-                    if($this->tick%80 == 0) {
-                        $this->getArena()->getLevel()->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
-                    }
-                    break;
                 default:
-                    $this->debug($level);
                     break;
             }
         }
@@ -273,7 +271,6 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             return;
         }
         if($tile->getText()[0] == self::LINE_1) {
-            $player->sendMessage("");
         }
     }
 

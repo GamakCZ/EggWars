@@ -20,6 +20,7 @@ use eggwars\commands\subcommands\HelpSubcommand;
 use eggwars\commands\subcommands\LeaveSubcommand;
 use eggwars\commands\subcommands\LevelSubcommand;
 use eggwars\commands\subcommands\SetSubcommand;
+use eggwars\commands\subcommands\ShopSubcommand;
 use eggwars\commands\subcommands\StartSubcommand;
 use eggwars\commands\subcommands\SubCommand;
 use eggwars\EggWars;
@@ -54,6 +55,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
         $this->registerSub("level", new LevelSubcommand);
         $this->registerSub("leave", new LeaveSubcommand);
         $this->registerSub("start", new StartSubcommand);
+        $this->registerSub("shop", new ShopSubcommand);
     }
 
     /**

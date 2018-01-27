@@ -15,6 +15,7 @@ namespace eggwars\level;
 
 use eggwars\EggWars;
 use eggwars\position\EggWarsVector;
+use pocketmine\entity\Item;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
@@ -49,6 +50,11 @@ class EggWarsLevel {
         if(Server::getInstance()->isLevelGenerated($data["folderName"])) {
             Server::getInstance()->loadLevel($data["folderName"]);
             $this->level = Server::getInstance()->getLevelByName($data["folderName"]);
+            foreach ($this->level->getEntities() as $entity) {
+                if($entity instanceof Item) {
+                    $entity->close();
+                }
+            }
         }
         else {
             EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["folderName"]}!");

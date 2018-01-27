@@ -48,11 +48,16 @@ class ShopManager {
         $this->arena = $arena;
     }
 
+    public function debug($msg) {
+        $this->arena->getPlugin()->getLogger()->critical("DEBUG: {$msg}");
+    }
+
     /**
      * @param Player $player
      * @param Team $team
      */
     public function openShop(Player $player, Team $team) {
+        $this->debug(" #19");
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
             new StringTag('CustomName', "§3§lEggWars §7>>> §6Shop"),
@@ -65,7 +70,8 @@ class ShopManager {
         $block->setComponents($x, $y, $z);
         $player->getLevel()->sendBlocks([$player], [$block]);
         $player->addWindow($inventory);
-        $this->shopping[$player->getName()] = [$team, 0];
+        $this->updateChestItems($inventory, $this->getArena()->getTeamByPlayer($player), -1);
+        $this->shopping[$player->getName()] = [$team, -1];
     }
 
     /**
@@ -128,16 +134,27 @@ class ShopManager {
     public function updateChestItems(CustomChestInventory $inventory, Team $team, int $id) {
         $shopItems = $this->shopData;
         if($id == -1) {
-            foreach ($shopItems as $slot => ["name" => $data]) {
+            /*foreach ($shopItems as $slot => ["name" => $data]) {
                 if($slot <= 8) {
                     $inventory->setItem($slot, Item::get($data[0], $data[1], $data[2])->setCustomName($data[3]));
+                }
+            }*/
+            for($x = 0; $x <= 8; $x++) {
+                if(isset($shopItems[$x])) {
+                    $itemArray = $shopItems[$x]["name"];
+                    $inventory->setItem($x, Item::get($itemArray[0], $itemArray[1], $itemArray[2])->setCustomName($itemArray[3]));
                 }
             }
         }
         else {
+            for($x = 8; $x <= 26; $x++) {
+                $inventory->setItem($x, Item::get(0));
+            }
             if(isset($shopItems[$id])) {
                 foreach ($shopItems[$id] as $invSlot => $itemArgs) {
-                    $inventory->setItem(8+$invSlot, $this->getItemFromArray($itemArgs, $team));
+                    if(is_int($invSlot)) {
+                        $inventory->setItem($invSlot+9, $this->getItemFromArray($itemArgs, $team));
+                    }
                 }
             }
         }
@@ -168,8 +185,22 @@ class ShopManager {
                 if($this->getEnchantmentFromArray($enchantment) instanceof Enchantment) $item->addEnchantment($enchantment);
             }
         }
+        $priceItem = null;
+
+        if($array[5][0] == 0) {
+            $priceItem = Item::get(Item::IRON_INGOT)->setCustomName("§7Iron");
+        }
+        elseif($array[5][0] == 1) {
+            $priceItem = Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold");
+        }
+        else {
+            $priceItem = Item::get(Item::DIAMOND)->setCustomName("§bDiamond");
+        }
+
+        $priceItem->setCount(intval($array[5][1]));
+
         if(isset($array[3]) && is_string($array[3])) {
-            $item->setCustomName($array[3]);
+            $item->setCustomName($array[3]."\n"."§9{$priceItem->getName()} §3x{$priceItem->getCount()}");
         }
         // leather armours
         if(in_array($item->getId(), [298, 299, 300, 301]) && $item instanceof Armor) {
@@ -271,11 +302,25 @@ class ShopManager {
         2 => [
             "name" => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxes"],
             0 => [Item::WOODEN_PICKAXE, 0, 1, "§7Pickaxe lvl1", "none", [0, 12]],
-            1 => [Item::STONE_PICKAXE, 0, 1, "§7Pickaxe lvl2", "none", [0, 14]]
+            1 => [Item::STONE_PICKAXE, 0, 1, "§7Pickaxe lvl2", "none", [0, 14]],
+            2 => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxe lvl3", "none", [1, 20]]
         ],
         3 => [
             "name" => [Item::STEAK, 0, 1,"§7Food"],
-            0 => [Item::APPLE, 0, 5, "Apple", "none", [0, 1]]
+            0 => [Item::APPLE, 0, 5, "Apple", "none", [0, 1]],
+            1 => [Item::STEAK, 0, 4, "Steak", "none", [0, 10]],
+            2 => [Item::CAKE, 0, 1, "Cake", "none", [1, 5]]
+        ],
+        4 => [
+            "name" => [Item::DIAMOND_CHESTPLATE, 0, 1, "§9Armours"],
+            0 => [Item::LEATHER_CAP, 0, 1, "Leather Cap", "none", [0, 5]],
+            1 => [Item::LEATHER_TUNIC, 0, 1, "Leather Tunic", "none", [0, 5]],
+            2 => [Item::LEATHER_LEGGINGS, 0, 1, "Leather Leggings", "none", [0, 5]],
+            3 => [Item::LEATHER_BOOTS, 0, 1, "Leather Boots", "none", [0, 5]],
+        ],
+        5 => [
+            "name" => [Item::SPONGE, 0, 1, "§8§k|||§r §6Special§8 §k|||§r"],
+            0 => [Item::ENDER_PEARL, 0, 1, "§3EnderPearl", "none", [2, 15]]
         ]
     ];
 }

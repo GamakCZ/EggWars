@@ -17,7 +17,6 @@ use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsVector;
 use eggwars\utils\Time;
-use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
@@ -58,23 +57,32 @@ class TeamManager {
     }
 
     /**
-     * @param string $team
+     * @param string $teamName
      * @return bool
      */
-    public function isEnded(string $team): bool {
-        if($this->teams[$team]->getTeamsPlayers() <= 0) {
-            return true;
+    public function isEnded(string $teamName): bool {
+
+        $team = null;
+        foreach ($this->teams as $teams) {
+            if($teams->getTeamName() == $teamName){
+                $team = $teams;
+            }
+
         }
-        return false;
+        if(count($team->getTeamsPlayers()) > 0) {
+            return false;
+        }
+        return true;
     }
 
     public function checkEnd(): bool {
         $alive = 0;
-        foreach ($this->teams as $name => $team) {
-            if(!$this->isEnded($name)) {
+        foreach ($this->teams as $team) {
+            if(!$this->isEnded($team->getTeamName())) {
                 $alive++;
             }
         }
+        $this->getArena()->debug(" #50 {$alive}");
         if($alive <= 1) {
             foreach ($this->teams as $team) {
                 $this->lastTeam = $team;

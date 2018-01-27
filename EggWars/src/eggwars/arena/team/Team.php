@@ -75,6 +75,10 @@ class Team {
         }
     }
 
+    public function removePlayer(Player $player) {
+        unset($this->players[$player->getName()]);
+    }
+
     /**
      * @return bool $return
      */
@@ -135,7 +139,11 @@ class Team {
      * @return Player[]
      */
     public function getTeamsPlayers() {
-        return $this->players;
+        $players = [];
+        foreach ($this->players as $name => $player) {
+            array_push($players, $player);
+        }
+        return $players;
     }
 
     /**
