@@ -17,6 +17,7 @@ use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsPosition;
 use eggwars\scheduler\EggWarsTask;
+use pocketmine\level\Position;
 use pocketmine\tile\Sign;
 
 /**
@@ -48,7 +49,10 @@ class RefreshSignScheduler extends EggWarsTask {
      * @param int $currentTick
      */
     public function onRun(int $currentTick) {
-        $signPos = EggWarsPosition::fromArray($this->arena->arenaData["sign"], $this->arena->arenaData["sign"][3])->asPosition();
+        $signPos = EggWarsPosition::fromArray($this->arena->arenaData["sign"], $this->arena->arenaData["sign"][3]);
+        if(!$signPos instanceof Position) {
+            return;
+        }
         /** @var Sign $sign */
         if(($sign = $signPos->getLevel()->getTile($signPos->asVector3())) instanceof Sign) {
             $line1 = "";

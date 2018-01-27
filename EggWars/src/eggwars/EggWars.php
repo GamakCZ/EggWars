@@ -102,7 +102,7 @@ class EggWars extends PluginBase {
      * @return string $prefix
      */
     public static function getPrefix(): string {
-        return "§3[EggWars] ";
+        return "§4§l[ §r§6EggWars §4§l] §r§7";
     }
 
     /**

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace eggwars\arena\team;
 
 use eggwars\arena\Arena;
+use eggwars\EggWars;
 use eggwars\position\EggWarsVector;
 use eggwars\utils\Time;
 use pocketmine\level\Position;
@@ -105,13 +106,12 @@ class TeamManager {
      * @return bool
      */
     public function onEggBreak(Player $player, Vector3 $eggVector): bool {
-        $pos = Position::fromObject($eggVector, $this->getArena()->getLevel());
         $team = $this->getArena()->getTeamEggByVector($eggVector);
         if(!$team instanceof Team) {
             return false;
         }
-        if(!$team->inTeam($player)) {
-            $player->sendMessage("§cYou can not broke you own egg!");
+        if($team->inTeam($player)) {
+            $player->sendMessage(EggWars::getPrefix()."§cYou can not broke you own egg!");
             return true;
         }
         $team->setAlive(false);

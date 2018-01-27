@@ -121,11 +121,11 @@ class ArenaSetupManager implements Listener {
                 }
                 switch ($args[2]) {
                     case "color":
-                        if (empty($args[3]) || strlen($args[3]) !== 2) {
+                        if (empty($args[3]) || empty($args[4]) || strlen($args[4]) !== 2) {
                             $player->sendMessage("§cUsage: §7setteam color <teamColor: &(color: a-f|0-9)>");
                             break;
                         }
-                        $arena->arenaData["teams"][$args[2]]["color"] = $c = str_replace("&", "§", $args[3]);
+                        $arena->arenaData["teams"][$args[3]]["color"] = $c = str_replace("&", "§", $args[4]);
                         $player->sendMessage("§aTeam color was changed to $c" . Color::getColorNameFormMC($c) . "§a.");
                         break;
                     default:
@@ -146,7 +146,7 @@ class ArenaSetupManager implements Listener {
                 $player->sendMessage("§aTeam $args[1] removed!");
                 break;
             case "lobby":
-                $arena->arenaData["lobby"] = [$player->getX(), $player->getY(), $player->getZ(), $player->getLevel()->getName()];
+                $arena->arenaData["lobby"] = [$player->getX(), $player->getY(), $player->getZ(), $player->getLevel()->getFolderName()];
                 $player->sendMessage("§aArena {$arena->getName()} lobby updated!");
                 break;
             case "done":
@@ -212,7 +212,7 @@ class ArenaSetupManager implements Listener {
             $arena = self::$players[$event->getPlayer()->getName()];
             switch ($this->b[$event->getPlayer()->getName()][0]) {
                 case 0:
-                    $arena->arenaData[$this->b[$event->getPlayer()->getName()][1]] = [$event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ(), $event->getBlock()->getLevel()->getName()];
+                    $arena->arenaData[$this->b[$event->getPlayer()->getName()][1]] = [$event->getBlock()->getX(), $event->getBlock()->getY(), $event->getBlock()->getZ(), $event->getBlock()->getLevel()->getFolderName()];
                     $event->getPlayer()->sendMessage("§aJoin sign updated!");
                     $event->setCancelled(true);
                     unset($this->b[$event->getPlayer()->getName()]);

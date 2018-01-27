@@ -31,6 +31,7 @@ use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\item\Item;
 use pocketmine\Player;
+use pocketmine\tile\Chest;
 use pocketmine\tile\Sign;
 
 /**
@@ -119,6 +120,15 @@ class ArenaListener implements Listener {
      */
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
+        if($entity instanceof Villager) {
+            if($event instanceof EntityDamageByEntityEvent) {
+                /** @var Player $damager */
+                $damager = $event->getDamager();
+                $this->getArena()->shopManager->openShop($damager, $this->getArena()->getTeamByPlayer($damager));
+                $event->setCancelled(true);
+            }
+            return;
+        }
         if(!$entity instanceof Player) {
             return;
         }
@@ -165,6 +175,8 @@ class ArenaListener implements Listener {
     public function onTransaction(InventoryTransactionEvent $event) {
 
         $transaction = $event->getTransaction();
+
+        /** @var CustomChestInventory $chestInventory */
         $chestInventory = null;
 
         foreach($transaction->getInventories() as $inventory) {
@@ -208,7 +220,7 @@ class ArenaListener implements Listener {
 
         // BROWSING
         if($slot <= 8) {
-            $this->getArena()->shopManager->onBrowseTransaction($player, $slot);
+            $this->getArena()->shopManager->onBrowseTransaction($player, $chestInventory, $slot);
         }
 
         // BUYING
@@ -241,7 +253,7 @@ class ArenaListener implements Listener {
         $player = $event->getPlayer();
         if($this->getArena()->inGame($player) && $event->getBlock()->getId() == Item::DRAGON_EGG) {
             $bool = $this->getArena()->teamManager->onEggBreak($player, $event->getBlock()->asVector3());
-            if($bool == false) {
+            if(!$bool) {
                 $event->getBlock()->getLevel()->setBlock($event->getBlock()->asVector3(), Block::get(0));
             }
             $event->setCancelled($bool);
@@ -255,7 +267,7 @@ class ArenaListener implements Listener {
         $player = $event->getPlayer();
         if($this->getArena()->inGame($player) && $event->getBlock()->getId() == Item::DRAGON_EGG) {
             $event->setCancelled($bool = $this->getArena()->teamManager->onEggBreak($player, $event->getBlock()->asVector3()));
-            if($bool = false) {
+            if(!$bool) {
                 $event->getBlock()->getLevel()->setBlock($event->getBlock()->asVector3(), Block::get(0));
             }
         }

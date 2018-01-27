@@ -30,6 +30,7 @@ interface ColorIds {
     const CYAN = ["§3", "Cyan", "35:9", [80, 190, 170]];
     const PURPLE = ["§5", "Purple", "35:10", [220, 0, 255]];
     const BLUE = ["§1", "Blue", "35:11", [0, 0, 225]];
+    const OUTHER_BLUE = ["§9", "Blue", "35::11", [0, 0, 225]];
     const BROWN = ["§6", "Brown", "35:12", [120, 110, 0]];
     const GREEN = ["§2", "Green", "35:13", [0, 225, 0]];
     const RED = ["§4", "Red", "35:14", [225, 0, 0]];
@@ -48,8 +49,10 @@ interface ColorIds {
         self::CYAN,
         self::PURPLE,
         self::BLUE,
+        self::OUTHER_BLUE,
         self::BROWN,
         self::GREEN,
         self::RED,
+        self::LIGHT_RED,
         self::BLACK];
 }

@@ -21,8 +21,12 @@ use pocketmine\item\Armor;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\tile\Chest;
+use pocketmine\tile\Tile;
 
 /**
  * Class ShopManager
@@ -49,9 +53,16 @@ class ShopManager {
      * @param Team $team
      */
     public function openShop(Player $player, Team $team) {
-        $inventory = new CustomChestInventory($tile = new Chest($player->getLevel(), Chest::createNBT($tileVec = new Vector3(intval($player->getX()), intval($player->getY())+4, intval($player->getZ())))));
+        $nbt = new CompoundTag('', [
+            new StringTag('id', Tile::CHEST),
+            new StringTag('CustomName', "§3§lEggWars §7>>> §6Shop"),
+            new IntTag('x', $x = intval($player->getX())),
+            new IntTag('y', $y = intval($player->getY()) + 4),
+            new IntTag('z', $z = intval($player->getZ()))
+        ]);
+        $inventory = new CustomChestInventory($tile = new Chest($player->getLevel(), $nbt));
         $block = Block::get(Block::CHEST);
-        $block->setComponents($tileVec->getX(), $tileVec->getY(), $tileVec->getZ());
+        $block->setComponents($x, $y, $z);
         $player->getLevel()->sendBlocks([$player], [$block]);
         $player->addWindow($inventory);
         $this->shopping[$player->getName()] = [$team, 0];
@@ -223,6 +234,22 @@ class ShopManager {
      */
     public function getArena(): Arena {
         return $this->arena;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBreakableBlocks(): array {
+        $blocks = [];
+        foreach ($this->shopData as $slot => [$shopSlot => $itemArray]) {
+            if(is_int($shopSlot)) {
+                $id = $itemArray[0];
+                if(Block::get($id) instanceof Block && $id !== 0) {
+                    array_push($blocks, $id);
+                }
+            }
+        }
+        return $blocks;
     }
 
     /**
