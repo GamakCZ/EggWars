@@ -25,12 +25,16 @@ use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
+use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\item\Item;
+use pocketmine\network\mcpe\protocol\ContainerClosePacket;
+use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\Player;
 use pocketmine\tile\Chest;
 use pocketmine\tile\Sign;
@@ -164,6 +168,22 @@ class ArenaListener implements Listener {
             return;
         }
         $this->deathManager->onBasicDeath($entity);
+    }
+
+    public function onWindowClose(DataPacketReceiveEvent $event) {
+        $pk = $event->getPacket();
+        if($pk instanceof ContainerClosePacket) {
+            $player = $event->getPlayer();
+            if($this->getArena()->inGame($player)) {
+                $packet = new UpdateBlockPacket();
+                $packet->x = intval($player->getX());
+                $packet->y = intval($player->getY())+4;
+                $packet->z = intval($player->getZ());
+                $packet->blockData = UpdateBlockPacket::FLAG_ALL;
+                $player->dataPacket($packet);
+
+            }
+        }
     }
 
     /**

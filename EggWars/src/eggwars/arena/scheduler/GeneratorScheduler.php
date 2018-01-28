@@ -14,15 +14,24 @@ declare(strict_types = 1);
 namespace eggwars\arena\scheduler;
 
 use eggwars\arena\Arena;
+use eggwars\arena\scheduler\generator\GenChestInventory;
 use eggwars\EggWars;
 use eggwars\LevelManager;
 use eggwars\scheduler\EggWarsTask;
 use pocketmine\block\Block;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\inventory\ChestInventory;
 use pocketmine\item\Item;
 use pocketmine\level\Level;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\Player;
+use pocketmine\tile\Chest;
 use pocketmine\tile\Sign;
+use pocketmine\tile\Tile;
 use function Sodium\library_version_major;
 
 /**
@@ -260,15 +269,239 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         }
     }
 
+    private function debug($msg) {
+        $this->getPlugin()->getLogger()->critical("DBG & {$msg}");
+}
+
     public function onTouch(PlayerInteractEvent $event) {
+
         $player = $event->getPlayer();
+
+        if(!$this->getArena()->inGame($player)) {
+            return;
+        }
+
         $tile = $event->getBlock()->getLevel()->getTile($event->getBlock()->asVector3());
+
         if(!$tile instanceof Sign) {
             return;
         }
-        if($tile->getText()[0] == self::LINE_1) {
+        if($tile->getText()[0] !== self::LINE_1) {
+            $this->debug("1");
+            return;
+        }
+
+        $text = $tile->getText();
+        $type = null;
+
+        switch ($text[1]) {
+            case self::LINE_2_IRON:
+                $type = self::IRON;
+                break;
+            case self::LINE_2_GOLD:
+                $type = self::GOLD;
+                break;
+            case self::LINE_2_DIAMOND:
+                $type = self::DIAMOND;
+                break;
+        }
+
+        if($type === null) {
+            $this->debug("2");
+            return;
+
+        }
+
+        $level = 0;
+        level:
+        if($level >= 4) {
+            $this->debug("3");
+            return;
+
+        }
+        if($tile->getText()[2] != str_replace("%level", $level, self::LINE_3)) {
+            $level++;
+            goto level;
+        }
+
+        $this->createUpdateWindow($player, $type, $level);
+    }
+
+    public function onTransaction(InventoryTransactionEvent $event) {
+
+        /** @var GenChestInventory $inv */
+        $inv = null;
+
+        foreach ($event->getTransaction()->getInventories() as $inventory) {
+            if($inventory instanceof GenChestInventory) {
+                $inv = $inventory;
+            }
+        }
+
+        if($inv === null) {
+            return;
+        }
+
+        /** @var Player $player */
+        $player = null;
+
+        foreach ($inv->getViewers() as $viewer) {
+            $player = $viewer;
+        }
+
+        if($player === null) {
+            return;
+        }
+
+        /** @var Item $targetItem */
+        $targetItem = null;
+
+        foreach ($event->getTransaction()->getActions() as $action) {
+            $targetItem = $action->getTargetItem();
+        }
+
+        if($targetItem === null) {
+            return;
+        }
+
+        if($targetItem->getId() == 0) {
+            $event->setCancelled(true);
+            return;
+        }
+
+        if($inv->genType === null || $inv->genLevel === null || $inv->gensigntile === null) {
+            return;
+        }
+
+        $price = $this->getPriceItem($inv->genType, $inv->genLevel);
+
+        if($targetItem->getId()==Item::EXPERIENCE_BOTTLE) {
+            if($player->getInventory()->contains($price)) {
+                /** @var Sign $tile */
+                $tile = $inv->gensigntile;
+                $tile->setText(self::LINE_1, str_replace(strval($inv->genLevel), strval($inv->genLevel+1), $tile->getText()[1]), $tile->getText()[2], $tile->getText()[3]);
+                $player->sendMessage(EggWars::getPrefix()."§aGenerator updated!");
+            }
+            else {
+                $player->sendMessage(EggWars::getPrefix(). "§cYou does not have too enough materials!");
+            }
+        }
+        $event->setCancelled(true);
+
+    }
+
+    public function createUpdateWindow(Player $player, int $ingot, $genLevel) {
+        $this->debug("4");
+        $nbt = new CompoundTag('', [
+            new StringTag('id', Tile::CHEST),
+            new StringTag('CustomName', "§3§lEggWars §7>>> §6Generator"),
+            new IntTag('x', $x = intval($player->getX())),
+            new IntTag('y', $y = intval($player->getY()) + 4),
+            new IntTag('z', $z = intval($player->getZ()))
+        ]);
+        $inv = new GenChestInventory(new Chest($player->getLevel(), $nbt));
+        $block = Block::get(0);
+        $block->setComponents($x, $y, $z);
+        $player->getLevel()->sendBlocks([$player], [$block]);
+
+        $time = strval($this->ticks[$ingot][$genLevel]);
+        $player->addWindow($inv);
+        switch ($ingot) {
+            case self::IRON:
+                $inv->setItem(11, Item::get(Item::IRON_INGOT)->setCustomName("§7Iron generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+                break;
+            case self::GOLD:
+                $inv->setItem(11, Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+                break;
+            case self::DIAMOND:
+                $inv->setItem(11, Item::get(Item::DIAMOND)->setCustomName("§bDiamond generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+        }
+        $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName($this->getUpdatedDescription($ingot, $genLevel)));
+        ;
+    }
+
+    public function getUpdatedDescription($ingot, $genLevel): string {
+        $text = "";
+        $level = $genLevel++;
+        $time = 0;
+        if(empty($this->tick[$ingot][$level])) {
+            $level = "max";
+        }
+        else {
+            $time = $this->ticks[$ingot][$level];
+        }
+        $pItem = $this->getPriceItem($ingot, $genLevel);
+        $update = $pItem->getName()." ".$pItem->getCount()."x";
+        switch ($ingot) {
+            case self::IRON:
+                $text = "§7Iron Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
+                break;
+            case self::GOLD:
+                $text = "§6Gold Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
+                break;
+            case self::DIAMOND:
+                $text = "§6Gold Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
+                break;
+        }
+        return $text;
+    }
+
+    public function getPriceItem($ingot, $genLevel): Item {
+        switch ($ingot) {
+            case self::IRON:
+                switch ($genLevel) {
+                    case 1:
+                        return Item::get(Item::IRON_INGOT, 0, 20);
+                    case 2:
+                        return Item::get(Item::IRON_INGOT, 0, 40);
+                    case 3:
+                        return Item::get(Item::GOLD_INGOT, 0, 30);
+                }
+                break;
+            case self::GOLD:
+                switch ($genLevel) {
+                    case 1:
+                        return Item::get(Item::GOLD_INGOT, 0, 25);
+                    case 2:
+                        return Item::get(Item::GOLD_INGOT, 0, 40);
+                    case 3:
+                        return Item::get(Item::DIAMOND, 0, 20);
+                }
+                break;
+            case self::DIAMOND:
+                switch ($genLevel) {
+                    case 0:
+                        return Item::get(Item::DIAMOND, 0, 20);
+                    case 1:
+                        return Item::get(Item::DIAMOND, 0, 25);
+                    case 2:
+                        return Item::get(Item::DIAMOND, 0, 30);
+                }
+                break;
+
         }
     }
+
+
+    private $ticks = [
+        self::IRON => [
+            1 => 3.0,
+            2 => 2.0,
+            3 => 1.0,
+            4 => 0.5
+        ],
+        self::GOLD => [
+            1 => 5.0,
+            2 => 3.0,
+            3 => 2.5,
+            4 => 2.0
+        ],
+        self::DIAMOND => [
+            1 => 20,
+            2 => 15,
+            3 => 10
+        ]
+    ];
 
     /**
      * @return Arena $arena

@@ -70,7 +70,10 @@ class Color implements ColorIds {
      * @return \pocketmine\utils\Color
      */
     public static function getColorFromMC(string $mc): \pocketmine\utils\Color {
-        $html = self::getColorFromMC($mc);
+        $html = [];
+        foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $idFormat, $htmlArray]) {
+            if($mc = $mcFormat) $html = $htmlArray;
+        }
         return new \pocketmine\utils\Color($html[0], $html[1], $html[2]);
     }
 

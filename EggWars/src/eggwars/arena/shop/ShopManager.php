@@ -38,7 +38,7 @@ class ShopManager {
     private $arena;
 
     /** @var array $shopping */
-    private $shopping = [];
+    public $shopping = [];
 
     /**
      * ShopManager constructor.
@@ -312,6 +312,10 @@ class ShopManager {
             1 => [Item::LEATHER_TUNIC, 0, 1, "Leather Tunic", "none", [0, 5]],
             2 => [Item::LEATHER_LEGGINGS, 0, 1, "Leather Leggings", "none", [0, 5]],
             3 => [Item::LEATHER_BOOTS, 0, 1, "Leather Boots", "none", [0, 5]],
+            4 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
+            5 => [Item::CHAIN_CHESTPLATE, 0, 1, "Chain Chestplate", "none", [1, 20]],
+            6 => [Item::CHAIN_LEGGINGS, 0, 1, "Chain Leggings", "none", [1, 20]],
+            7 => [Item::CHAIN_BOOTS, 0, 1, "Chain Boots", "none", [1, 20]],
         ],
         5 => [
             "name" => [Item::SPONGE, 0, 1, "§8§k|||§r §6Special§8 §k|||§r"],
