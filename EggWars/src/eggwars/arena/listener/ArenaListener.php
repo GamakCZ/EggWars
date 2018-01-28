@@ -55,10 +55,6 @@ class ArenaListener implements Listener {
         $this->deathManager = new DeathManager($this);
     }
 
-    public function debug($msg) {
-        $this->arena->getPlugin()->getLogger()->critical("DEBUG: {$msg}");
-    }
-
     /**
      * @param PlayerChatEvent $event
      */
@@ -141,11 +137,9 @@ class ArenaListener implements Listener {
         }
 
         if(!$entity instanceof Player) {
-            ##$this->debug(" #9");
             return;
         }
         if(!$this->getArena()->inGame($entity)) {
-            ##$this->debug(" #10");
             return;
         }
         if(!($entity->getHealth()-$event->getDamage() <= 0)) {
@@ -158,34 +152,18 @@ class ArenaListener implements Listener {
         }
         if($event->getCause() == EntityDamageByEntityEvent::CAUSE_FIRE || $event->getCause() == EntityDamageByEntityEvent::CAUSE_FIRE_TICK) {
             $this->deathManager->onBurnDeath($entity);
-            $this->debug(" #13");
             return;
         }
         if($event instanceof EntityDamageByEntityEvent) {
-            $this->debug(" #14");
             $damager = $event->getDamager();
             if(!$damager instanceof Player) {
-                $this->debug(" #15");
                 $this->deathManager->onBasicDeath($entity);
                 return;
             }
             $this->deathManager->onDeath($entity, $damager);
-            $this->debug(" #16");
             return;
         }
         $this->deathManager->onBasicDeath($entity);
-        $this->debug(" #17");
-    }
-
-    /**
-     * @param PlayerInteractEvent $event
-     */
-    public function onVillagerClick(PlayerInteractEvent $event) {
-        $villager = $event->getPlayer()->getTargetEntity();
-        if($villager instanceof Villager) {
-            $this->getArena()->shopManager->openShop($event->getPlayer(), $this->getArena()->getTeamByPlayer($event->getPlayer()));
-            $this->debug(" #18");
-        }
     }
 
     /**
@@ -200,13 +178,11 @@ class ArenaListener implements Listener {
 
         foreach($transaction->getInventories() as $inventory) {
             if($inventory instanceof CustomChestInventory) {
-                $this->getArena()->debug("#60");
                 $chestInventory = $inventory;
             }
         }
 
         if($chestInventory === null) {
-            $this->getArena()->debug("#61");
             return;
         }
 
@@ -215,7 +191,6 @@ class ArenaListener implements Listener {
 
         foreach ($inventory->getViewers() as $viewer) {
             if($viewer instanceof Player) {
-                $this->getArena()->debug("#62");
                 $player = $viewer;
             }
         }
@@ -225,12 +200,10 @@ class ArenaListener implements Listener {
 
         foreach ($transaction->getActions() as $inventoryAction) {
             $targetItem = $inventoryAction->getTargetItem();
-            $this->getArena()->debug("#63 {$targetItem->getName()}");
         }
 
         if($targetItem === null || $targetItem->getId() == 0) {
             $event->setCancelled(true);
-            $this->getArena()->debug("#64");
             return;
         }
 
@@ -243,18 +216,15 @@ class ArenaListener implements Listener {
             }
         }
 
-        $this->getArena()->debug("#65 {$slot}");
 
         // BROWSING
         if($slot <= 8) {
             $this->getArena()->shopManager->onBrowseTransaction($player, $chestInventory, $slot);
-            $this->getArena()->debug("#66");
         }
 
         // BUYING
         else {
             $this->getArena()->shopManager->onBuyTransaction($player, $targetItem, $slot);
-            $this->getArena()->debug("#67");
         }
 
         $event->setCancelled(true);

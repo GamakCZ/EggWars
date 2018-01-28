@@ -439,15 +439,12 @@ class Arena {
         switch ($this->phase) {
             case 0:
                 $this->lobby();
-                #$this->debug(" #25");
                 break;
             case 1:
                 $this->game();
-                #$this->debug(" #26");
                 break;
             case 2:
                 $this->restart();
-                #$this->debug(" #27");
                 break;
         }
     }
@@ -527,7 +524,6 @@ class Arena {
                 $team = $this->getAllTeams()[array_rand($this->getAllTeams(), 1)];
                 if (!$team->isFull()) {
                     $team->addPlayer($player);
-                    $this->debug(" #24 {$player->getName()} & {$team->getDisplayName()}");
                     $player->sendMessage(EggWars::getPrefix() . "§7You are joined " . $team->getMinecraftColor() . $team->getTeamName() . "§7 team!");
                 } else {
                     goto choose;
@@ -566,7 +562,6 @@ class Arena {
     private function game() {
         // END
         if($this->teamManager->checkEnd()) {
-            $this->debug(" #23");
             $lastTeam = $this->teamManager->getLastTeam();
             foreach ($lastTeam->getTeamsPlayers() as $player) {
                 $player->addTitle("§aCONGRATULATION!", "§fYou are won the game");
@@ -590,7 +585,6 @@ class Arena {
     private function restart() {
         if(empty($this->progress["restartTime"])) {
             $this->progress["restartTime"] = $this->arenaData["restartTime"];
-            $this->debug(" #20");
         }
         $this->progress["restartTime"]--;
         /** @var Player[] $players */
@@ -602,11 +596,6 @@ class Arena {
             $this->getLevel()->unload();
             $this->loadGame();
         }
-        $this->debug(" #21");
-    }
-
-    public function debug($msg) {
-        $this->getPlugin()->getLogger()->critical("DEBUG: {$msg}");
     }
 
     public function getPlugin():EggWars {

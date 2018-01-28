@@ -48,16 +48,11 @@ class ShopManager {
         $this->arena = $arena;
     }
 
-    public function debug($msg) {
-        $this->arena->getPlugin()->getLogger()->critical("DEBUG: {$msg}");
-    }
-
     /**
      * @param Player $player
      * @param Team $team
      */
     public function openShop(Player $player, Team $team) {
-        $this->debug(" #19");
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
             new StringTag('CustomName', "§3§lEggWars §7>>> §6Shop"),
@@ -104,22 +99,22 @@ class ShopManager {
      */
     public function getPrice(Item $item): Item {
         $price = null;
-        while ($price == null) {
-            foreach ($this->shopData as $shopIds => $shopItems) {
-                foreach ($shopItems as $id => $itemArray) {
-                    if(isset($itemArray[5])) {
-                        switch ($itemArray[5][0]) {
-                            case 0:
-                                $price = Item::get(Item::IRON_INGOT, 0, $itemArray[5][1]);
-                                break;
-                            case 1:
-                                $price = Item::get(Item::GOLD_INGOT, 0, $itemArray[5][1]);
-                                break;
-                            case 2:
-                                $price = Item::get(Item::DIAMOND, 0, $itemArray[5][1]);
-                                break;
-                        }
+        $shopData = null;
+        foreach ($this->shopData as $arrays) {
+            foreach ($arrays as $shopItems) {
+                if($shopItems[0] == $item->getId() && $shopItems[1] == $item->getDamage() && $shopItems[2] == $item->getCount()) {
+                    $priceItem = $shopItems[5];
+                    $id = null;
+                    if($priceItem[0] == 0) {
+                        $id = Item::IRON_INGOT;
                     }
+                    elseif($priceItem[0] == 1) {
+                        $id = Item::GOLD_INGOT;
+                    }
+                    else {
+                        $id = Item::DIAMOND;
+                    }
+                    $price = Item::get($id, 0, $priceItem[1]);
                 }
             }
         }

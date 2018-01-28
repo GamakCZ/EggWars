@@ -82,7 +82,6 @@ class TeamManager {
                 $alive++;
             }
         }
-        $this->getArena()->debug(" #50 {$alive}");
         if($alive <= 1) {
             foreach ($this->teams as $team) {
                 $this->lastTeam = $team;

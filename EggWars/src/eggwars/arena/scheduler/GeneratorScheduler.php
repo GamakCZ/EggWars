@@ -108,10 +108,6 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         }
     }
 
-    public function debug($msg) {
-        $this->getArena()->getPlugin()->getLogger()->critical(strval($msg));
-    }
-
     /**
      * @param Level $level
      * @param int $material
