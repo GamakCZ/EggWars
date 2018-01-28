@@ -280,7 +280,7 @@ class ArenaListener implements Listener {
     /**
      * @param BlockBreakEvent $event
      */
-    public function onEggBreak(BlockBreakEvent $event) {
+    public function oBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
         if($this->getArena()->inGame($player) && $event->getBlock()->getId() == Item::DRAGON_EGG) {
             $bool = $this->getArena()->teamManager->onEggBreak($player, $event->getBlock()->asVector3());

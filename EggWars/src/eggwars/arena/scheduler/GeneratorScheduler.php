@@ -370,6 +370,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         }
 
         if($inv->genType === null || $inv->genLevel === null || $inv->gensigntile === null) {
+            $event->setCancelled(true);
             return;
         }
 
@@ -400,7 +401,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             new IntTag('z', $z = intval($player->getZ()))
         ]);
         $inv = new GenChestInventory(new Chest($player->getLevel(), $nbt));
-        $block = Block::get(0);
+        $block = Block::get(Block::CHEST);
         $block->setComponents($x, $y, $z);
         $player->getLevel()->sendBlocks([$player], [$block]);
 
@@ -408,23 +409,22 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         $player->addWindow($inv);
         switch ($ingot) {
             case self::IRON:
-                $inv->setItem(11, Item::get(Item::IRON_INGOT)->setCustomName("§7Iron generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+                $inv->setItem(11, Item::get(Item::IRON_INGOT)->setCustomName("§7Iron generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
                 break;
             case self::GOLD:
-                $inv->setItem(11, Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+                $inv->setItem(11, Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
                 break;
             case self::DIAMOND:
-                $inv->setItem(11, Item::get(Item::DIAMOND)->setCustomName("§bDiamond generator\n§blevel: {$genLevel}\n§btime:{$time} sec."));
+                $inv->setItem(11, Item::get(Item::DIAMOND)->setCustomName("§bDiamond generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
         }
         $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName($this->getUpdatedDescription($ingot, $genLevel)));
-        ;
     }
 
     public function getUpdatedDescription($ingot, $genLevel): string {
         $text = "";
         $level = $genLevel++;
         $time = 0;
-        if(empty($this->tick[$ingot][$level])) {
+        if(empty($this->ticks[$ingot][$level])) {
             $level = "max";
         }
         else {
