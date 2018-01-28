@@ -75,6 +75,7 @@ class LevelManager extends ConfigManager {
                 $config = new Config($this->getDataFolder()."levels/".$name.".yml", Config::YAML);
                 $config->setAll($level->data);
                 $config->save();
+                $level->getLevel()->unload();
             }
             else {
                 $config = new Config($this->getDataFolder()."levels/".$name.".yml", Config::YAML, $level->data);

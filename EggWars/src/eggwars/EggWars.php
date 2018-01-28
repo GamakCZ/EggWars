@@ -25,6 +25,12 @@ use pocketmine\plugin\PluginBase;
 /**
  * Class EggWars
  * @package eggwars
+ *
+ * @author VixikCZ
+ * @version 1.0.0 [DEV]
+ * @api 3.0.0-ALPHA7 - 3.0.0-ALPHA10
+ *
+ * @copyright (c) GamakCZ (2016 - 2018)
  */
 class EggWars extends PluginBase {
 

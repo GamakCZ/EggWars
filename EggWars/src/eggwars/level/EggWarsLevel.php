@@ -27,19 +27,13 @@ use pocketmine\utils\Config;
  */
 class EggWarsLevel {
 
-    /**
-     * @var Level $level
-     */
+    /** @var null|Level $level */
     public $level;
 
-    /**
-     * @var array $data
-     */
+    /** @var array $data */
     public $data = [];
 
-    /**
-     * @var int $teamsCount
-     */
+    /** @var int $teamsCount */
     public $teamsCount;
 
     /**
@@ -50,11 +44,12 @@ class EggWarsLevel {
         if(Server::getInstance()->isLevelGenerated($data["folderName"])) {
             Server::getInstance()->loadLevel($data["folderName"]);
             $this->level = Server::getInstance()->getLevelByName($data["folderName"]);
-            foreach ($this->level->getEntities() as $entity) {
+            foreach ($this->getLevel()->getEntities() as $entity) {
                 if($entity instanceof Item) {
                     $entity->close();
                 }
             }
+            $this->getLevel()->setAutoSave(false);
         }
         else {
             EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["folderName"]}!");

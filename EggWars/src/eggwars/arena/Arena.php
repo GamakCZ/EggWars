@@ -36,10 +36,6 @@ use pocketmine\scheduler\Task;
 use pocketmine\Server;
 use pocketmine\utils\Config;
 
-/**
- * Class Arena
- * @package eggwars\arena
- */
 class Arena {
 
     /** @var array $arenaData */
