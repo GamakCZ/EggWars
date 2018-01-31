@@ -38,16 +38,17 @@ class Color implements ColorIds {
 
     /**
      * @param string $id
-     * @return string
+     * @param int $color
+     * @return mixed
      */
-    public static function getMCFromId(string $id) {
-        $mc = null;
+    public static function getMCFromId(string $id, int $color = 0) {
+        $mc = [];
         foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $idFormat, $htmlArray]) {
             if($id == $idFormat) {
-                $mc = $mcFormat;
+                array_push($mc, $mcFormat);
             }
         }
-        return $mc;
+        return $mc[$color];
     }
 
     /**
@@ -72,7 +73,7 @@ class Color implements ColorIds {
     public static function getColorFromMC(string $mc): \pocketmine\utils\Color {
         $html = [];
         foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $idFormat, $htmlArray]) {
-            if($mc = $mcFormat) $html = $htmlArray;
+            if($mc == $mcFormat) $html = $htmlArray;
         }
         return new \pocketmine\utils\Color($html[0], $html[1], $html[2]);
     }

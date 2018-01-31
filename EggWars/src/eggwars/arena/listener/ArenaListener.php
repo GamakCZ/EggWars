@@ -113,6 +113,12 @@ class ArenaListener implements Listener {
                 return;
             }
             $team = $this->getArena()->getTeamByMinecraftColor($mc);
+            if(!$team instanceof Team) {
+                if(!is_string($mc = Color::getMCFromId("{$item->getId()}:{$item->getDamage()}", 1))) {
+                    return;
+                }
+                $team = $this->getArena()->getTeamByMinecraftColor($mc);
+            }
             $this->getArena()->addPlayerToTeam($player, $team->getTeamName());
             return;
         }
