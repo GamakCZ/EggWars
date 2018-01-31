@@ -270,9 +270,11 @@ class ArenaListener implements Listener {
         if(!$entity instanceof Player) {
             return;
         }
-        if($this->getArena()->inGame($entity)) {
-            if($event->getTarget()->getName() != $this->getArena()->getLevel()->getName()) {
-                $this->getArena()->disconnectPlayer($entity);
+        if($this->getArena()->getPhase() == 1) {
+            if($this->getArena()->inGame($entity)) {
+                if($event->getTarget()->getName() != $this->getArena()->getLevel()->getName()) {
+                    $this->getArena()->disconnectPlayer($entity);
+                }
             }
         }
     }
@@ -280,7 +282,7 @@ class ArenaListener implements Listener {
     /**
      * @param BlockBreakEvent $event
      */
-    public function oBreak(BlockBreakEvent $event) {
+    public function onBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
         if($this->getArena()->inGame($player) && $event->getBlock()->getId() == Item::DRAGON_EGG) {
             $bool = $this->getArena()->teamManager->onEggBreak($player, $event->getBlock()->asVector3());
