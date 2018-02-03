@@ -31,7 +31,7 @@ _EggWars minigame for PocketMine_
 - [ ] Shop:
     - [x] Simple shop without config - INDEV (needs test, fix)
 
-- [xx] Gameplay system:
+- [x] Gameplay system:
     - [x] Join signs
     - [x] Generators
     - [x] Joining to arena
