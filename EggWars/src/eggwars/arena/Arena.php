@@ -111,6 +111,22 @@ class Arena {
         Server::getInstance()->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
     }
 
+    public function reloadGame() {
+        $levels = $this->getPlugin()->getLevelManager()->getLevelsForArena($this);
+        if(!$levels) {
+            $this->arenaData["enabled"] = false;
+            $this->getPlugin()->getLogger()->critical("Cloud not load levels for arena {$this->getName()}");
+        }
+
+        $this->voteManager->createVoteTable($levels);
+        $this->teamManager->reloadTeams();
+
+        $this->progress = [];
+        $this->progress["lobbyPlayers"] = [];
+        $this->phase = 0;
+    }
+
+
     private function loadLevel() {
         if(!Server::getInstance()->isLevelGenerated($this->arenaData["lobby"][3])) {
             $this->getPlugin()->getLogger()->critical("Arena level not found!");
@@ -126,6 +142,8 @@ class Arena {
 
 
     /**
+     * @api
+     *
      * @return bool
      */
     public function isEnabled(): bool {
@@ -133,13 +151,31 @@ class Arena {
     }
 
     /**
-     * @return string
+     * @api
+     *
+     * @param bool|null $enabled
+     */
+    public function setEnabled(?bool $enabled) {
+        if(is_bool($enabled)) {
+            $this->arenaData["enabled"] = boolval($enabled);
+        }
+        else {
+            $this->arenaData["enabled"] = true;
+        }
+    }
+
+    /**
+     * @api
+     *
+     * @return string $arenaName
      */
     public function getName(): string {
         return $this->arenaData["name"];
     }
 
     /**
+     * @api
+     *
      * @return int $phase
      */
     public function getPhase():int {
@@ -147,6 +183,8 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param Player $player
      */
     public function addSpectator(Player $player) {
@@ -154,6 +192,8 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @return Player[] $spectators
      */
     public function getSpectators(): array {
@@ -161,6 +201,8 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @return Team[] $teams
      */
     public function getAllTeams() {
@@ -171,62 +213,79 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param string $name
-     * @return Team
+     * @return Team|null $team
      */
     public function getTeamByName(string $name):Team {
         return $this->teamManager->teams[$name];
     }
 
     /**
+     * @api
+     *
      * @param string $mc
-     * @return Team|null
+     * @return Team|null $team
      */
     public function getTeamByMinecraftColor(string $mc) {
-        $rteam = null;
+        /** @var Team|null $return */
+        $return = null;
         foreach ($this->teamManager->teams as $name => $team) {
             if($team->getMinecraftColor() == $mc) {
-                $rteam = $team;
+                $return = $team;
             }
         }
-        return $rteam;
+        return $return;
     }
 
     /**
+     * @api
+     *
      * @param Player $player
      * @param string $teamName
      */
     public function addPlayerToTeam(Player $player, string $teamName) {
-        //array_push($this->getTeamByName($teamName)->players, $player);
+
+        /** @var Team $team */
         $team = $this->getTeamByName($teamName);
+
+        /** @var Team $lastTeam */
         $lastTeam = $this->getTeamByPlayer($player);
+
         if($lastTeam instanceof Team) {
             unset($lastTeam->players[$player->getName()]);
         }
+
         if(!$team instanceof Team) {
             $player->sendMessage("§cTeam {$teamName} does not found!");
             return;
         }
+
         $player->sendMessage(EggWars::getPrefix()."§aYou are joined {$team->getDisplayName()}§a team!");
         $player->setNameTag($team->getMinecraftColor().$player->getName());
         $team->addPlayer($player);
     }
 
     /**
+     * @api
+     *
      * @param string $name
-     * @return bool
+     * @return bool $teamExists
      */
     public function teamExists(string $name): bool {
         return isset($this->teamManager->teams[$name]);
     }
 
     /**
+     * @api
+     *
      * @param Vector3 $vector3
      * @return Team|null $team
      */
     public function getTeamEggByVector(Vector3 $vector3) {
         $team = null;
-        foreach ($this->level->data["teams"] as $teamName => $teamData) {
+        foreach ($this->getMap()->data["teams"] as $teamName => $teamData) {
             $teamVec = EggWarsVector::fromArray($teamData["egg"]);
             if($teamVec->equals($vector3)) {
                 $team = $this->getTeamByName($teamName);
@@ -236,24 +295,30 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param string $team
-     * @return Vector3 $egg
+     * @return Vector3 $eggVector
      */
     public function getTeamEggVector(string $team): Vector3 {
-        return $this->level->getEggVector($team);
+        return $this->getMap()->getEggVector($team);
     }
 
     /**
+     * @api
+     *
      * @param string $team
      * @return Vector3 $spawn
      */
     public function getTeamSpawnVector(string $team): Vector3{
-        return $this->level->getSpawnVector($team);
+        return $this->getMap()->getSpawnVector($team);
     }
 
     /**
+     * @api
+     *
      * @param Player $player
-     * @return Team
+     * @return Team|null $team
      */
     public function getTeamByPlayer(Player $player) {
         $team = null;
@@ -268,7 +333,11 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @return Level|null $level
+     *
+     * > Works only in 1 & 2 phase!
      */
     public function getLevel() {
         if($this->level != null) {
@@ -280,6 +349,8 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @return EggWarsLevel $level
      */
     public function getMap() {
@@ -287,7 +358,11 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param string $message
+     *
+     * > without spectators
      */
     public function broadcastMessage(string $message) {
         foreach ($this->getAllPlayers() as $player) {
@@ -296,8 +371,10 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param Player $player
-     * @param null $team
+     * @param string $team
      */
     public function joinPlayer(Player $player, $team = null) {
         if(!boolval($this->arenaData["enabled"])) {
@@ -311,11 +388,14 @@ class Arena {
 
         $player->teleport(EggWarsPosition::fromArray($this->arenaData["lobby"], $this->arenaData["lobby"][3]));
         $player->setGamemode($player::ADVENTURE);
+        $player->setMaxHealth(20);
         $player->setHealth(20);
         $player->setFood(20);
+        $player->setScale(1.0);
         $player->setAllowFlight(false);
         $player->setXpProgress(0);
         $player->getInventory()->clearAll();
+        $player->removeAllEffects();
 
         $t = 0;
         foreach ($this->getAllTeams() as $team) {
@@ -340,7 +420,10 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @param Player $player
+     * @return void
      */
     public function disconnectPlayer(Player $player) {
         if($this->getTeamByPlayer($player) instanceof Team) {
@@ -362,7 +445,9 @@ class Arena {
     }
 
     /**
-     * @return int $int
+     * @api
+     *
+     * @return int
      */
     public function getFillTeamsCount():int {
         $count = 0;
@@ -375,11 +460,18 @@ class Arena {
     }
 
     /**
+     * @api
+     *
      * @return Player[] $players
+     *
+     * > without spectators
      */
     public function getAllPlayers(): array {
+
         /** @var Player[] $returnPlayers */
         $returnPlayers = [];
+
+
         if($this->getPhase() == 0 || $this->getPhase() == 1) {
             foreach ($this->getAllTeams() as $team) {
                 foreach ($team->getTeamsPlayers() as $player) {
@@ -433,18 +525,56 @@ class Arena {
 
     public function progress() {
         switch ($this->phase) {
-            case 0:
-                $this->lobby();
-                break;
-            case 1:
-                $this->game();
-                break;
-            case 2:
-                $this->restart();
-                break;
+            case 0: $this->lobby(); break;
+            case 1: $this->game(); break;
+            case 2: $this->restart(); break;
         }
     }
 
+    /**
+     * Last update:
+     *
+     * @version EggWars 1.0.0
+     */
+    public function startGame() {
+
+        // Add players to teams:
+        foreach ($this->getAllPlayers() as $player) {
+            if ($this->getTeamByPlayer($player) == null) {
+                choose:
+                $team = $this->getAllTeams()[array_rand($this->getAllTeams(), 1)];
+                if (!$team->isFull()) {
+                    $team->addPlayer($player);
+                    $player->sendMessage(EggWars::getPrefix() . "§7You are joined " . $team->getMinecraftColor() . $team->getTeamName() . "§7 team!");
+                } else {
+                    goto choose;
+                }
+
+            }
+        }
+
+        foreach ($this->getAllPlayers() as $player) {
+            $player->setGamemode($player::SURVIVAL);
+            $player->setFood(20);
+            $player->setHealth(20);
+            $player->setMaxHealth(20);
+            $player->getInventory()->clearAll();
+            $player->addTitle("§6Game started!", "map created by: ".$this->arenaData["builder"]);
+            $player->teleport(Position::fromObject($this->getTeamSpawnVector($this->getTeamByPlayer($player)->getTeamName()), $this->getLevel()));
+        }
+
+        $this->phase = 1;
+
+        // Task data
+        $this->progress["gameTime"] = $this->arenaData["gameTime"];
+        $this->getPlugin()->getServer()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
+    }
+
+    /**
+     * Last update:
+     *
+     * @version EggWars 1.0.0
+     */
     public function lobby() {
 
         foreach ($this->getAllPlayers() as $player) {
@@ -453,6 +583,7 @@ class Arena {
 
         // if game is ready to start
         if($this->getFillTeamsCount() >= intval($this->arenaData["teamsToStart"])) {
+
             // check for start
             if(empty($this->progress["startTime"]) || !is_numeric($this->progress["startTime"])) {
                 $this->progress["startTime"] = $startTime = intval($this->arenaData["startTime"]);
@@ -470,31 +601,21 @@ class Arena {
             }
 
             foreach ($this->getAllPlayers() as $player) {
+
                 $player->sendPopup(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
 
-                if($startTime == 5) {
-                    $player->addTitle("§c5");
-                }
-
-                if($startTime == 4) {
-                    $player->addTitle("§64");
-                }
-
-                if($startTime == 3) {
-                    $player->addTitle("§e3");
-                }
-
-                if($startTime == 2) {
-                    $player->addTitle("§a2");
-                }
-
-                if($startTime == 1) {
-                    $player->addTitle("§21");
+                switch ($startTime) {
+                    case 5: $player->addTitle("§c5"); break;
+                    case 4: $player->addTitle("§64"); break;
+                    case 3: $player->addTitle("§e3"); break;
+                    case 2: $player->addTitle("§a2"); break;
+                    case 1: $player->addTitle("§21"); break;
                 }
             }
 
             if($startTime == 5) {
                 $map = $this->voteManager->getMap();
+                $map->loadForGame($this);
                 $this->level = $map;
                 $this->broadcastMessage(EggWars::getPrefix()."§e{$map->getCustomName()} §6chosen.");
             }
@@ -512,50 +633,12 @@ class Arena {
         }
     }
 
-    public function startGame() {
-        // ADD PLAYERS TO TEAMS
-        foreach ($this->getAllPlayers() as $player) {
-            if ($this->getTeamByPlayer($player) == null) {
-                choose:
-                $team = $this->getAllTeams()[array_rand($this->getAllTeams(), 1)];
-                if (!$team->isFull()) {
-                    $team->addPlayer($player);
-                    $player->sendMessage(EggWars::getPrefix() . "§7You are joined " . $team->getMinecraftColor() . $team->getTeamName() . "§7 team!");
-                } else {
-                    goto choose;
-                }
-
-            }
-        }
-
-        foreach ($this->getLevel()->getEntities() as $entity) {
-            if($entity instanceof Item) {
-                $entity->close();
-            }
-        }
-
-        foreach ($this->getAllTeams() as $team) {
-            $this->getLevel()->setBlock($this->getTeamEggVector($team->getTeamName()), Block::get(Block::DRAGON_EGG));
-        }
-
-        // data
-        foreach ($this->getAllPlayers() as $player) {
-            $player->setGamemode($player::SURVIVAL);
-            $player->setFood(20);
-            $player->setHealth(20);
-            $player->setMaxHealth(20);
-            $player->getInventory()->clearAll();
-            $player->addTitle("§6Game started!", "map created by: ".$this->arenaData["builder"]);
-            $player->teleport(Position::fromObject($this->getTeamSpawnVector($this->getTeamByPlayer($player)->getTeamName()), $this->getLevel()));
-        }
-        $this->phase = 1;
-
-        // gametime
-        $this->progress["gameTime"] = $this->arenaData["gameTime"];
-        $this->getPlugin()->getServer()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
-    }
-
-    private function game() {
+    /**
+     * Last update:
+     *
+     * @version EggWars 1.0.0
+     */
+    public function game() {
         // END
         if($this->teamManager->checkEnd()) {
             $lastTeam = $this->teamManager->getLastTeam();
@@ -589,7 +672,10 @@ class Arena {
             $player->sendTip(EggWars::getPrefix()."§aRestarting in {$this->progress["restartTime"]}");
         }
         if($this->progress["restartTime"] == 0) {
-            $this->getLevel()->unload();
+            foreach ($players as $player) {
+                $this->disconnectPlayer($player);
+            }
+            $this->getMap()->unload();
             $this->loadGame();
         }
     }

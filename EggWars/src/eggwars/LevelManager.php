@@ -87,7 +87,8 @@ class LevelManager extends ConfigManager {
 
     public function loadLevels() {
         foreach (glob($this->getDataFolder()."levels/*.yml") as $file) {
-            $this->levels[basename($file, ".yml")] = EggWarsLevel::loadFromConfig(new Config($file, Config::YAML));
+            $config = new Config($file, Config::YAML);
+            $this->levels[basename($file, ".yml")] = new EggWarsLevel($config->getAll());
         }
     }
 

@@ -41,11 +41,11 @@ class TeamManager {
      */
     public function __construct(Arena $arena) {
         $this->arena = $arena;
-        $this->loadTeams();
+        $this->reloadTeams();
     }
 
 
-    private function loadTeams() {
+    public function reloadTeams() {
         foreach ($this->getArena()->arenaData["teams"] as $team => $data) {
             $color = strval($data["color"]);
             $t = new Team($this, $team, $color, []);

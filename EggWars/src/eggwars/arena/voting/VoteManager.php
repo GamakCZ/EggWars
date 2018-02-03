@@ -46,13 +46,19 @@ class VoteManager {
     public function __construct(Arena $arena, array $levels) {
         $this->arena = $arena;
         $this->levels = $levels;
+        $this->createVoteTable($levels);
+    }
+
+    /**
+     * @param array $levels
+     */
+    public function createVoteTable(array $levels) {
         $this->maps = [
-            $levels[0]->getCustomName() =>
-            [
-                "customName" => $levels[0]->getCustomName(),
-                "votes" => [],
-                "arg" => 0
-            ],
+            $levels[0]->getCustomName() => [
+                    "customName" => $levels[0]->getCustomName(),
+                    "votes" => [],
+                    "arg" => 0
+                ],
             $levels[1]->getCustomName() => [
                 "customName" => $levels[1]->getCustomName(),
                 "votes" => [],

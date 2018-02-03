@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace eggwars\level;
 
+use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsVector;
 use pocketmine\entity\Item;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Server;
-use pocketmine\utils\Config;
 
 /**
  * Class EggWarsLevel
@@ -38,9 +38,36 @@ class EggWarsLevel {
 
     /**
      * EggWarsLevel constructor.
+     *
      * @param array $data
      */
     public function __construct(array $data) {
+
+        $folderName = $data["folderName"];
+        $teams = $data["teams"];
+
+        if(!Server::getInstance()->isLevelGenerated($folderName)) {
+            EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$folderName}!");
+            return;
+        }
+
+        if(!Server::getInstance()->isLevelLoaded($folderName)) {
+            Server::getInstance()->loadLevel($folderName);
+        }
+
+        $this->data = $data;
+
+        if(!$this->isValid()) {
+            EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$folderName} - level is not valid!");
+            return;
+        }
+
+        $this->teamsCount = count($teams);
+
+
+        /*$level = Server::getInstance()->getLevelByName($folderName);
+
+
         if(Server::getInstance()->isLevelGenerated($data["folderName"])) {
             Server::getInstance()->loadLevel($data["folderName"]);
             $this->level = Server::getInstance()->getLevelByName($data["folderName"]);
@@ -53,13 +80,14 @@ class EggWarsLevel {
         }
         else {
             EggWars::getInstance()->getLogger()->critical("§cCloud not load level {$data["folderName"]}!");
-        }
-        $this->data = $data;
-        $this->teamsCount = count($data["teams"]);
+        }*/
+
+
     }
 
+
     /**
-     * @return bool
+     * @return bool $valid
      */
     public function isValid(): bool {
         $valid = true;
@@ -71,15 +99,50 @@ class EggWarsLevel {
         return $valid;
     }
 
+
     /**
-     * @param Config $config
-     * @return EggWarsLevel
+     * @api
+     *
+     * @param Arena $arena
+     * @return Level $level
      */
-    public static function loadFromConfig(Config $config) {
-        return new EggWarsLevel($config->getAll());
+    public function loadForGame(Arena $arena = null): Level {
+        $folderName = $this->data["folderName"];
+
+        if(!Server::getInstance()->isLevelLoaded($folderName)) {
+            Server::getInstance()->loadLevel($folderName);
+        }
+
+        $level = Server::getInstance()->getLevelByName($folderName);
+
+        $count = 0;
+        foreach ($level->getEntities() as $entity) {
+            if($entity instanceof Item) {
+                $entity->close();
+                $count++;
+            }
+        }
+        EggWars::getInstance()->getLogger()->alert("$count entities removed!");
+
+        $level->setAutoSave(false);
+
+        $this->level = $level;
+
+        return $level;
     }
 
     /**
+     * @api
+     *
+     * > Unload and save the level
+     */
+    public function unload() {
+        $this->getLevel()->unload();
+    }
+
+    /**
+     * @api
+     *
      * @param string $teamName
      * @return \pocketmine\math\Vector3|null
      */
@@ -97,6 +160,8 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @param string $teamName
      * @param Vector3 $vector3
      */
@@ -108,8 +173,10 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @param string $teamName
-     * @return \pocketmine\math\Vector3|void
+     * @return \pocketmine\math\Vector3|null
      */
     public function getSpawnVector(string $teamName) {
         if(isset($this->data["teams"][$teamName])) {
@@ -125,8 +192,12 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @param string $teamName
      * @param Vector3 $vector3
+     *
+     * @return void
      */
     public function setSpawnVector(string $teamName, Vector3 $vector3) {
         if(empty($this->data["teams"][$teamName])) {
@@ -137,6 +208,8 @@ class EggWarsLevel {
 
 
     /**
+     * @api
+     *
      * @return string $customName
      *
      * (CustomName)
@@ -146,6 +219,8 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @return string $levelName
      *
      * (LevelName)
@@ -155,6 +230,8 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @return array $data
      */
     public function getLevelData(): array {
@@ -162,6 +239,8 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @return int $teamsCount
      */
     public function getTeamsCount(): int {
@@ -169,6 +248,8 @@ class EggWarsLevel {
     }
 
     /**
+     * @api
+     *
      * @return Level $level
      */
     public function getLevel(): Level {

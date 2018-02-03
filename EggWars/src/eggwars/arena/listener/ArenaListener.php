@@ -192,6 +192,10 @@ class ArenaListener implements Listener {
         }
     }
 
+    public function debug($msg) {
+        $this->getPlugin()->getLogger()->alert("Shop > ".$msg);
+    }
+
     /**
      * @param InventoryTransactionEvent $event
      */
@@ -209,13 +213,14 @@ class ArenaListener implements Listener {
         }
 
         if($chestInventory === null) {
+            $this->debug("#1");
             return;
         }
 
         /** @var Player $player */
         $player = null;
 
-        foreach ($inventory->getViewers() as $viewer) {
+        foreach ($chestInventory->getViewers() as $viewer) {
             if($viewer instanceof Player) {
                 $player = $viewer;
             }
@@ -230,6 +235,7 @@ class ArenaListener implements Listener {
 
         if($targetItem === null || $targetItem->getId() == 0) {
             $event->setCancelled(true);
+            $this->debug("#2");
             return;
         }
 
@@ -246,11 +252,13 @@ class ArenaListener implements Listener {
         // BROWSING
         if($slot <= 8) {
             $this->getArena()->shopManager->onBrowseTransaction($player, $chestInventory, $slot);
+            $this->debug("#3");
         }
 
         // BUYING
         else {
             $this->getArena()->shopManager->onBuyTransaction($player, $targetItem, $slot);
+            $this->debug("#4");
         }
 
         $event->setCancelled(true);
