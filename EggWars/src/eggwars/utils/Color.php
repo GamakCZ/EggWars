@@ -12,18 +12,22 @@
 declare(strict_types=1);
 
 namespace eggwars\utils;
+
 use pocketmine\item\Item;
 
 /**
  * Class Color
  * @package eggwars\utils
  *
- * MC $mc = Minecraft Color
+ * MC $mc = Minecraft Color (§a)
  */
 class Color implements ColorIds {
 
     /**
+     * @api
+     *
      * @param string $mc
+     *
      * @return string
      */
     public static function getColorNameFormMC(string $mc): string  {
@@ -37,22 +41,34 @@ class Color implements ColorIds {
     }
 
     /**
+     * @api
+     *
      * @param string $id
      * @param int $color
+     *
      * @return mixed
      */
     public static function getMCFromId(string $id, int $color = 0) {
         $mc = [];
+
         foreach (self::ALL as $colors => [$mcFormat, $nameFormat, $idFormat, $htmlArray]) {
             if($id == $idFormat) {
                 array_push($mc, $mcFormat);
             }
         }
-        return $mc[$color];
+
+        if(isset($mc[$color])) {
+            return $mc[$color];
+        }
+
+        return "";
     }
 
     /**
+     * @api
+     *
      * @param string $mc
+     *
      * @return Item $item
      */
     public static function getWoolFormMC(string $mc) {
@@ -67,7 +83,10 @@ class Color implements ColorIds {
     }
 
     /**
+     * @api
+     *
      * @param string $mc
+     *
      * @return \pocketmine\utils\Color
      */
     public static function getColorFromMC(string $mc): \pocketmine\utils\Color {
@@ -79,7 +98,10 @@ class Color implements ColorIds {
     }
 
     /**
+     * @api
+     *
      * @param string $mc
+     *
      * @return array $html
      */
     public static function getHtmlFromMC(string $mc): array {
@@ -93,7 +115,10 @@ class Color implements ColorIds {
     }
 
     /**
+     * @api
+     *
      * @param string $mc
+     *
      * @return bool
      */
     public static function mcColorExists(string $mc): bool {

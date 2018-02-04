@@ -32,6 +32,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\inventory\transaction\action\InventoryAction;
 use pocketmine\item\Item;
@@ -390,6 +391,12 @@ class ArenaListener implements Listener {
 
         if(in_array($event->getBlock()->getId(), $blocks)) {
             $event->setCancelled();
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $event) {
+        if($this->getArena()->inGame($event->getPlayer())) {
+            $this->getArena()->disconnectPlayer($event->getPlayer(), 1);
         }
     }
 

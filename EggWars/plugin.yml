@@ -11,7 +11,7 @@ permissions:
   ew.cmd:
     description: Permission for ALL EggWars Commands
     default: op
-    childern:
+    children:
       ew.cmd.vote:
         default: true
         description: Permission for /vote
