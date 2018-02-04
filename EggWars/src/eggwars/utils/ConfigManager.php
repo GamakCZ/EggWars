@@ -24,14 +24,18 @@ use pocketmine\utils\Config;
  */
 class ConfigManager {
 
-    /**
-     * @var array $mainConfigData
-     */
+    /** @var array $mainConfigData */
     private $mainConfigData = [];
 
-    /**
-     * @var array $defaultArenaData
-     */
+    /** @var string $prefix */
+    private static $prefix;
+
+    public function __construct() {
+        $this->initConfig();
+        self::$prefix = boolval($this->getFromConfig("enable-prefix")) ? $this->getFromConfig("prefix") : "§7";
+    }
+
+    /** @var array $defaultArenaData */
     public $defaultArenaData = [
         "enabled" => false,
         "name" => "",
@@ -45,18 +49,10 @@ class ConfigManager {
         "builder" => "VixikCZ",
         "teamsCount" => 2,
         "teams" => [
-            /*"red" => [
-                "color" => "§4"
-            ],
-            "blue" => [
-                "color" => "§9"
-            ]*/
         ]
     ];
 
-    /**
-     * @var array $defaultLevelData
-     */
+    /** @var array $defaultLevelData */
     public $defaultLevelData = [
         "enabled" => false,
         "levelName" => "EggWars",
@@ -65,18 +61,12 @@ class ConfigManager {
         "middle" => [90, 4, 90],
         "arenas" => [],
         "teams" => [
-            /*"red" => [
-                "egg" => [100, 4, 100],
-                "spawn" => [100, 5, 100]
-            ],
-            "blue" => [
-                "egg" => [80, 4, 80],
-                "spawn" => [80, 5, 80]
-            ]*/
         ]
     ];
 
     /**
+     * @api
+     *
      * @param mixed $k
      * @param mixed $v
      */
@@ -85,14 +75,18 @@ class ConfigManager {
     }
 
     /**
+     * @api
+     *
      * @param mixed $k
      * @return mixed
      */
-    public function getFromConfig($k):mixed {
+    public function getFromConfig($k) {
         return $this->mainConfigData[$k];
     }
 
     /**
+     * @api
+     *
      * @return string $dataFolder
      */
     public function getDataFolder():string {
@@ -100,6 +94,8 @@ class ConfigManager {
     }
 
     /**
+     * @api
+     *
      * @return string $arenaDataFolder
      */
     public function getArenaDataFolder():string {
@@ -107,6 +103,8 @@ class ConfigManager {
     }
 
     /**
+     * @api
+     *
      * @return Config $config
      */
     private function getConfig():Config {
@@ -115,10 +113,21 @@ class ConfigManager {
 
 
     /**
+     * @api
+     *
      * @return string $dataPath
      */
     public function getDataPath():string {
         return Server::getInstance()->getDataPath();
+    }
+
+    /**
+     * @api
+     *
+     * @return string $prefix
+     */
+    public static function getPrefix(): string {
+        return self::$prefix;
     }
 
     public function initConfig() {

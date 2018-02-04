@@ -22,6 +22,7 @@ use eggwars\utils\Color;
 use pocketmine\block\Block;
 use pocketmine\entity\Villager;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
@@ -61,65 +62,88 @@ class ArenaListener implements Listener {
     }
 
     /**
+     * @event
+     *
      * @param PlayerChatEvent $event
      */
     public function onChat(PlayerChatEvent $event) {
         $player = $event->getPlayer();
+
         if(!$this->getArena()->inGame($player)) {
             return;
         }
+
         $msg = $event->getMessage();
+
         if(!$this->getArena()->getTeamByPlayer($player) instanceof Team) {
             $this->getArena()->broadcastMessage("§8[§5Lobby§8]§7 {$player->getName()}: $msg");
             $event->setCancelled(true);
             return;
         }
+
         $team = $this->getArena()->getTeamByPlayer($player);
         $args = str_split($msg);
+
         if($args[0] == "!") {
             array_shift($args);
             $this->getArena()->broadcastMessage($team->getMinecraftColor()."[ALL] §7".$player->getName().": ".implode("", $args));
             $event->setCancelled(true);
             return;
         }
+
         $team->broadcastMessage($team->getMinecraftColor()."[Team] §7".$player->getName().": ".$msg);
         $event->setCancelled(true);
+
         return;
     }
 
     /**
+     * @event
+     *
      * @param PlayerInteractEvent $event
      */
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
+
         if(!$this->getArena()->inGame($player)) {
+
             $signPos = EggWarsPosition::fromArray($this->getArena()->arenaData["sign"],  $this->getArena()->arenaData["sign"][3]);
             $sign = $signPos->getLevel()->getTile($signPos->asVector3());
+
             if($sign instanceof Sign && $this->getArena()->getPhase() == 0) {
                 if($event->getBlock()->asVector3()->equals($signPos->asVector3())) {
                     $this->getArena()->joinPlayer($event->getPlayer());
                 }
             }
+
             return;
         }
+
         if($this->getArena()->getPhase() == 0) {
             if($event->getAction() != $event::RIGHT_CLICK_AIR) {
                 return;
             }
+
             $item = $player->getInventory()->getItemInHand();
+
             if($item->getId() == 0) {
                 return;
             }
+
             if(!is_string($mc = Color::getMCFromId("{$item->getId()}:{$item->getDamage()}"))) {
                 return;
             }
+
             $team = $this->getArena()->getTeamByMinecraftColor($mc);
+
             if(!$team instanceof Team) {
                 if(!is_string($mc = Color::getMCFromId("{$item->getId()}:{$item->getDamage()}", 1))) {
                     return;
                 }
+
                 $team = $this->getArena()->getTeamByMinecraftColor($mc);
             }
+
             $this->getArena()->addPlayerToTeam($player, $team->getTeamName());
             return;
         }
@@ -132,54 +156,80 @@ class ArenaListener implements Listener {
     }
 
     /**
+     * @event
+     *
      * @param EntityDamageEvent $event
      */
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
+
         if($entity instanceof Villager) {
             if($event instanceof EntityDamageByEntityEvent) {
+
                 /** @var Player $damager */
                 $damager = $event->getDamager();
                 $this->getArena()->shopManager->openShop($damager, $this->getArena()->getTeamByPlayer($damager));
                 $event->setCancelled(true);
             }
+
             return;
         }
 
         if(!$entity instanceof Player) {
             return;
         }
+
         if(!$this->getArena()->inGame($entity)) {
             return;
         }
+
         if(!($entity->getHealth()-$event->getDamage() <= 0)) {
             return;
         }
+
         $event->setCancelled(true);
+
         if((!$event instanceof EntityDamageByEntityEvent) && $event->getCause() == EntityDamageByEntityEvent::CAUSE_VOID) {
             $this->deathManager->onVoidDeath($entity);
+            $this->deathManager->callEvent($entity, $event);
             return;
         }
+
         if($event->getCause() == EntityDamageByEntityEvent::CAUSE_FIRE || $event->getCause() == EntityDamageByEntityEvent::CAUSE_FIRE_TICK) {
             $this->deathManager->onBurnDeath($entity);
+            $this->deathManager->callEvent($entity, $event);
             return;
         }
+
         if($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
+
             if(!$damager instanceof Player) {
                 $this->deathManager->onBasicDeath($entity);
+                $this->deathManager->callEvent($entity, $event);
                 return;
             }
+
             $this->deathManager->onDeath($entity, $damager);
+            $this->deathManager->callEvent($entity, $event);
             return;
         }
+
         $this->deathManager->onBasicDeath($entity);
+        $this->deathManager->callEvent($entity, $event);
     }
 
+    /**
+     * @event
+     *
+     * @param DataPacketReceiveEvent $event
+     */
     public function onWindowClose(DataPacketReceiveEvent $event) {
         $pk = $event->getPacket();
+
         if($pk instanceof ContainerClosePacket) {
             $player = $event->getPlayer();
+
             if($this->getArena()->inGame($player)) {
                 $packet = new UpdateBlockPacket();
                 $packet->x = intval($player->getX());
@@ -193,11 +243,9 @@ class ArenaListener implements Listener {
         }
     }
 
-    public function debug($msg) {
-        $this->getPlugin()->getLogger()->alert("Shop > ".$msg);
-    }
-
     /**
+     * @event
+     *
      * @param InventoryTransactionEvent $event
      */
     public function onTransaction(InventoryTransactionEvent $event) {
@@ -275,6 +323,8 @@ class ArenaListener implements Listener {
 
 
     /**
+     * @event
+     *
      * @param PlayerExhaustEvent $event
      */
     public function onExhaust(PlayerExhaustEvent $event) {
@@ -283,10 +333,16 @@ class ArenaListener implements Listener {
             return;
         }
         if(($this->getArena()->getPhase() == 0) && $this->getArena()->inGame($player)) {
+            $player->setFood(20);
             $event->setCancelled();
         }
     }
 
+    /**
+     * @event
+     *
+     * @param EntityLevelChangeEvent $event
+     */
     public function onLevelChange(EntityLevelChangeEvent $event) {
         $entity = $event->getEntity();
         if(!$entity instanceof Player) {
@@ -302,6 +358,8 @@ class ArenaListener implements Listener {
     }
 
     /**
+     * @event
+     *
      * @param BlockBreakEvent $event
      */
     public function onBreak(BlockBreakEvent $event) {
@@ -313,16 +371,40 @@ class ArenaListener implements Listener {
             }
             $event->setCancelled($bool);
         }
+        /** @var array $ids */
+        $blocks = $this->getArena()->shopManager->getBreakableBlocks();
+
+        if(in_array($event->getBlock()->getId(), $blocks)) {
+            $event->setCancelled();
+        }
     }
 
     /**
-     * @return EggWars $eggWars
+     * @event
+     *
+     * @param BlockPlaceEvent $event
+     */
+    public function onPlace(BlockPlaceEvent $event) {
+        /** @var array $ids */
+        $blocks = $this->getArena()->shopManager->getBreakableBlocks();
+
+        if(in_array($event->getBlock()->getId(), $blocks)) {
+            $event->setCancelled();
+        }
+    }
+
+    /**
+     * @api
+     *
+     * @return EggWars $plugin
      */
     public function getPlugin(): EggWars {
         return EggWars::getInstance();
     }
 
     /**
+     * @api
+     *
      * @return Arena $arena
      */
     public function getArena(): Arena {

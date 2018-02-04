@@ -15,6 +15,7 @@ namespace eggwars\arena\shop;
 
 use eggwars\arena\Arena;
 use eggwars\arena\team\Team;
+use eggwars\event\PlayerOpenShopEvent;
 use eggwars\utils\Color;
 use pocketmine\block\Block;
 use pocketmine\item\Armor;
@@ -53,6 +54,14 @@ class ShopManager {
      * @param Team $team
      */
     public function openShop(Player $player, Team $team) {
+        $event = new PlayerOpenShopEvent($player, $this->getArena(), PlayerOpenShopEvent::SHOP_TYPE_CHEST, $this->shopData);
+        $this->getArena()->getPlugin()->getServer()->getPluginManager()->callEvent($event);
+        if($event->isCancelled() || $event->getShopType() !== PlayerOpenShopEvent::SHOP_TYPE_CHEST) {
+            return;
+        }
+        $this->shopData = $event->getShopItems();
+
+
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
             new StringTag('CustomName', "§3§lEggWars §7>>> §6Shop"),

@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace eggwars\arena\listener;
 
+use eggwars\event\PlayerArenaDeathEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Position;
 use pocketmine\Player;
 
@@ -90,5 +92,9 @@ class DeathManager {
         $player->setGamemode($player::SURVIVAL);
         $player->getInventory()->clearAll();
         $player->teleport(Position::fromObject($this->arenaListener->getArena()->getTeamSpawnVector($this->arenaListener->getArena()->getTeamByPlayer($player)->getTeamName()), $this->arenaListener->getArena()->getLevel()));
+    }
+
+    public function callEvent(Player $player, EntityDamageEvent $lastDmg) {
+        $this->arenaListener->getPlugin()->getServer()->getPluginManager()->callEvent(new PlayerArenaDeathEvent($player, $this->arenaListener->getArena(), $lastDmg));
     }
 }

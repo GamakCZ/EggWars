@@ -22,6 +22,8 @@ use eggwars\arena\team\Team;
 use eggwars\arena\team\TeamManager;
 use eggwars\arena\voting\VoteManager;
 use eggwars\EggWars;
+use eggwars\event\PlayerArenaJoinEvent;
+use eggwars\event\PlayerArenaQuitEvent;
 use eggwars\level\EggWarsLevel;
 use eggwars\position\EggWarsPosition;
 use eggwars\position\EggWarsVector;
@@ -377,9 +379,13 @@ class Arena {
      * @param string $team
      */
     public function joinPlayer(Player $player, $team = null) {
+        $event = new PlayerArenaJoinEvent($player, $this);
+        $this->getPlugin()->getServer()->getPluginManager()->callEvent($event);
+
         if(!boolval($this->arenaData["enabled"])) {
             return;
         }
+
         if(empty($this->progress["lobbyPlayers"]) || !is_array($this->progress["lobbyPlayers"])) {
             $this->progress["lobbyPlayers"] = [];
         }
@@ -423,9 +429,10 @@ class Arena {
      * @api
      *
      * @param Player $player
-     * @return void
+     * @param int $message
      */
-    public function disconnectPlayer(Player $player) {
+    public function disconnectPlayer(Player $player, $message = 0) {
+        $this->getPlugin()->getServer()->getPluginManager()->callEvent(new PlayerArenaQuitEvent($player, $this));
         if($this->getTeamByPlayer($player) instanceof Team) {
             unset($this->getTeamByPlayer($player)->players[$player->getName()]);
         }
@@ -441,7 +448,14 @@ class Arena {
         $player->getInventory()->clearAll();
         $player->teleport($this->getPlugin()->getServer()->getDefaultLevel()->getSpawnLocation()->asPosition());
         $player->setNameTag($player->getName());
-        $player->sendMessage(EggWars::getPrefix()."§aYou are successfully leaved arena!");
+        switch ($message) {
+            case 0:
+                $player->sendMessage(EggWars::getPrefix()."§aYou are successfully leaved arena!");
+                break;
+            case 1:
+                break;
+        }
+
     }
 
     /**
@@ -673,7 +687,7 @@ class Arena {
         }
         if($this->progress["restartTime"] == 0) {
             foreach ($players as $player) {
-                $this->disconnectPlayer($player);
+                $this->disconnectPlayer($player, 1);
             }
             $this->getMap()->unload();
             $this->reloadGame();

@@ -19,6 +19,7 @@ use eggwars\commands\TeamCommand;
 use eggwars\commands\VoteCommand;
 use eggwars\event\listener\ArenaSetupManager;
 use eggwars\event\listener\LevelSetupManager;
+use eggwars\utils\ConfigManager;
 use pocketmine\command\Command;
 use pocketmine\plugin\PluginBase;
 
@@ -49,12 +50,16 @@ class EggWars extends PluginBase {
     /** @var LevelSetupManager $levelSetupManager */
     private $levelSetupManager;
 
+    /** @var ConfigManager $configManager */
+    private $configManager;
+
     /** @var Command[] $commands */
     private $commands = [];
 
     public function onEnable() {
         self::$instance = $this;
         $this->registerCommands();
+        $this->configManager = new ConfigManager;
         $this->levelManager = new LevelManager;
         $this->arenaManager = new ArenaManager;
         $this->arenaSetupManager = new ArenaSetupManager;
@@ -104,10 +109,17 @@ class EggWars extends PluginBase {
     }
 
     /**
+     * @return ConfigManager
+     */
+    public function getConfigManager(): ConfigManager {
+        return $this->configManager;
+    }
+
+    /**
      * @return string $prefix
      */
     public static function getPrefix(): string {
-        return "§4§l[ §r§6EggWars §4§l] §r§7";
+        return ConfigManager::getPrefix();
     }
 
     /**

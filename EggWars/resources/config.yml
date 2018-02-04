@@ -1,11 +1,45 @@
 ---
-##
-##    > Main EggWars configuration file
-##    - EggWars plugin created by VixikCZ
-##
 
-default-level: "true"
+#
+# > Main configuration file
+#
 
-prefix: "§3[EggWars]"
+#
+#  ********************************************************************************************
+#
+#    _____               __        __                              _        ___        ___
+#   | ____| __ _    __ _ \ \      / / __ _  _ __  ___    __   __  / |      / _ \     /  _ \
+#   |  _|  / _` | / _` |  \ \ /\ / / / _` || '__|/ __|   \ \ / /  | |     | | | |    | | | |
+#   | |___| (_| || (_| |   \ V  V / | (_| || |   \__ \    \ V /   | |  _  | |_| |  _ | |_| |
+#   |_____|\__, | \__, |    \_/\_/   \__,_||_|   |___/     \_/    |_| (_)  \___/  (_) \___/
+#         |___/  |___/
+#
+#  ********************************************************************************************
+#
+#
+# - Author: VixikCZ
+# - License: Apache License 2.0
+# - Version: 1.0.0
+#
+# - Source: https://github.com/GamakCZ/EggWars
+# - Documentation: https://github.com/GamakCZ/EggWars/wiki
+#
+
+
+# ---------- ==== [ Main configuration: ] ==== ---------- #
+
+# Disable / Enable prefix
+enable-prefix: true
+
+# Main prefix
+prefix: "§3[EggWars] "
+
+# Change language here:
+# available languages: eng (English)
+language: "eng"
+
+# Turn on debug (for developers)
+debug: false
+
 
 ...
