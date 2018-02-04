@@ -97,24 +97,26 @@ class ShopManager {
      * @param Item $item
      * @return Item $item
      */
-    public function getPrice(Item $item): Item {
+    public function getPrice(Item $item): Item{
         $price = null;
         $shopData = null;
         foreach ($this->shopData as $arrays) {
-            foreach ($arrays as $shopItems) {
-                if($shopItems[0] == $item->getId() && $shopItems[1] == $item->getDamage() && $shopItems[2] == $item->getCount()) {
-                    $priceItem = $shopItems[5];
-                    $id = null;
-                    if($priceItem[0] == 0) {
-                        $id = Item::IRON_INGOT;
+            foreach ($arrays as $index => $shopItems) {
+                if(!is_string($index)) {
+                    if($shopItems[0] == $item->getId() && $shopItems[1] == $item->getDamage() && $shopItems[2] == $item->getCount()/* && $shopItems[3] == $item->getName()*/) {
+                        $priceItem = $shopItems[5];
+                        $id = null;
+                        if($priceItem[0] == 0) {
+                            $id = Item::IRON_INGOT;
+                        }
+                        elseif($priceItem[0] == 1) {
+                            $id = Item::GOLD_INGOT;
+                        }
+                        else {
+                            $id = Item::DIAMOND;
+                        }
+                        $price = Item::get($id, 0, $priceItem[1]);
                     }
-                    elseif($priceItem[0] == 1) {
-                        $id = Item::GOLD_INGOT;
-                    }
-                    else {
-                        $id = Item::DIAMOND;
-                    }
-                    $price = Item::get($id, 0, $priceItem[1]);
                 }
             }
         }
@@ -284,7 +286,8 @@ class ShopManager {
     private $shopData = [
         0 => [
             "name" => [Item::SANDSTONE, 0, 1, "§6Blocks"],
-            0 => [Item::SANDSTONE, 0, 4, "Sandstone", "none", [0, 16]]
+            0 => [Item::SANDSTONE, 0, 4, "Sandstone", "none", [0, 1]],
+            1 => [Item::SANDSTONE, 0, 32, "Sandstone", "none", [0, 8]]
         ],
         1 => [
             "name" => [Item::GOLD_SWORD, 0, 1,"§7Swords"],
@@ -296,7 +299,7 @@ class ShopManager {
         ],
         2 => [
             "name" => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxes"],
-            0 => [Item::WOODEN_PICKAXE, 0, 1, "§7Pickaxe lvl1", "none", [0, 12]],
+            0 => [Item::WOODEN_PICKAXE, 0, 1, "§7 Pickaxe lvl1", "none", [0, 12]],
             1 => [Item::STONE_PICKAXE, 0, 1, "§7Pickaxe lvl2", "none", [0, 14]],
             2 => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxe lvl3", "none", [1, 20]]
         ],
@@ -315,11 +318,16 @@ class ShopManager {
             4 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
             5 => [Item::CHAIN_CHESTPLATE, 0, 1, "Chain Chestplate", "none", [1, 20]],
             6 => [Item::CHAIN_LEGGINGS, 0, 1, "Chain Leggings", "none", [1, 20]],
-            7 => [Item::CHAIN_BOOTS, 0, 1, "Chain Boots", "none", [1, 20]],
+            7 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
+            8 => [Item::IRON_BOOTS, 0, 1, "Iron Boots", "none", [1, 20]],
+            9 => [Item::IRON_LEGGINGS, 0, 1, "Iron Leggings", "none", [1, 20]],
+            10 => [Item::IRON_CHESTPLATE, 0, 1, "Iron Chestplate", "none", [1, 20]],
+            11 => [Item::IRON_HELMET, 0, 1, "Iron Helmet", "none", [1, 20]],
         ],
         5 => [
             "name" => [Item::SPONGE, 0, 1, "§8§k|||§r §6Special§8 §k|||§r"],
-            0 => [Item::ENDER_PEARL, 0, 1, "§3EnderPearl", "none", [2, 15]]
+            0 => [Item::ENDER_PEARL, 0, 1, "§3EnderPearl", "none", [2, 15]],
+            1 => [Item::SPONGE, 0, 1, "§eLucky§6Block", "none", [2, 1]]
         ]
     ];
 }

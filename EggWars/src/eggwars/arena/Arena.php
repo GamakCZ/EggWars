@@ -676,7 +676,7 @@ class Arena {
                 $this->disconnectPlayer($player);
             }
             $this->getMap()->unload();
-            $this->loadGame();
+            $this->reloadGame();
         }
     }
 

@@ -32,6 +32,7 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\inventory\transaction\action\InventoryAction;
 use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
@@ -136,10 +137,9 @@ class ArenaListener implements Listener {
     public function onDamage(EntityDamageEvent $event) {
         $entity = $event->getEntity();
         if($entity instanceof Villager) {
-            $lastDmg = $entity->getLastDamageCause();
-            if($lastDmg instanceof EntityDamageByEntityEvent) {
+            if($event instanceof EntityDamageByEntityEvent) {
                 /** @var Player $damager */
-                $damager = $lastDmg->getDamager();
+                $damager = $event->getDamager();
                 $this->getArena()->shopManager->openShop($damager, $this->getArena()->getTeamByPlayer($damager));
                 $event->setCancelled(true);
             }
@@ -186,6 +186,7 @@ class ArenaListener implements Listener {
                 $packet->y = intval($player->getY())+4;
                 $packet->z = intval($player->getZ());
                 $packet->blockData = UpdateBlockPacket::FLAG_ALL;
+                $packet->blockId = $player->getLevel()->getBlock($player->add(0, 4))->getId();
                 $player->dataPacket($packet);
 
             }
@@ -213,7 +214,6 @@ class ArenaListener implements Listener {
         }
 
         if($chestInventory === null) {
-            $this->debug("#1");
             return;
         }
 
@@ -229,36 +229,44 @@ class ArenaListener implements Listener {
         /** @var Item $targetItem */
         $targetItem = null;
 
+        /**
+         * @var InventoryAction $inventoryAction
+         */
         foreach ($transaction->getActions() as $inventoryAction) {
-            $targetItem = $inventoryAction->getTargetItem();
+            if($inventoryAction->getTargetItem()->getId() !== Item::AIR) {
+                $targetItem = $inventoryAction->getTargetItem();
+            }
         }
+
 
         if($targetItem === null || $targetItem->getId() == 0) {
             $event->setCancelled(true);
-            $this->debug("#2");
             return;
         }
 
-        $team = $this->getArena()->getTeamByPlayer($player);
-
-        $slot = 0;
+        $slot = -1;
         foreach ($chestInventory->getContents() as $chestSlot => $chestItem) {
-            if($chestItem->equals($targetItem, false, false)) {
-                $slot = $chestSlot;
+            if($chestItem->getId() == $targetItem->getId() && $chestItem->getDamage() == $targetItem->getDamage() && $chestItem->getCount() == $targetItem->getCount() && $chestItem->getCustomName() == $targetItem->getCustomName()) {
+                if($slot == -1) {
+                    $slot = $chestSlot;
+                }
             }
+        }
+
+        if($slot == -1) {
+            $event->setCancelled(true);
+            return;
         }
 
 
         // BROWSING
         if($slot <= 8) {
             $this->getArena()->shopManager->onBrowseTransaction($player, $chestInventory, $slot);
-            $this->debug("#3");
         }
 
         // BUYING
         else {
             $this->getArena()->shopManager->onBuyTransaction($player, $targetItem, $slot);
-            $this->debug("#4");
         }
 
         $event->setCancelled(true);

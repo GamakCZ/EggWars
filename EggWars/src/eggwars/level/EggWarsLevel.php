@@ -16,6 +16,7 @@ namespace eggwars\level;
 use eggwars\arena\Arena;
 use eggwars\EggWars;
 use eggwars\position\EggWarsVector;
+use pocketmine\entity\Creature;
 use pocketmine\entity\Item;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
@@ -117,7 +118,7 @@ class EggWarsLevel {
 
         $count = 0;
         foreach ($level->getEntities() as $entity) {
-            if($entity instanceof Item) {
+            if(!$entity instanceof Creature) {
                 $entity->close();
                 $count++;
             }
