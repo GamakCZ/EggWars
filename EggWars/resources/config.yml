@@ -32,7 +32,7 @@
 enable-prefix: true
 
 # Main prefix
-prefix: "§3[EggWars] "
+prefix: "§3[EggWars]"
 
 # Change language here:
 # available languages: eng (English)

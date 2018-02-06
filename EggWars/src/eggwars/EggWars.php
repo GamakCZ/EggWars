@@ -119,7 +119,7 @@ class EggWars extends PluginBase {
      * @return string $prefix
      */
     public static function getPrefix(): string {
-        return ConfigManager::getPrefix();
+        return ConfigManager::getPrefix()." ";
     }
 
     /**

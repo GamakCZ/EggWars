@@ -56,11 +56,14 @@ class ShopManager {
     public function openShop(Player $player, Team $team) {
         $event = new PlayerOpenShopEvent($player, $this->getArena(), PlayerOpenShopEvent::SHOP_TYPE_CHEST, $this->shopData);
         $this->getArena()->getPlugin()->getServer()->getPluginManager()->callEvent($event);
+
         if($event->isCancelled() || $event->getShopType() !== PlayerOpenShopEvent::SHOP_TYPE_CHEST) {
             return;
         }
+
         $this->shopData = $event->getShopItems();
 
+        
 
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
@@ -69,6 +72,7 @@ class ShopManager {
             new IntTag('y', $y = intval($player->getY()) + 4),
             new IntTag('z', $z = intval($player->getZ()))
         ]);
+
         $inventory = new CustomChestInventory($tile = new Chest($player->getLevel(), $nbt));
         $block = Block::get(Block::CHEST);
         $block->setComponents($x, $y, $z);
@@ -188,7 +192,7 @@ class ShopManager {
         if(isset($array[4]) && is_array($array[4])) {
             $enchantments = (array)$array[4];
             foreach ($enchantments as $enchantment) {
-                if($this->getEnchantmentFromArray($enchantment) instanceof Enchantment) $item->addEnchantment($enchantment);
+                if(($ench = $this->getEnchantmentFromArray($enchantment)) instanceof Enchantment) $item->addEnchantment($ench);
             }
         }
         $priceItem = null;
@@ -277,16 +281,7 @@ class ShopManager {
      * @return array
      */
     public function getBreakableBlocks(): array {
-        $blocks = [];
-        foreach ($this->shopData as $slot => [$shopSlot => $itemArray]) {
-            if(is_int($shopSlot)) {
-                $id = $itemArray[0];
-                if(Block::get($id) instanceof Block && $id !== 0) {
-                    array_push($blocks, $id);
-                }
-            }
-        }
-        return $blocks;
+        return [Item::SANDSTONE, Item::OBSIDIAN, Item::IRON_BLOCK, Item::CHEST];
     }
 
     /**
@@ -295,8 +290,12 @@ class ShopManager {
     private $shopData = [
         0 => [
             "name" => [Item::SANDSTONE, 0, 1, "§6Blocks"],
-            0 => [Item::SANDSTONE, 0, 4, "Sandstone", "none", [0, 1]],
-            1 => [Item::SANDSTONE, 0, 32, "Sandstone", "none", [0, 8]]
+            0 => [Item::SANDSTONE, 0, 4, "Sandstone", "none", [0, 2]],
+            1 => [Item::SANDSTONE, 0, 32, "Sandstone", "none", [0, 16]],
+            2 => [Item::END_STONE, 0, 1, "End Stone", "none", [0, 4]],
+            3 => [Item::IRON_BLOCK, 0, 1, "Iron Block", "none", [0, 16]],
+            4 => [Item::OBSIDIAN, 0, 1, "Obsidian", "none", [1, 25]],
+            5 => [Item::CHEST, 0, 1, "Chest", "none", [0, 20]]
         ],
         1 => [
             "name" => [Item::GOLD_SWORD, 0, 1,"§7Swords"],
@@ -310,16 +309,19 @@ class ShopManager {
             "name" => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxes"],
             0 => [Item::WOODEN_PICKAXE, 0, 1, "§7 Pickaxe lvl1", "none", [0, 12]],
             1 => [Item::STONE_PICKAXE, 0, 1, "§7Pickaxe lvl2", "none", [0, 14]],
-            2 => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxe lvl3", "none", [1, 20]]
+            2 => [Item::IRON_PICKAXE, 0, 1, "§7Pickaxe lvl3", [["efficiency", 1]], [1, 20]],
+            3 => [Item::DIAMOND_PICKAXE, 0, 1, "§7Pickaxe lvl4", [["efficiency", 4]], [2, 20]],
+            4 => [Item::WOODEN_AXE, 0, 1, "Axe", "none", [2, 1]]
         ],
         3 => [
             "name" => [Item::STEAK, 0, 1,"§7Food"],
             0 => [Item::APPLE, 0, 5, "Apple", "none", [0, 1]],
             1 => [Item::STEAK, 0, 4, "Steak", "none", [0, 10]],
-            2 => [Item::CAKE, 0, 1, "Cake", "none", [1, 5]]
+            2 => [Item::CAKE, 0, 1, "Cake", "none", [1, 5]],
+            3 => [Item::GOLDEN_APPLE, 0, 1 ,"Golden Apple", "none", [2, 10]]
         ],
         4 => [
-            "name" => [Item::DIAMOND_CHESTPLATE, 0, 1, "§9Armours"],
+            "name" => [Item::DIAMOND_CHESTPLATE, 0, 1, "§7Armours"],
             0 => [Item::LEATHER_CAP, 0, 1, "Leather Cap", "none", [0, 5]],
             1 => [Item::LEATHER_TUNIC, 0, 1, "Leather Tunic", "none", [0, 5]],
             2 => [Item::LEATHER_LEGGINGS, 0, 1, "Leather Leggings", "none", [0, 5]],
@@ -328,12 +330,18 @@ class ShopManager {
             5 => [Item::CHAIN_CHESTPLATE, 0, 1, "Chain Chestplate", "none", [1, 20]],
             6 => [Item::CHAIN_LEGGINGS, 0, 1, "Chain Leggings", "none", [1, 20]],
             7 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
-            8 => [Item::IRON_BOOTS, 0, 1, "Iron Boots", "none", [1, 20]],
-            9 => [Item::IRON_LEGGINGS, 0, 1, "Iron Leggings", "none", [1, 20]],
-            10 => [Item::IRON_CHESTPLATE, 0, 1, "Iron Chestplate", "none", [1, 20]],
-            11 => [Item::IRON_HELMET, 0, 1, "Iron Helmet", "none", [1, 20]],
+            8 => [Item::IRON_BOOTS, 0, 1, "Iron Boots", "none", [2, 20]],
+            9 => [Item::IRON_LEGGINGS, 0, 1, "Iron Leggings", "none", [2, 20]],
+            10 => [Item::IRON_CHESTPLATE, 0, 1, "Iron Chestplate", "none", [2, 20]],
+            11 => [Item::IRON_HELMET, 0, 1, "Iron Helmet", "none", [2, 20]],
         ],
         5 => [
+            "name" => [Item::BOW, 0, 1, "§7Bows"],
+            0 => [Item::BOW, 0, 1, "Bow", "none", [2, 5]],
+            1 => [Item::BOW, 0, 1, "Bow lvl1", [["power", 1]], [2, 10]],
+            2 => [Item::BOW, 0, 1, "Bow lvl2", [["power", 3], ["punch", 1]], [2, 10]]
+        ],
+        6 => [
             "name" => [Item::SPONGE, 0, 1, "§8§k|||§r §6Special§8 §k|||§r"],
             0 => [Item::ENDER_PEARL, 0, 1, "§3EnderPearl", "none", [2, 15]],
             1 => [Item::SPONGE, 0, 1, "§eLucky§6Block", "none", [2, 1]]

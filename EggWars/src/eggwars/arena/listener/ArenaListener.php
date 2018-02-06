@@ -26,8 +26,8 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityLevelChangeEvent;
-use pocketmine\event\inventory\InventoryCloseEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
+use pocketmine\event\inventory\InventoryPickupArrowEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
@@ -39,7 +39,6 @@ use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\ContainerClosePacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\Player;
-use pocketmine\tile\Chest;
 use pocketmine\tile\Sign;
 
 /**
@@ -156,6 +155,15 @@ class ArenaListener implements Listener {
         }
     }
 
+    public function onPickup(InventoryPickupArrowEvent $event) {
+        foreach($event->getInventory()->getViewers() as $player) {
+            if($player instanceof Player && $this->getArena()->inGame($player)) {
+                $event->setCancelled(true);
+                $event->getArrow()->close();
+            }
+        }
+    }
+
     /**
      * @event
      *
@@ -182,6 +190,17 @@ class ArenaListener implements Listener {
 
         if(!$this->getArena()->inGame($entity)) {
             return;
+        }
+
+        if($event instanceof EntityDamageByEntityEvent) {
+            $damager = $event->getDamager();
+            if($damager instanceof Player) {
+                if($this->getArena()->inGame($damager)) {
+                    if($this->getArena()->getTeamByPlayer($damager)->getTeamName() == $this->getArena()->getTeamByPlayer($entity)->getDisplayName()) {
+                        $event->setCancelled(true);
+                    }
+                }
+            }
         }
 
         if(!($entity->getHealth()-$event->getDamage() <= 0)) {
@@ -365,7 +384,10 @@ class ArenaListener implements Listener {
      */
     public function onBreak(BlockBreakEvent $event) {
         $player = $event->getPlayer();
-        if($this->getArena()->inGame($player) && $event->getBlock()->getId() == Item::DRAGON_EGG) {
+        if(!$this->getArena()->inGame($player)) {
+            return;
+        }
+        if($event->getBlock()->getId() == Item::DRAGON_EGG) {
             $bool = $this->getArena()->teamManager->onEggBreak($player, $event->getBlock()->asVector3());
             if(!$bool) {
                 $event->getBlock()->getLevel()->setBlock($event->getBlock()->asVector3(), Block::get(0));
@@ -378,6 +400,10 @@ class ArenaListener implements Listener {
         if(in_array($event->getBlock()->getId(), $blocks)) {
             $event->setCancelled();
         }
+
+        if($event->getBlock()->getId() == Item::SPONGE) {
+            #$event->setDrops($this->getArena()->shopManager->randomItem());
+        }
     }
 
     /**
@@ -388,6 +414,10 @@ class ArenaListener implements Listener {
     public function onPlace(BlockPlaceEvent $event) {
         /** @var array $ids */
         $blocks = $this->getArena()->shopManager->getBreakableBlocks();
+
+        if(!$this->getArena()->inGame($event->getPlayer())) {
+            return;
+        }
 
         if(in_array($event->getBlock()->getId(), $blocks)) {
             $event->setCancelled();
