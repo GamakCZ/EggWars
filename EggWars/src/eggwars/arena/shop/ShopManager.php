@@ -90,7 +90,8 @@ class ShopManager {
         $inv = $player->getInventory();
         $price = $this->getPrice($item);
         if($inv->contains($this->getPrice($item))) {
-            $inv->addItem($item);
+            $item->setCustomName(Item::get($item->getId(), $item->getDamage(), $item->getCount())->getName());
+            $player->getInventory()->addItem($item);
             $inv->removeItem($price);
         }
         else {
@@ -144,11 +145,6 @@ class ShopManager {
     public function updateChestItems(CustomChestInventory $inventory, Team $team, int $id) {
         $shopItems = $this->shopData;
         if($id == -1) {
-            /*foreach ($shopItems as $slot => ["name" => $data]) {
-                if($slot <= 8) {
-                    $inventory->setItem($slot, Item::get($data[0], $data[1], $data[2])->setCustomName($data[3]));
-                }
-            }*/
             for($x = 0; $x <= 8; $x++) {
                 if(isset($shopItems[$x])) {
                     $itemArray = $shopItems[$x]["name"];
@@ -160,6 +156,7 @@ class ShopManager {
             for($x = 8; $x <= 26; $x++) {
                 $inventory->setItem($x, Item::get(0));
             }
+
             if(isset($shopItems[$id])) {
                 foreach ($shopItems[$id] as $invSlot => $itemArgs) {
                     if(is_int($invSlot)) {
@@ -173,6 +170,7 @@ class ShopManager {
     /**
      * @param Armor $armor
      * @param Team $team
+     *
      * @return Armor
      */
     public function setItemTeamColor(Armor $armor, Team $team): Armor {
@@ -281,7 +279,7 @@ class ShopManager {
      * @return array
      */
     public function getBreakableBlocks(): array {
-        return [Item::SANDSTONE, Item::OBSIDIAN, Item::IRON_BLOCK, Item::CHEST];
+        return [Item::SANDSTONE, Item::OBSIDIAN, Item::IRON_BLOCK, Item::CHEST, Item::END_STONE];
     }
 
     /**
@@ -339,7 +337,8 @@ class ShopManager {
             "name" => [Item::BOW, 0, 1, "§7Bows"],
             0 => [Item::BOW, 0, 1, "Bow", "none", [2, 5]],
             1 => [Item::BOW, 0, 1, "Bow lvl1", [["power", 1]], [2, 10]],
-            2 => [Item::BOW, 0, 1, "Bow lvl2", [["power", 3], ["punch", 1]], [2, 10]]
+            2 => [Item::BOW, 0, 1, "Bow lvl2", [["power", 3], ["punch", 1]], [2, 10]],
+            3 => [Item::ARROW, 0, 8, "Arrow", "none", [0, 10]]
         ],
         6 => [
             "name" => [Item::SPONGE, 0, 1, "§8§k|||§r §6Special§8 §k|||§r"],

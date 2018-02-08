@@ -397,7 +397,7 @@ class ArenaListener implements Listener {
         /** @var array $ids */
         $blocks = $this->getArena()->shopManager->getBreakableBlocks();
 
-        if(in_array($event->getBlock()->getId(), $blocks)) {
+        if(!in_array($event->getBlock()->getId(), $blocks)) {
             $event->setCancelled();
         }
 
@@ -419,7 +419,7 @@ class ArenaListener implements Listener {
             return;
         }
 
-        if(in_array($event->getBlock()->getId(), $blocks)) {
+        if(!in_array($event->getBlock()->getId(), $blocks)) {
             $event->setCancelled();
         }
     }

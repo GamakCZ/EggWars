@@ -34,11 +34,6 @@ class VoteManager {
     public $arena;
 
     /**
-     * @var EggWarsLevel[] $levels
-     */
-    private $levels = [];
-
-    /**
      * VoteManager constructor.
      * @param Arena $arena
      * @param array $levels
@@ -54,20 +49,17 @@ class VoteManager {
      */
     public function createVoteTable(array $levels) {
         $this->maps = [
-            $levels[0]->getCustomName() => [
+            0 => [
                     "customName" => $levels[0]->getCustomName(),
-                    "votes" => [],
-                    "arg" => 0
+                    "votes" => []
                 ],
-            $levels[1]->getCustomName() => [
+            1 => [
                 "customName" => $levels[1]->getCustomName(),
-                "votes" => [],
-                "arg" => 1
+                "votes" => []
             ],
-            $levels[2]->getCustomName() => [
+            2 => [
                 "customName" => $levels[2]->getCustomName(),
-                "votes" => [],
-                "arg" => 2
+                "votes" => []
             ]];
     }
 
@@ -88,7 +80,8 @@ class VoteManager {
      */
     public function getMapName(int $map): string {
         #return $this->maps[intval($map-1)]["customName"];
-        return $this->maps[$this->levels[intval($map-1)]->getCustomName()]["customName"];
+        #return $this->maps[$this->levels[intval($map-1)]->getCustomName()]["customName"];
+        return $this->maps[intval($map-1)]["customName"];
     }
 
     /**
@@ -96,7 +89,8 @@ class VoteManager {
      * @return int $votes
      */
     public function getVotes(int $map): int {
-        return count($this->maps[$this->levels[intval($map-1)]->getCustomName()]["votes"]);
+        #return count($this->maps[$this->levels[intval($map-1)]->getCustomName()]["votes"]);
+        return count($this->maps[intval($map-1)]["votes"]);
     }
 
 
@@ -104,21 +98,23 @@ class VoteManager {
      * @return EggWarsLevel
      */
     public function getMap() {
+
+        $a = $this->getMapName(1);
+        $b = $this->getMapName(2);
+        $c = $this->getMapName(3);
+
         $maps = [
-            $this->getMapName(1) => $this->getVotes(1),
-            $this->getMapName(2) => $this->getVotes(2),
-            $this->getMapName(3) => $this->getVotes(3)
+            "a" => $this->getVotes(1),
+            "b" => $this->getVotes(2),
+            "c" => $this->getVotes(3)
         ];
 
         asort($maps);
 
-        array_shift($maps);
-        array_shift($maps);
-
         $result = null;
 
         foreach ($maps as $map => $votes) {
-            $result = $map;
+            $result = ${$map};
         }
 
         if($result == null) {
@@ -135,32 +131,32 @@ class VoteManager {
     public function addVote(Player $player, $map): bool {
         $lastVote = $this->voted($player);
         if($lastVote !== 0) {
-            unset($this->maps[$this->levels[intval($lastVote-1)]->getCustomName()]["votes"][$player->getName()]);
+            unset($this->maps[intval($lastVote-1)]["votes"][$player->getName()]);
         }
         if(is_numeric($map)) {
             switch ($map = intval($map)) {
                 case 1:
-                    $this->maps[$this->levels[0]->getCustomName()]["votes"][$player->getName()] = 1;
-                    $player->sendMessage("§aYou are voted for {$this->levels[0]->getCustomName()}!");
+                    $this->maps[0]["votes"][$player->getName()] = 1;
+                    $player->sendMessage("§aYou are voted for {$this->maps[0]["customName"]}!");
                     break;
                 case 2:
-                    $this->maps[$this->levels[1]->getCustomName()]["votes"][$player->getName()] = 1;
-                    $player->sendMessage("§aYou are voted for {$this->levels[1]->getCustomName()}!");
+                    $this->maps[1]["votes"][$player->getName()] = 1;
+                    $player->sendMessage("§aYou are voted for {$this->maps[1]["customName"]}!");
                     break;
                 case 3:
-                    $this->maps[$this->levels[2]->getCustomName()]["votes"][$player->getName()] = 1;
-                    $player->sendMessage("§aYou are voted for {$this->levels[2]->getCustomName()}!");
+                    $this->maps[2]["votes"][$player->getName()] = 1;
+                    $player->sendMessage("§aYou are voted for {$this->maps[2]["customName"]}!");
                     break;
             }
         }
         else {
-            if($this->levels[0]->getCustomName() == $map) {
+            if($this->maps[0]["customName"] == $map) {
                 $this->addVote($player, 1);
             }
-            elseif($this->levels[1]->getCustomName() == $map) {
+            elseif($this->maps[0]["customName"] == $map) {
                 $this->addVote($player, 2);
             }
-            elseif($this->levels[2]->getCustomName() == $map) {
+            elseif($this->maps[0]["customName"] == $map) {
                 $this->addVote($player, 3);
             }
             else {
@@ -175,9 +171,9 @@ class VoteManager {
      * @return int
      */
     private function voted(Player $player): int {
-        if(isset($this->maps[$this->levels[0]->getCustomName()]["votes"][$player->getName()])) return 1;
-        if(isset($this->maps[$this->levels[1]->getCustomName()]["votes"][$player->getName()])) return 2;
-        if(isset($this->maps[$this->levels[2]->getCustomName()]["votes"][$player->getName()])) return 3;
+        if(isset($this->maps[0]["votes"][$player->getName()])) return 1;
+        if(isset($this->maps[1]["votes"][$player->getName()])) return 2;
+        if(isset($this->maps[2]["votes"][$player->getName()])) return 3;
         return 0;
     }
 

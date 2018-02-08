@@ -56,7 +56,7 @@ class Arena {
      * @var Task $scheduler
      * @var Task $genScheduler
      */
-    private $scheduler, $genScheduler;
+    public $scheduler, $genScheduler;
 
     /** @var ArenaListener $listener */
     private $listener;
