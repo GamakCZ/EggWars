@@ -4,45 +4,18 @@
 
 _EggWars minigame for PocketMine_
 
-[![Build Status](https://travis-ci.org/GamakCZ/EggWars.svg?branch=master)](https://travis-ci.org/GamakCZ/EggWars)
 
-[![Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/uwBf2jS)
+| --- | --- | --- |
+| Travis CI | Poggit | Discord |
+| [![Build Status](https://travis-ci.org/GamakCZ/EggWars.svg?branch=master)](https://travis-ci.org/GamakCZ/EggWars) | [![Poggit-CI](https://poggit.pmmp.io/ci.shield/GamakCZ/EggWars/EggWars)](https://poggit.pmmp.io/ci/GamakCZ/EggWars/EggWars) | [![Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/uwBf2jS) |
 
-[![Poggit-CI](https://poggit.pmmp.io/ci.shield/GamakCZ/EggWars/EggWars)](https://poggit.pmmp.io/ci/GamakCZ/EggWars/EggWars)
 
+#### TODO Fix:
 
-### TODO:
-
-- [x] Commands:
-    - [x] Create command
-    - [x] Set command
-    - [x] Level command
-    - [x] Other commands
-
-- [x] Setup Mode:
-    - [x] Level setup mode
-    - [x] Arenas setup mode
-    - [x] Advanced settings
-    
-- [x] Voting:
-    - [x] World choosing
-    - [x] Voting
-
-- [ ] Shop:
-    - [x] Simple shop without config - INDEV (needs test, fix)
-
-- [x] Gameplay system:
-    - [x] Join signs
-    - [x] Generators
-    - [x] Joining to arena
-    - [x] Joining to teams
-    - [x] Task
-    - [x] Custom teams
-    - [x] Working deaths / respawns
-    - [x] Arena restart (need test)
-
-- [ ] Bug fixing:
-    - [ ] Shop bugs
+- [ ] Shop works only in classic UI
+- [ ] Add spectator
+- [ ] Change setup-command add to set
+- [ ] Fix join sign (Restarting)
 
 
 #### News:

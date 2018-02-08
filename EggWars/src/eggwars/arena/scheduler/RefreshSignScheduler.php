@@ -26,13 +26,14 @@ use pocketmine\tile\Sign;
  */
 class RefreshSignScheduler extends EggWarsTask {
 
-    const SIGN_PX = "§5§l[ §r§3EggWars §5§l]";
+    const SIGN_PX = "§3§lEggWars";
     const SIGN_INGAME = "§5InGame";
     const SIGN_JOIN = "§aJoin";
     const SIGN_FULL = "§eFull";
     const SIGN_SETUP = "§4Setup";
-    const SIGN_STATUS = "§9[§b%1 / %2§9]";
-    const SIGN_LAST = "§8---";
+    const SIGN_RESTART = "§cRestarting ...";
+    const SIGN_STATUS = "§9[ §b%1 / %2§9 ]";
+    const SIGN_LAST = "§7§oClick to join!";
 
     /** @var Arena $arena */
     private $arena;
@@ -64,6 +65,7 @@ class RefreshSignScheduler extends EggWarsTask {
             $line1 = self::SIGN_PX;
 
             //line 2
+            if($this->getArena()->getPhase() == 2) $line2 = self::SIGN_RESTART;
             if($this->getArena()->getPhase() == 1) $line2 = self::SIGN_INGAME;
             if(!$this->getArena()->isEnabled()) $line2 = self::SIGN_SETUP;
             if($this->getArena()->getPhase() == 0 &&
