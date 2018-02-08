@@ -4,9 +4,8 @@
 
 _EggWars minigame for PocketMine_
 
-
-| --- | --- | --- |
 | Travis CI | Poggit | Discord |
+| --- | --- | --- |
 | [![Build Status](https://travis-ci.org/GamakCZ/EggWars.svg?branch=master)](https://travis-ci.org/GamakCZ/EggWars) | [![Poggit-CI](https://poggit.pmmp.io/ci.shield/GamakCZ/EggWars/EggWars)](https://poggit.pmmp.io/ci/GamakCZ/EggWars/EggWars) | [![Discord](https://img.shields.io/discord/102860784329052160.svg)](https://discord.gg/uwBf2jS) |
 
 
