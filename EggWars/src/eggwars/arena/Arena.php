@@ -46,17 +46,17 @@ class Arena {
     /** @var array $progress */
     public $progress = [];
 
-    /**
-     * @var int $time
-     * @var int $phase
-     */
-    public $time, $phase = 0;
+    /** @var int $time */
+    public $time;
 
-    /**
-     * @var Task $scheduler
-     * @var Task $genScheduler
-     */
-    public $scheduler, $genScheduler;
+    /** @var int $phase */
+    public $phase = 0;
+
+    /** @var ArenaScheduler $scheduler */
+    public $scheduler;
+
+    /** @var GeneratorScheduler$genScheduler */
+    public $genScheduler;
 
     /** @var ArenaListener $listener */
     private $listener;
@@ -554,7 +554,7 @@ class Arena {
 
         // Add players to teams:
         foreach ($this->getAllPlayers() as $player) {
-            if ($this->getTeamByPlayer($player) == null) {
+            if ($this->getTeamByPlayer($player) === null) {
                 choose:
                 $team = $this->getAllTeams()[array_rand($this->getAllTeams(), 1)];
                 if (!$team->isFull()) {
@@ -566,7 +566,6 @@ class Arena {
 
             }
         }
-
         foreach ($this->getAllPlayers() as $player) {
             $player->setGamemode($player::SURVIVAL);
             $player->setFood(20);
@@ -582,6 +581,8 @@ class Arena {
         // Task data
         $this->progress["gameTime"] = $this->arenaData["gameTime"];
         $this->getPlugin()->getServer()->getScheduler()->scheduleRepeatingTask($this->genScheduler = new GeneratorScheduler($this), 1);
+
+        $this->genScheduler->checkSigns($this->getLevel());
     }
 
     /**

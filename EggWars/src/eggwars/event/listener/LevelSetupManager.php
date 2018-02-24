@@ -61,11 +61,11 @@ class LevelSetupManager implements Listener {
         switch (strtolower($args[0])) {
             case "help":
                 $player->sendMessage("§9--- §6§lEggWars level setup help§l 1/1§r§9 ---§r§f\n" .
-                    "§2add §bAdd the arena, in there level can be used\n" .
+                    "§2set §bSet the arena, in there level can be used\n" .
                     "§2spawn §bSet the team spawn\n".
                     "§2egg §bSet the team egg");
                 break;
-            case "add":
+            case "set":
                 if(empty($args[1])) {
                     $player->sendMessage("§cUsage: §7add <arena>");
                     break;
@@ -75,12 +75,12 @@ class LevelSetupManager implements Listener {
                     break;
                 }
                 if(in_array($args[1], $level->data["arenas"])) {
-                    $player->sendMessage("§cArena is already added!");
+                    $player->sendMessage("§cArena is already set!");
                     break;
                 }
                 $arena = EggWars::getInstance()->getArenaManager()->getArenaByName($args[1]);
                 array_push($level->data["arenas"], $args[1]);
-                $player->sendMessage("§aArena $args[1] added! §bImporting teams...");
+                $player->sendMessage("§aArena $args[1] set! §bImporting teams...");
                 foreach($arena->arenaData["teams"] as $team => ["color" => $color]) {
                     $player->sendMessage("§a{$color}{$team} team imported!");
                     $level->data["teams"][$team] = [

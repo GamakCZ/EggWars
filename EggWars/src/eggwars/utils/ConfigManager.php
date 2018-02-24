@@ -40,7 +40,7 @@ class ConfigManager {
         "enabled" => false,
         "name" => "",
         "startTime" => 30,
-        "gameTime" => 600,
+        "gameTime" => 3600,
         "restartTime" => 20,
         "teamsToStart" => 2,
         "playersPerTeam" => 2,

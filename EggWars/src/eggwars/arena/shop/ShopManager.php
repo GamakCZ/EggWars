@@ -20,8 +20,8 @@ use eggwars\utils\Color;
 use pocketmine\block\Block;
 use pocketmine\item\Armor;
 use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\Item;
-use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -101,6 +101,7 @@ class ShopManager {
 
     /**
      * @param Player $player
+     * @param CustomChestInventory $inventory
      * @param int $slot
      */
     public function onBrowseTransaction(Player $player, CustomChestInventory $inventory, int $slot) {
@@ -219,7 +220,7 @@ class ShopManager {
 
     /**
      * @param array $array
-     * @return Enchantment|null $enchantment
+     * @return Enchantment|EnchantmentInstance|null $enchantment
      */
     public function getEnchantmentFromArray(array $array) {
         $enchantment = null;
@@ -263,8 +264,16 @@ class ShopManager {
                     break;
 
             }
-            $enchantment->setLevel(intval($array[1]));
+
+            if(class_exists(EnchantmentInstance::class)) {
+                $enchantment = new EnchantmentInstance($enchantment, intval($array[1]));
+            }
+            else {
+                $enchantment->setLevel(intval($array[1]));
+            }
+
         }
+
         return $enchantment;
     }
 

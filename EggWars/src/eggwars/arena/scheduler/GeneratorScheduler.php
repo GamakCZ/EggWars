@@ -357,7 +357,9 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         $targetItem = null;
 
         foreach ($event->getTransaction()->getActions() as $action) {
-            $targetItem = $action->getTargetItem();
+            if($action->getTargetItem()->getId() != 0) {
+                $targetItem = $action->getTargetItem();
+            }
         }
 
         if($targetItem === null) {
@@ -376,7 +378,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
 
         $price = $this->getPriceItem($inv->genType, $inv->genLevel);
 
-        if($targetItem->getId()==Item::EXPERIENCE_BOTTLE) {
+        if($targetItem->getId() == Item::EXPERIENCE_BOTTLE) {
             if($player->getInventory()->contains($price)) {
                 /** @var Sign $tile */
                 $tile = $inv->gensigntile;
@@ -391,8 +393,16 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
 
     }
 
-    public function createUpdateWindow(Player $player, int $ingot, $genLevel) {
+    /**
+     * @api
+     *
+     * @param Player $player
+     * @param int $ingot
+     * @param $genLevel
+     */
+    public function createUpdateWindow(Player $player, int $ingot, int $genLevel) {
         $this->debug("4");
+
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
             new StringTag('CustomName', "§3§lEggWars §7>>> §6Generator"),
@@ -400,6 +410,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             new IntTag('y', $y = intval($player->getY()) + 4),
             new IntTag('z', $z = intval($player->getZ()))
         ]);
+
         $inv = new GenChestInventory(new Chest($player->getLevel(), $nbt));
         $block = Block::get(Block::CHEST);
         $block->setComponents($x, $y, $z);
@@ -407,43 +418,56 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
 
         $time = strval($this->ticks[$ingot][$genLevel]);
         $player->addWindow($inv);
+
         switch ($ingot) {
             case self::IRON:
                 $inv->setItem(11, Item::get(Item::IRON_INGOT)->setCustomName("§7Iron generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
+                }
+                else {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7MAX LEVEL"));
+                }
                 break;
             case self::GOLD:
                 $inv->setItem(11, Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
+                }
+                else {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7MAX LEVEL"));
+                }
                 break;
             case self::DIAMOND:
                 $inv->setItem(11, Item::get(Item::DIAMOND)->setCustomName("§bDiamond generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
+                }
+                else {
+                    $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7MAX LEVEL"));
+                }
+                break;
         }
-        $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName($this->getUpdatedDescription($ingot, $genLevel)));
     }
 
-    public function getUpdatedDescription($ingot, $genLevel): string {
-        $text = "";
-        $level = $genLevel++;
-        $time = 0;
-        if(empty($this->ticks[$ingot][$level])) {
-            $level = "max";
+    /**
+     * @param $ingot
+     * @param $genLevel
+     * @return string
+     */
+    public function getPrice($ingot, $genLevel): string {
+        $item = $this->getPriceItem($ingot, $genLevel);
+
+        switch ($item->getId()) {
+            case Item::IRON_INGOT:
+                return "§7Iron Ingot §9{$item->getCount()}x";
+            case Item::GOLD_INGOT:
+                return "§6Gold Ingot §9{$item->getCount()}x";
+            case Item::DIAMOND:
+                return "§bDiamond §9{$item->getCount()}x";
+            default:
+                return "unknown";
         }
-        else {
-            $time = $this->ticks[$ingot][$level];
-        }
-        $pItem = $this->getPriceItem($ingot, $genLevel);
-        $update = $pItem->getName()." ".$pItem->getCount()."x";
-        switch ($ingot) {
-            case self::IRON:
-                $text = "§7Iron Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
-                break;
-            case self::GOLD:
-                $text = "§6Gold Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
-                break;
-            case self::DIAMOND:
-                $text = "§6Gold Generator\n§blevel {$level}\ntime: {$time}\n§bupdate: {$update}";
-                break;
-        }
-        return $text;
     }
 
     public function getPriceItem($ingot, $genLevel): Item {
