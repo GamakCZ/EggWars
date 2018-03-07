@@ -250,7 +250,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
      */
     private function loadSign(Sign $sign) {
         $text = $sign->getText();
-        if($text[0] != "EggWars" && $text[0] != self::LINE_1) return;
+        if($text[0] != "EggWars") return;
 
         $gen = $text[1];
         $lvl = $text[2];
