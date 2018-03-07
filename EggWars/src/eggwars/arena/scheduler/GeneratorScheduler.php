@@ -422,7 +422,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         switch ($ingot) {
             case self::IRON:
                 $inv->setItem(11, Item::get(Item::IRON_INGOT)->setCustomName("§7Iron generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
-                if(isset($this->ticks[$ingot][intval($genLevel+1)])) {
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
                     $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
                 }
                 else {
@@ -431,7 +431,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
                 break;
             case self::GOLD:
                 $inv->setItem(11, Item::get(Item::GOLD_INGOT)->setCustomName("§6Gold generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
-                if(isset($this->ticks[$ingot][intval($genLevel+1)])) {
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
                     $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
                 }
                 else {
@@ -440,7 +440,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
                 break;
             case self::DIAMOND:
                 $inv->setItem(11, Item::get(Item::DIAMOND)->setCustomName("§bDiamond generator\n§blevel: {$genLevel}\n§btime: {$time} sec."));
-                if(isset($this->ticks[$ingot][intval($genLevel+1)])) {
+                if(isset($this->tick[$ingot][intval($genLevel+1)])) {
                     $inv->setItem(14, Item::get(Item::EXPERIENCE_BOTTLE)->setCustomName("§7UPDATE GENERATOR\n§bnext level: ".strval($genLevel+1)."\n§btime: ".$this->ticks[$ingot][intval($genLevel+1)]."sec.\n{$this->getPrice($ingot, $genLevel+1)}"));
                 }
                 else {
