@@ -80,12 +80,10 @@ class TeamManager {
         foreach ($this->teams as $team) {
             if(!$this->isEnded($team->getTeamName())) {
                 $alive++;
+                $this->lastTeam = $team;
             }
         }
         if($alive <= 1) {
-            foreach ($this->teams as $team) {
-                $this->lastTeam = $team;
-            }
             return true;
         }
         return false;

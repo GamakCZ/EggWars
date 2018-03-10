@@ -196,7 +196,7 @@ class ArenaListener implements Listener {
             $damager = $event->getDamager();
             if($damager instanceof Player) {
                 if($this->getArena()->inGame($damager)) {
-                    if(strcasecmp($this->getArena()->getTeamByPlayer($damager)->getTeamName(), $this->getArena()->getTeamByPlayer($entity)->getTeamName())) {
+                    if(strcasecmp($this->getArena()->getTeamByPlayer($damager)->getTeamName(), $this->getArena()->getTeamByPlayer($entity)->getTeamName()) === 0) {
                         $event->setCancelled(true);
                     }
                 }
