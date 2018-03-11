@@ -106,15 +106,19 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
     }
 
 
+    public static function loadSigns(Level $level) {
+        foreach ($level->getTiles() as $tile) {
+            if($tile instanceof Sign) {
+                self::loadSign($tile);
+            }
+        }
+    }
+
     /**
      * @param Level $level
      */
     public function checkSigns(Level $level) {
-        foreach ($level->getTiles() as $tile) {
-            if($tile instanceof Sign) {
-                $this->loadSign($tile);
-            }
-        }
+        self::loadSigns($level);
     }
 
     /**
@@ -248,7 +252,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
     /**
      * @param Sign $sign
      */
-    private function loadSign(Sign $sign) {
+    private static function loadSign(Sign $sign) {
         $text = $sign->getText();
         if($text[0] != "EggWars") return;
 
@@ -401,7 +405,6 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
      * @param $genLevel
      */
     public function createUpdateWindow(Player $player, int $ingot, int $genLevel) {
-        $this->debug("4");
 
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),

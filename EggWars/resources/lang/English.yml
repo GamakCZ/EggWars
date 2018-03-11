@@ -1,0 +1,14 @@
+---
+# English language file by @VixikCZ
+# need fix
+
+arena-join: '%prefix§7 %player joined the game [%online/%max]'
+arena-quit: '%prefix§7 %player left the game [%online/%max]'
+arena-time-progres: '%prefix§7 Game ends in %end sec.'
+
+waiting-popup: '%prefix §7|| §cYou need more players to start the game!'
+starting-popup: '%prefix §7|| §aGame starts in %start sec.'
+
+voting-voted: '%prefix §aYou are voted for %map!'
+voting-bad-map: '%prefix §cMap %map does not found!'
+...

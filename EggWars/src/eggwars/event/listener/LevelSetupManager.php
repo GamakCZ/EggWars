@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace eggwars\event\listener;
 
+use eggwars\arena\scheduler\GeneratorScheduler;
 use eggwars\EggWars;
 use eggwars\level\EggWarsLevel;
-use eggwars\utils\Color;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\level\Level;
 use pocketmine\Player;
 use pocketmine\Server;
 
@@ -63,7 +64,8 @@ class LevelSetupManager implements Listener {
                 $player->sendMessage("§9--- §6§lEggWars level setup help§l 1/1§r§9 ---§r§f\n" .
                     "§2set §bSet the arena, in there level can be used\n" .
                     "§2spawn §bSet the team spawn\n".
-                    "§2egg §bSet the team egg");
+                    "§2egg §bSet the team egg\n".
+                    "§2checksigns §bSaves all spawners in the level");
                 break;
             case "set":
                 if(empty($args[1])) {
@@ -112,6 +114,17 @@ class LevelSetupManager implements Listener {
                 }
                 $this->b[$player->getName()] = [0, $args[1], $level];
                 $player->sendMessage("§aDestroy the egg to update it!");
+                break;
+            case "checksigns":
+
+                if($this->getPlugin()->getServer()->getLevelByName($level->getLevelData()["folderName"]) instanceof Level) {
+                    GeneratorScheduler::loadSigns($this->getPlugin()->getServer()->getLevelByName($level->getLevelData()["folderName"]));
+                    $player->sendMessage("§aAll signs reloaded!");
+                }
+                else {
+                    $player->sendMessage("§cCloud not reload signs!");
+                }
+
                 break;
             case "done":
                 unset(self::$players[$player->getName()]);

@@ -54,6 +54,11 @@ class RefreshSignScheduler extends EggWarsTask {
         if(!$signPos instanceof Position) {
             return;
         }
+
+        if($signPos->getLevel() == null) {
+            return;
+        }
+
         /** @var Sign $sign */
         if(($sign = $signPos->getLevel()->getTile($signPos->asVector3())) instanceof Sign) {
             $line1 = "";

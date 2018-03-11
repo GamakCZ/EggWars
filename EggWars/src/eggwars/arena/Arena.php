@@ -180,7 +180,7 @@ class Arena {
      *
      * @return int $phase
      */
-    public function getPhase():int {
+    public function getPhase(): int {
         return $this->phase;
     }
 
@@ -383,6 +383,11 @@ class Arena {
         $this->getPlugin()->getServer()->getPluginManager()->callEvent($event);
 
         if(!boolval($this->arenaData["enabled"])) {
+            return;
+        }
+
+        if($this->progress["lobbyPlayers"] >= count($this->getAllTeams())*$this->arenaData["playersPerTeam"]) {
+            $player->sendMessage(EggWars::getPrefix()."§cArena is full!");
             return;
         }
 

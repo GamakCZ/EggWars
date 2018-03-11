@@ -192,6 +192,13 @@ class ArenaListener implements Listener {
             return;
         }
 
+        if($this->getArena()->getPhase() === 0) {
+            if($event->getCause() == $event::CAUSE_VOID) {
+                $entity->teleport(EggWarsPosition::fromArray($this->getArena()->arenaData["lobby"], $this->getArena()->arenaData["lobby"][3]));
+            }
+            $event->setCancelled(true);
+        }
+
         if($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
             if($damager instanceof Player) {

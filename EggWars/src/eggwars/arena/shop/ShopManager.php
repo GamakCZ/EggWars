@@ -336,17 +336,17 @@ class ShopManager {
             4 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
             5 => [Item::CHAIN_CHESTPLATE, 0, 1, "Chain Chestplate", "none", [1, 20]],
             6 => [Item::CHAIN_LEGGINGS, 0, 1, "Chain Leggings", "none", [1, 20]],
-            7 => [Item::CHAIN_HELMET, 0, 1, "Chain Helmet", "none", [1, 20]],
-            8 => [Item::IRON_BOOTS, 0, 1, "Iron Boots", "none", [2, 20]],
-            9 => [Item::IRON_LEGGINGS, 0, 1, "Iron Leggings", "none", [2, 20]],
-            10 => [Item::IRON_CHESTPLATE, 0, 1, "Iron Chestplate", "none", [2, 20]],
-            11 => [Item::IRON_HELMET, 0, 1, "Iron Helmet", "none", [2, 20]],
+            7 => [Item::CHAIN_BOOTS, 0, 1, "Chain Helmet", "none", [1, 20]],
+            8 => [Item::IRON_HELMET, 0, 1, "Iron Boots", "none", [2, 20]],
+            9 => [Item::IRON_CHESTPLATE, 0, 1, "Iron Leggings", "none", [2, 20]],
+            10 => [Item::IRON_LEGGINGS, 0, 1, "Iron Chestplate", "none", [2, 20]],
+            11 => [Item::IRON_BOOTS, 0, 1, "Iron Helmet", "none", [2, 20]],
         ],
         5 => [
             "name" => [Item::BOW, 0, 1, "§7Bows"],
             0 => [Item::BOW, 0, 1, "Bow", "none", [2, 5]],
             1 => [Item::BOW, 0, 1, "Bow lvl1", [["power", 1]], [2, 10]],
-            2 => [Item::BOW, 0, 1, "Bow lvl2", [["power", 3], ["punch", 1]], [2, 10]],
+            2 => [Item::BOW, 0, 1, "Bow lvl2", [["power", 3], ["punch", 1]], [2, 20]],
             3 => [Item::ARROW, 0, 8, "Arrow", "none", [0, 10]]
         ],
         6 => [
