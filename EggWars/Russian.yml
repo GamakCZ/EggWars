@@ -1,0 +1,11 @@
+# Russian language file by @BogdanMakarchuk
+
+arena-join: '%prefix§7 %player присоединился к игре [%online/%max]'
+arena-quit: '%prefix§7 %player вышел с игры [%online/%max]'
+arena-time-progres: '%prefix§7 Конец игры через %end сек.'
+
+waiting-popup: '%prefix §7|| §cНужно больше игроков, чтобы начать игру'
+starting-popup: '%prefix §7|| §aИгра начнется %start сек.'
+
+voting-voted: '%prefix §aВы проголосовали за карту %map!'
+voting-bad-map: '%prefix §cКарта %map не обнаружена!'
