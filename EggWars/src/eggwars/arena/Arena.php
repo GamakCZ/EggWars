@@ -338,10 +338,11 @@ class Arena {
      * @api
      *
      * @return Level|null $level
-     *
-     * > Works only in 1 & 2 phase!
      */
     public function getLevel() {
+        if($this->getPhase() == 0) {
+            return $this->getPlugin()->getServer()->getLevelByName($this->arenaData["lobby"][3]);
+        }
         if($this->level != null) {
             return $this->level->getLevel();
         }
@@ -386,7 +387,7 @@ class Arena {
             return;
         }
 
-        if($this->progress["lobbyPlayers"] >= count($this->getAllTeams())*$this->arenaData["playersPerTeam"]) {
+        if(count($this->progress["lobbyPlayers"]) >= count($this->getAllTeams())*intval($this->arenaData["playersPerTeam"])) {
             $player->sendMessage(EggWars::getPrefix()."§cArena is full!");
             return;
         }
@@ -406,6 +407,7 @@ class Arena {
         $player->setAllowFlight(false);
         $player->setXpProgress(0);
         $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
         $player->removeAllEffects();
 
         $t = 0;
@@ -456,8 +458,6 @@ class Arena {
         switch ($message) {
             case 0:
                 $player->sendMessage(EggWars::getPrefix()."§aYou are successfully leaved arena!");
-                break;
-            case 1:
                 break;
         }
 
@@ -622,7 +622,7 @@ class Arena {
 
             foreach ($this->getAllPlayers() as $player) {
 
-                $player->sendPopup(EggWars::getPrefix()." §7|| §aGame starts in {$this->progress["startTime"]}");
+                $player->sendPopup(EggWars::getPrefix()." §7 §aGame starts in {$this->progress["startTime"]}");
 
                 switch ($startTime) {
                     case 5: $player->addTitle("§c5"); break;
@@ -648,7 +648,7 @@ class Arena {
         }
         else {
             foreach ($this->getAllPlayers() as $player) {
-                $player->sendPopup(EggWars::getPrefix()." §7|| §cYou need more players!");
+                $player->sendPopup(EggWars::getPrefix()." §7 §cYou need more players!");
             }
         }
     }

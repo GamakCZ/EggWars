@@ -375,6 +375,11 @@ class ArenaListener implements Listener {
         if(!$entity instanceof Player) {
             return;
         }
+        if($this->getArena()->inGame($entity)) {
+            if($event->getTarget()->getId() != $this->getArena()->getLevel()->getId()) {
+                $this->arena->disconnectPlayer($entity);
+            }
+        }
         if($this->getArena()->getPhase() == 1) {
             if($this->getArena()->inGame($entity)) {
                 if($event->getTarget()->getName() != $this->getArena()->getLevel()->getName()) {

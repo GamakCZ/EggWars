@@ -25,6 +25,9 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\inventory\ChestInventory;
 use pocketmine\item\Item;
 use pocketmine\level\Level;
+use pocketmine\level\particle\HappyVillagerParticle;
+use pocketmine\level\sound\FizzSound;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -328,7 +331,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             goto level;
         }
 
-        $this->createUpdateWindow($player, $type, $level);
+        $this->createUpdateWindow($player, $type, $level, $tile);
     }
 
     public function onTransaction(InventoryTransactionEvent $event) {
@@ -354,6 +357,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         }
 
         if($player === null) {
+            $this->debug("#4");
             return;
         }
 
@@ -367,16 +371,19 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
         }
 
         if($targetItem === null) {
+            $this->debug("#3");
             return;
         }
 
         if($targetItem->getId() == 0) {
             $event->setCancelled(true);
+            $this->debug("#2");
             return;
         }
 
         if($inv->genType === null || $inv->genLevel === null || $inv->gensigntile === null) {
             $event->setCancelled(true);
+            $this->debug("#1");
             return;
         }
 
@@ -386,8 +393,23 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
             if($player->getInventory()->contains($price)) {
                 /** @var Sign $tile */
                 $tile = $inv->gensigntile;
-                $tile->setText(self::LINE_1, str_replace(strval($inv->genLevel), strval($inv->genLevel+1), $tile->getText()[1]), $tile->getText()[2], $tile->getText()[3]);
+                $tile->setText(self::LINE_1, $tile->getText()[1], str_replace(strval($inv->genLevel), strval($inv->genLevel+1), $tile->getText()[2]),  $tile->getText()[3]);
                 $player->sendMessage(EggWars::getPrefix()."§aGenerator updated!");
+                $this->debug("$inv->genLevel : $inv->genType");
+                $player->getInventory()->removeItem($price);
+
+                $sound = new FizzSound($tile);
+                $player->getLevel()->addSound($sound);
+
+                for($x = 0; $x <= 20; $x++) {
+                    for($y = 0; $y <= 20; $y++) {
+                        for($z = 0; $z <= 20; $z++) {
+                            if(rand(1,4) == 4) {
+                                $player->getLevel()->addParticle(new HappyVillagerParticle(new Vector3($x, $y, $z)));
+                            }
+                        }
+                    }
+                }
             }
             else {
                 $player->sendMessage(EggWars::getPrefix(). "§cYou does not have too enough materials!");
@@ -404,7 +426,7 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
      * @param int $ingot
      * @param $genLevel
      */
-    public function createUpdateWindow(Player $player, int $ingot, int $genLevel) {
+    public function createUpdateWindow(Player $player, int $ingot, int $genLevel, Tile $tile) {
 
         $nbt = new CompoundTag('', [
             new StringTag('id', Tile::CHEST),
@@ -421,6 +443,10 @@ class GeneratorScheduler extends EggWarsTask implements Listener {
 
         $time = strval($this->ticks[$ingot][$genLevel]);
         $player->addWindow($inv);
+
+        $inv->gensigntile = $tile;
+        $inv->genType = $ingot;
+        $inv->genLevel = $genLevel;
 
         switch ($ingot) {
             case self::IRON:
