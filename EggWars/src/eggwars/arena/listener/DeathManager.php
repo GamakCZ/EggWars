@@ -91,6 +91,8 @@ class DeathManager {
         $player->setFood(20);
         $player->setGamemode($player::SURVIVAL);
         $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
+        $player->getCursorInventory()->clearAll();
         $player->teleport(Position::fromObject($this->arenaListener->getArena()->getTeamSpawnVector($this->arenaListener->getArena()->getTeamByPlayer($player)->getTeamName()), $this->arenaListener->getArena()->getLevel()));
     }
 
