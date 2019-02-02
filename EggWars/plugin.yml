@@ -1,8 +1,8 @@
 name: EggWars
-api: [3.0.0-ALPHA7, 3.0.0-ALPHA8, 3.0.0-ALPHA9, 3.0.0-ALPHA10, 3.0.0-ALPHA11]
+api: [3.0.0]
 version: 1.0.0-beta1
-author: VixikCZ
-main: eggwars\EggWars
+author: VixikHD
+main: vixikhd\eggwars\EggWars
 description: EggWars minigame plugin
 website: https://github.com/GamakCZ/EggWars
 load: POSTWORLD
