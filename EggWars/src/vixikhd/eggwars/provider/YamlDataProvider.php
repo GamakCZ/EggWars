@@ -23,7 +23,7 @@ namespace vixikhd\eggwars\provider;
 use pocketmine\level\Level;
 use pocketmine\utils\Config;
 use vixikhd\eggwars\arena\Arena;
-use vixikhd\eggwars\SkyWars;
+use vixikhd\eggwars\EggWars;
 
 /**
  * Class YamlDataProvider
@@ -31,17 +31,23 @@ use vixikhd\eggwars\SkyWars;
  */
 class YamlDataProvider {
 
-    /** @var SkyWars $plugin */
+    /** @var EggWars $plugin */
     private $plugin;
 
     /**
      * YamlDataProvider constructor.
-     * @param SkyWars $plugin
+     * @param EggWars $plugin
      */
-    public function __construct(SkyWars $plugin) {
+    public function __construct(EggWars $plugin) {
         $this->plugin = $plugin;
         $this->init();
+        $this->loadLevels();
         $this->loadArenas();
+    }
+
+    public function saveAll() {
+        $this->saveLevels();
+        $this->saveArenas();
     }
 
     public function init() {
@@ -59,6 +65,21 @@ class YamlDataProvider {
         }
     }
 
+    public function loadLevels() {
+        foreach (glob($this->getDataFolder() . "levels" . DIRECTORY_SEPARATOR . "*.yml") as $levelFile) {
+            $config = new Config($levelFile, Config::YAML);
+            $this->plugin->levels[basename($levelFile, ".yml")] = $config->getAll();
+        }
+    }
+
+    public function saveLevels() {
+        foreach ($this->plugin->levels as $fileName => $data) {
+            $config = new Config($this->getDataFolder() . "levels" . DIRECTORY_SEPARATOR . $fileName . ".yml", Config::YAML);
+            $config->setAll($data);
+            $config->save();
+        }
+    }
+
     public function loadArenas() {
         foreach (glob($this->getDataFolder() . "arenas" . DIRECTORY_SEPARATOR . "*.yml") as $arenaFile) {
             $config = new Config($arenaFile, Config::YAML);
@@ -68,13 +89,7 @@ class YamlDataProvider {
 
     public function saveArenas() {
         foreach ($this->plugin->arenas as $fileName => $arena) {
-            if($arena->level instanceof Level) {
-                foreach ($arena->players as $player) {
-                    $player->teleport($player->getServer()->getDefaultLevel()->getSpawnLocation());
-                }
-                // must be reseted
-                $arena->mapReset->loadMap($arena->level->getFolderName());
-            }
+            // TODO: implement saving when arena is ingame
             $config = new Config($this->getDataFolder() . "arenas" . DIRECTORY_SEPARATOR . $fileName . ".yml", Config::YAML);
             $config->setAll($arena->data);
             $config->save();

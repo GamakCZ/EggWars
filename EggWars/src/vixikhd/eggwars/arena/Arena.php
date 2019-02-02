@@ -50,6 +50,9 @@ class Arena implements Listener {
     /** @var EggWars $plugin */
     public $plugin;
 
+    /** @var MapReset $mapReset */
+    public $mapReset;
+
     /** @var array $arenaData */
     public $data = [];
 
@@ -67,8 +70,6 @@ class Arena implements Listener {
 
     /** @var LevelManager $levelManager */
     public $levelManager;
-
-
 
     /**
      * Arena constructor.
@@ -97,8 +98,11 @@ class Arena implements Listener {
      * @return bool
      */
     public function enable(bool $loadArena = true): bool {
+        if(!isset($this->data["levels"])) {
+            return false;
+        }
         foreach ($this->data["levels"] as $index => $level) {
-            if(!isset($this->plugin->levels[$level])) {
+            if(!isset($this->plugin->levels[$level]) || !$this->plugin->levels[$level]["enabled"]) {
                 unset($this->data["levels"][$index]);
             }
         }
@@ -143,7 +147,7 @@ class Arena implements Listener {
     }
 
     public function loadArena() {
-
+        $this->mapReset = new MapReset($this);
     }
 
     public function loadGame() {
