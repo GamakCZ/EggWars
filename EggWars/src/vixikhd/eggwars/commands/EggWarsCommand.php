@@ -59,6 +59,8 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
             return;
         }
 
+        if(!$sender->hasPermission("ew.cmd") || !$sender instanceof Player) return;
+
         switch ($args[0]) {
             case "help":
                 if(!$sender->hasPermission("ew.cmd.help")) {
@@ -70,7 +72,8 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     "§7/ew create : Create EggWars arena\n".
                     "§7/ew remove : Remove EggWars arena\n".
                     "§7/ew set : Set EggWars arena\n".
-                    "§7/ew arenas : Displays list of arenas");
+                    "§7/ew arenas : Displays list of arenas\n".
+                    "§7/ew level : Level settings");
 
                 break;
             case "create":
@@ -148,7 +151,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     break;
                 }
                 if(!isset($args[1])) {
-                    $sender->sendMessage("§cUsage: §7/ew level <add|set|list>");
+                    $sender->sendMessage("§cUsage: §7/ew level <add|rm|set|list>");
                     break;
                 }
                 switch ($args[1]) {
@@ -165,10 +168,15 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                             $sender->sendMessage("§c> Level {$args[2]} is already added!");
                             break;
                         }
+                        if(!$this->plugin->getServer()->isLevelLoaded($args[2])) {
+                            $sender->sendMessage("§6> Loading level {$args[2]}...");
+                            $this->plugin->getServer()->loadLevel($args[2]);
+                        }
+                        $level = $this->plugin->getServer()->getLevelByName($args[2]);
                         $this->plugin->levels[$args[2]] = [
                             "enabled" => false,
                             "name" => "", // custom (displayed) name
-                            "level" => "", // folder name of level
+                            "level" => $level->getFolderName(), // folder name of level
                             "arena" => "", // arena
                             "teams" => []
                         ];
@@ -213,6 +221,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                                 $list .= "§7- $name ($customName): §aenabled\n";
                             }
                         }
+                        $sender->sendMessage($list);
                         break;
                     default:
                         $sender->sendMessage("§cUsage: §7/ew level <add|rm|set|list>");

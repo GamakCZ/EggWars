@@ -31,9 +31,9 @@ interface LevelManager {
 
     /**
      * @param Arena $arena
-     * @return void
+     * @return bool
      */
-    public function init(Arena $arena);
+    public function init(Arena $arena): bool;
 
     /**
      * @return array $levelData

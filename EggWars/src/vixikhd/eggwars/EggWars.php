@@ -20,7 +20,9 @@ declare(strict_types=1);
 
 namespace vixikhd\eggwars;
 
+use pocketmine\block\Block;
 use pocketmine\event\block\BlockBreakEvent;
+use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\command\Command;
@@ -251,13 +253,41 @@ class EggWars extends PluginBase implements Listener {
                 $player->sendMessage("§a> Spawn position updated to {$pos->getX()}, {$pos->getY()}, {$pos->getZ()}!");
                 break;
             case "egg":
-
+                if(!isset($args[1])) {
+                    $player->sendMessage("§cUsage: §7egg <team>");
+                    break;
+                }
+                if($this->levels[$levelData]["arena"] == "") {
+                    $player->sendMessage("§c> Import teams first!");
+                    break;
+                }
+                if(!isset($this->arenas[$this->levels[$levelData]["arena"]])) {
+                    $player->sendMessage("§c> Arena is not implemented! Import teams again!\n§6> Imported teams were removed.");
+                    $this->levels[$levelData]["arena"] = "";
+                    $this->levels[$levelData]["teams"] = [];
+                    break;
+                }
+                if(!isset($this->levels[$levelData]["teams"][$args[1]])) {
+                    $player->sendMessage("§c> Team {$args[1]} isn't imported!");
+                    break;
+                }
+                $this->setupData[$player->getName()] = [1, $args[1]];
+                $player->sendMessage("§a> Break the block to set the egg!");
                 break;
             default:
                 $player->sendMessage("§6> You are in setup mode.\n".
                     "§7- use §lhelp §r§7to display available commands\n".
                     "§7- or §ldone §r§7to leave setup mode");
                 break;
+        }
+    }
+
+    /**
+     * @param BlockPlaceEvent $event
+     */
+    public function onPlace(BlockPlaceEvent $event) {
+        if($event->getBlock()->getId() == Block::DRAGON_EGG) {
+            $event->getBlock()->getLevel()->setBlock($event->getBlock(), Block::get(Block::DRAGON_EGG));
         }
     }
 
@@ -273,6 +303,7 @@ class EggWars extends PluginBase implements Listener {
                         unset($this->setupData[$player->getName()]);
                         return;
                     }
+                    $event->setCancelled(true);
                     $arena = $this->setters[$player->getName()];
                     $pos = Math::ceilPosition($event->getBlock());
                     $arena->data["joinsign"] = [$pos->getX(), $pos->getY(), $pos->getZ(), $pos->getLevel()->getFolderName()];
@@ -283,6 +314,7 @@ class EggWars extends PluginBase implements Listener {
                         unset($this->setupData[$player->getName()]);
                         return;
                     }
+                    $event->setCancelled(true);
                     if($event->getBlock()->getLevel()->getFolderName() != $this->setters[$player->getName()]) {
                         $player->sendMessage("§a> Egg must been set in arena level!");
                         break;

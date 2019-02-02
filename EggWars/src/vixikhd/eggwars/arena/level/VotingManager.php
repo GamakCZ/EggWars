@@ -33,7 +33,7 @@ class VotingManager implements LevelManager {
     /** @var Level $level */
     public $level;
 
-    public function init(Arena $arena) {
+    public function init(Arena $arena): bool {
 
     }
 
