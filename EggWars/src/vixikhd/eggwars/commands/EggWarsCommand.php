@@ -38,7 +38,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
     protected $plugin;
 
     /**
-     * SkyWarsCommand constructor.
+     * EggWarsCommand constructor.
      * @param EggWars $plugin
      */
     public function __construct(EggWars $plugin) {
@@ -68,11 +68,11 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
                     break;
                 }
-                $sender->sendMessage("§a> SkyWars commands:\n" .
-                    "§7/ew help : Displays list of SkyWars commands\n".
-                    "§7/ew create : Create SkyWars arena\n".
-                    "§7/ew remove : Remove SkyWars arena\n".
-                    "§7/ew set : Set SkyWars arena\n".
+                $sender->sendMessage("§a> EggWars commands:\n" .
+                    "§7/ew help : Displays list of EggWars commands\n".
+                    "§7/ew create : Create EggWars arena\n".
+                    "§7/ew remove : Remove EggWars arena\n".
+                    "§7/ew set : Set EggWars arena\n".
                     "§7/ew arenas : Displays list of arenas");
 
                 break;
@@ -93,7 +93,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage("§a> Arena $args[1] created!");
                 break;
             case "remove":
-                if(!$sender->hasPermission("sw.cmd.remove")) {
+                if(!$sender->hasPermission("ew.cmd.remove")) {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
                     break;
                 }
@@ -120,7 +120,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage("§a> Arena removed!");
                 break;
             case "set":
-                if(!$sender->hasPermission("sw.cmd.set")) {
+                if(!$sender->hasPermission("ew.cmd.set")) {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
                     break;
                 }
@@ -129,7 +129,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     break;
                 }
                 if(!isset($args[1])) {
-                    $sender->sendMessage("§cUsage: §7/sw set <arenaName>");
+                    $sender->sendMessage("§cUsage: §7/ew set <arenaName>");
                     break;
                 }
                 if(isset($this->plugin->setters[$sender->getName()])) {
@@ -140,13 +140,13 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     $sender->sendMessage("§c> Arena $args[1] does not found!");
                     break;
                 }
-                $sender->sendMessage("§a> You are joined setup mode.\n".
+                $sender->sendMessage("§a> You are joined arena setup mode.\n".
                     "§7- use §lhelp §r§7to display available commands\n"  .
                     "§7- or §ldone §r§7to leave setup mode");
                 $this->plugin->setters[$sender->getName()] = $this->plugin->arenas[$args[1]];
                 break;
             case "arenas":
-                if(!$sender->hasPermission("sw.cmd.arenas")) {
+                if(!$sender->hasPermission("ew.cmd.arenas")) {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
                     break;
                 }
@@ -166,11 +166,11 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage($list);
                 break;
             default:
-                if(!$sender->hasPermission("sw.cmd.help")) {
+                if(!$sender->hasPermission("ew.cmd.help")) {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
                     break;
                 }
-                $sender->sendMessage("§cUsage: §7/sw help");
+                $sender->sendMessage("§cUsage: §7/ew help");
                 break;
         }
 

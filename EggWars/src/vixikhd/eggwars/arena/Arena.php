@@ -24,14 +24,12 @@ use pocketmine\event\Listener;
 use vixikhd\eggwars\arena\level\BaseLevelManager;
 use vixikhd\eggwars\arena\level\LevelManager;
 use vixikhd\eggwars\arena\listener\ArenaListener;
-use vixikhd\eggwars\arena\scheduler\ArenaScheduler;
 use vixikhd\eggwars\arena\scheduler\GeneratorScheduler;
 use vixikhd\eggwars\arena\shop\ShopManager;
 use vixikhd\eggwars\arena\team\Team;
 use vixikhd\eggwars\arena\team\TeamManager;
 use vixikhd\eggwars\arena\voting\VotingManager;
 use vixikhd\eggwars\EggWars;
-use vixikhd\eggwars\level\EggWarsLevel;
 use vixikhd\eggwars\utils\Color;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
@@ -78,23 +76,51 @@ class Arena implements Listener {
      * @param array $arenaFileData
      */
     public function __construct(EggWars $plugin, array $arenaFileData) {
-        $this->data = $arenaFileData;
         $this->plugin = $plugin;
-        $this->setup = !$this->enable();
+        $this->data = $arenaFileData;
+        $this->setup = !$this->enable(false);
+
+        $this->plugin->getScheduler()->scheduleRepeatingTask($this->scheduler = new ArenaScheduler($this), 20);
+
+        if($this->setup) {
+            if(empty($this->data)) {
+                $this->createBasicData();
+            }
+        }
+        else {
+            $this->loadArena();
+        }
     }
 
     /**
+     * @param bool $loadArena
      * @return bool
      */
-    public function enable(): bool {
-        if(!isset($this->plugin->levels[$this->data["name"]])) {
+    public function enable(bool $loadArena = true): bool {
+        foreach ($this->data["levels"] as $index => $level) {
+            if(!isset($this->plugin->levels[$level])) {
+                unset($this->data["levels"][$index]);
+            }
+        }
+        if(count($this->data["levels"]) == 0) {
             return false;
         }
-        $levels = $this->plugin->levels[$this->data["name"]];
-        if(count($levels) == 0) {
+        if($this->data["teamstostart"] == 0) {
             return false;
         }
-        if(count($levels) > 1) {
+        if($this->data["playersperteam"] == 0) {
+            return false;
+        }
+        if(empty($this->data["lobby"])) {
+            return false;
+        }
+        if(empty($this->data["joinsign"])) {
+            return false;
+        }
+        if(empty($this->data["teams"])) {
+            return false;
+        }
+        if(count($this->data["levels"]) > 1) {
             $this->levelManager = new VotingManager();
         }
         else {
@@ -102,6 +128,22 @@ class Arena implements Listener {
         }
         $this->levelManager->init($this);
         return true;
+    }
+
+    public function createBasicData() {
+        $this->data = [
+            "enabled" => false,
+            "teamstostart" => 0,
+            "playersperteam" => 0,
+            "lobby" => [],
+            "joinsign" => [],
+            "teams" => [],
+            "levels" => []
+        ];
+    }
+
+    public function loadArena() {
+
     }
 
     public function loadGame() {

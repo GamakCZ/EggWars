@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Copyright 2018 GamakCZ
+ *    Copyright 2018-2019 GamakCZ
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,28 +18,22 @@
 
 declare(strict_types=1);
 
-namespace vixikhd\eggwars\arena;
+namespace vixikhd\eggwars\utils;
 
-use pocketmine\scheduler\Task;
+use pocketmine\block\SignPost;
+use pocketmine\level\Position;
 
 /**
- * Class ArenaScheduler
- * @package vixikhd\eggwars\arena
+ * Class Math
+ * @package vixikhd\eggwars\utils
  */
-class ArenaScheduler extends Task {
-
-    /** @var Arena $plugin */
-    public $plugin;
+class Math {
 
     /**
-     * ArenaScheduler constructor.
-     * @param Arena $plugin
+     * @param Position $position
+     * @return Position
      */
-    public function __construct(Arena $plugin) {
-        $this->plugin = $plugin;
-    }
-
-    public function onRun(int $currentTick) {
-        // TODO: Implement onRun() method.
+    public static function ceilPosition(Position $position): Position {
+        return Position::fromObject($position->ceil(), $position->getLevel());
     }
 }
