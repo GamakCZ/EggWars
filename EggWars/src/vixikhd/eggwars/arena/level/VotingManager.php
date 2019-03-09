@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-namespace vixikhd\eggwars\arena\voting;
+namespace vixikhd\eggwars\arena\level;
 
 use pocketmine\level\Level;
 use vixikhd\eggwars\arena\Arena;
