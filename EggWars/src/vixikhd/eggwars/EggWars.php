@@ -92,11 +92,11 @@ class EggWars extends PluginBase implements Listener {
             return;
         }
 
-        $event->setCancelled(\true);
+        $event->setCancelled(true);
         $args = explode(" ", $event->getMessage());
 
         if($args[0] == "done") {
-            $player->sendMessage("§a> You are successfully left setup mode!");
+            $player->sendMessage("§a> You have successfully left setup mode!");
             unset($this->setters[$player->getName()]);
             return;
         }
@@ -189,7 +189,7 @@ class EggWars extends PluginBase implements Listener {
         if(!is_string($this->setters[$player->getName()])) return;
 
         /** @var string $levelData */
-        $levelData = $this->setters[$player->getName()];
+        $levelData = $this->setters[$player->getName()]; // level's name
 
         switch ($args[0]) {
             case "help":
@@ -198,7 +198,8 @@ class EggWars extends PluginBase implements Listener {
                     "§7setarena : Set arena to import teams\n".
                     "§7name : Set custom level name (required)\n".
                     "§7spawn : Update team spawn\n" .
-                    "§7egg : Update team egg");
+                    "§7egg : Update team egg\n" .
+                    "§7enable : Enables the level");
                 break;
             case "setarena":
                 if(!isset($args[1])) {
@@ -215,6 +216,7 @@ class EggWars extends PluginBase implements Listener {
                     $this->levels[$levelData]["teams"][$team] = [];
                 }
                 $this->levels[$levelData]["arena"] = $args[1];
+                $arena->data["levels"][] = $levelData;
                 $player->sendMessage("§a> Arena {$args[1]} imported!");
                 break;
             case "name":
@@ -274,6 +276,48 @@ class EggWars extends PluginBase implements Listener {
                 $this->setupData[$player->getName()] = [1, $args[1]];
                 $player->sendMessage("§a> Break the block to set the egg!");
                 break;
+            case "enable":
+                $data = $this->levels[$levelData];
+                if(!isset($data["name"]) || $data["name"] == "") {
+                    $data["name"] = $data["level"];
+                }
+                if($data["arena"] == "" || !isset($this->arenas[$data["arena"]])) {
+                    $player->sendMessage("§c> Arena of level $levelData wasn't found.");
+                    break;
+                }
+                $arena = $this->arenas[$data["arena"]];
+                $problem = false;
+                foreach ($data["teams"] as $team => $teamInformation) {
+                    if(count($teamInformation) < 2) {
+                        $problem = true;
+                    }
+                    foreach ($teamInformation as $posName => $vector) {
+                        if(count($vector) < 3) {
+                            $problem = true;
+                        }
+                    }
+                }
+
+                if(count($arena->data["teams"]) != count($data["teams"]) || $problem) {
+                    $player->sendMessage("§c> Check that you have set all the teams.");
+                    return;
+                }
+                $this->levels[$levelData]["enabled"] = true;
+
+                if(!$this->getServer()->isLevelGenerated($levelData)) {
+                    $player->sendMessage("§c> Level not found!");
+                    break;
+                }
+
+                if(!$this->getServer()->isLevelLoaded($levelData)) {
+                    $this->getServer()->loadLevel($levelData);
+                }
+
+                $level = $this->getServer()->getLevelByName($levelData);
+                $arena->mapReset->saveMap($level);
+                $player->sendMessage("§6> Level saved.");
+                $player->sendMessage("§a> Level is successfully enabled!");
+                break;
             default:
                 $player->sendMessage("§6> You are in setup mode.\n".
                     "§7- use §lhelp §r§7to display available commands\n".
@@ -323,7 +367,7 @@ class EggWars extends PluginBase implements Listener {
                     $player->sendMessage("§a> Egg updated to {$pos->getX()}, {$pos->getY()}, {$pos->getZ()}");
                     /** @var string $index */
                     $index = $this->setters[$player->getName()];
-                    $this->levels[$index]["egg"][$this->setupData[$player->getName()][1]] = [$pos->getX(), $pos->getY(), $pos->getZ()];
+                    $this->levels[$index]["teams"][$this->setupData[$player->getName()][1]]["egg"] = [$pos->getX(), $pos->getY(), $pos->getZ()];
                     break;
             }
 

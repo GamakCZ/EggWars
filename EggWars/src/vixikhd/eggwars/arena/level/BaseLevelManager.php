@@ -30,8 +30,14 @@ class BaseLevelManager implements LevelManager {
         $this->levelData = $this->plugin->plugin->levels[$this->plugin->data["levels"][0]];
         $server = $this->plugin->plugin->getServer();
         if(!$server->isLevelGenerated($this->levelData["level"])) {
-            
+            $plugin->plugin->getLogger()->error("Could not load arena level manager. Arena level ({$this->levelData["level"]}) isn't generated!");
+            return false;
         }
+        if(!$server->isLevelLoaded($this->levelData["level"])) {
+            $server->loadLevel($this->levelData["level"]);
+        }
+        $this->level = $server->getLevelByName($this->levelData["level"]);
+        return true;
     }
 
     /**

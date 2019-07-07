@@ -140,7 +140,7 @@ class EggWarsCommand extends Command implements PluginIdentifiableCommand {
                     $sender->sendMessage("§c> Arena $args[1] does not found!");
                     break;
                 }
-                $sender->sendMessage("§a> You are joined arena setup mode.\n".
+                $sender->sendMessage("§a> You've joined arena setup mode.\n".
                     "§7- use §lhelp §r§7to display available commands\n"  .
                     "§7- or §ldone §r§7to leave setup mode");
                 $this->plugin->setters[$sender->getName()] = $this->plugin->arenas[$args[1]];
