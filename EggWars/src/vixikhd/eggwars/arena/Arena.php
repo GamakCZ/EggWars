@@ -216,8 +216,8 @@ class Arena implements Listener {
         if($this->inGame($player) && $this->phase === self::PHASE_GAME) {
             if($event->getBlock()->getId() == Block::DRAGON_EGG) {
                 $team = "";
-                foreach ($this->levelManager->getLevelData()["teams"] as $t => ["spawn" => $pos]) {
-                    if((new Vector3($pos[0], $pos[1], $pos[2]))->ceil()->equals($event->getBlock()->ceil())) {
+                foreach ($this->levelManager->getLevelData()["teams"] as $t => ["egg" => $pos]) {
+                    if(($v = new Vector3($pos[0], $pos[1], $pos[2]))->ceil()->equals($n = $event->getBlock()->ceil())) {
                         $team = $t;
                     }
                 }
@@ -322,6 +322,10 @@ class Arena implements Listener {
         if($this->inGame($player) && $event->getBlock()->getId() == Block::CHEST && $this->phase == self::PHASE_LOBBY) {
             $event->setCancelled(true);
             return;
+        }
+
+        if($this->inGame($player) && $this->phase === self::PHASE_GAME && $event->getBlock()->getId() == Block::DRAGON_EGG) {
+            $this->onBreak(new BlockBreakEvent($player, $event->getBlock(), $player->getInventory()->getItemInHand(), false, [], 0));
         }
 
         if(!$block->getLevel()->getTile($block) instanceof Tile) {

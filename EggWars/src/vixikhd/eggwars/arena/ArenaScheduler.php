@@ -20,10 +20,12 @@ declare(strict_types=1);
 
 namespace vixikhd\eggwars\arena;
 
+use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\level\sound\AnvilUseSound;
 use pocketmine\level\sound\ClickSound;
+use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 use pocketmine\tile\Sign;
 use vixikhd\eggwars\utils\Time;
@@ -32,7 +34,7 @@ use vixikhd\eggwars\utils\Time;
  * Class ArenaScheduler
  * @package vixikhd\eggwars\arena
  */
-class ArenaScheduler extends Task {
+class ArenaScheduler extends Task implements IngotGeneratorData {
 
     /** @var Arena $plugin */
     public $plugin;
@@ -86,7 +88,7 @@ class ArenaScheduler extends Task {
                 break;
             case Arena::PHASE_GAME:
                 $this->plugin->broadcastMessage($this->getScoreText(), Arena::MSG_POPUP);
-                $this->spawnIngots();
+                $this->spawnIngots($currentTick);
                 $this->gameTime--;
                 break;
             case Arena::PHASE_RESTART:
@@ -116,8 +118,61 @@ class ArenaScheduler extends Task {
         }
     }
 
-    public function spawnIngots() {
+    public function spawnIngots(int $currentTick) {
+        foreach ($this->plugin->levelManager->getLevel()->getTiles() as $sign) {
+            if($sign instanceof Sign) {
+                $text = $sign->getText();
+                $level = (int)str_replace("§fLevel: ", "", $text[2]);
+                if($text[0] == "Generator") {
+                    switch ($text[1]) {
+                        case "§l§7Iron":
+                            $speed = self::INGOT_IRON["delay"][$level];
+                            if($speed <= 1) {
+                                $this->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT), (int)round(1/$speed));
+                            }
+                            else {
+                                if($this->gameTime % $speed == 0) {
+                                    $this->dropItem($sign->asVector3(), Item::get(Item::IRON_INGOT));
+                                }
+                            }
+                            break;
+                        case "§l§6Gold":
+                            $speed = self::INGOT_GOLD["delay"][$level];
+                            if($speed <= 1) {
+                                $this->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT), (int)round(1/$speed));
+                            }
+                            else {
+                                if($this->gameTime % $speed == 0) {
+                                    $this->dropItem($sign->asVector3(), Item::get(Item::GOLD_INGOT));
+                                }
+                            }
+                            break;
+                        case "§l§bDiamond":
+                            $speed = self::INGOT_DIAMOND["delay"][$level];
+                            if($speed <= 1) {
+                                $this->dropItem($sign->asVector3(), Item::get(Item::DIAMOND), (int)round(1/$speed));
+                            }
+                            else {
+                                if($this->gameTime % $speed == 0) {
+                                    $this->dropItem($sign->asVector3(), Item::get(Item::DIAMOND));
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+    }
 
+    /**
+     * @param Vector3 $pos
+     * @param Item $item
+     * @param int $count
+     */
+    private function dropItem(Vector3 $pos, Item $item, int $count = 1) {
+        for($x = 0; $x < $count; $x++) {
+            $this->plugin->levelManager->getLevel()->dropItem($pos->add(0.5, 0, 0.5), $item, new Vector3(0, 0, 0));
+        }
     }
 
     public function getScoreText(): string {

@@ -27,7 +27,9 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\command\Command;
 use pocketmine\plugin\PluginBase;
+use pocketmine\tile\Sign;
 use vixikhd\eggwars\arena\Arena;
+use vixikhd\eggwars\arena\IngotGeneratorData;
 use vixikhd\eggwars\commands\EggWarsCommand;
 use vixikhd\eggwars\provider\YamlDataProvider;
 use vixikhd\eggwars\utils\Color;
@@ -41,7 +43,7 @@ use vixikhd\eggwars\utils\Math;
  * @version 1.0.0-beta1
  * @api 3.0.0
  */
-class EggWars extends PluginBase implements Listener {
+class EggWars extends PluginBase implements Listener, IngotGeneratorData {
 
     /** @var EggWars $instance */
     private static $instance;
@@ -199,6 +201,7 @@ class EggWars extends PluginBase implements Listener {
                     "§7name : Set custom level name (required)\n".
                     "§7spawn : Update team spawn\n" .
                     "§7egg : Update team egg\n" .
+                    "§7checksigns : Loads all the signs in the world\n" .
                     "§7enable : Enables the level");
                 break;
             case "setarena":
@@ -275,6 +278,68 @@ class EggWars extends PluginBase implements Listener {
                 }
                 $this->setupData[$player->getName()] = [1, $args[1]];
                 $player->sendMessage("§a> Break the block to set the egg!");
+                break;
+            case "checksigns":
+                if(!$this->getServer()->isLevelGenerated($levelData)) {
+                    $player->sendMessage("§c> Level not found.");
+                    break;
+                }
+                if(!$this->getServer()->isLevelLoaded($levelData)) {
+                    $this->getServer()->loadLevel($levelData);
+                }
+                foreach ($this->getServer()->getLevelByName($levelData)->getTiles() as $sign) {
+                    if($sign instanceof Sign) {
+                        $text = $sign->getText();
+                        if(strtolower($text[0]) == "generator") {
+                            $level = -1;
+                            $ingot = "";
+                            $maxLevel = false;
+
+                            switch (ucfirst($text[1])) {
+                                case "Iron":
+                                    $ingot = "§l§7Iron";
+                                    if(($l = (int)trim($text[2])) <= self::INGOT_IRON["maxLevel"]) {
+                                        $level = $l;
+                                        if($level == self::INGOT_IRON["maxLevel"]) {
+                                            $maxLevel = true;
+                                        }
+                                    }
+                                    else {
+                                        $level = 1;
+                                    }
+                                    break;
+                                case "Gold":
+                                    $ingot = "§l§6Gold";
+                                    if(($l = (int)trim($text[2])) <= self::INGOT_GOLD["maxLevel"]) {
+                                        $level = $l;
+                                        if($level == self::INGOT_GOLD["maxLevel"]) {
+                                            $maxLevel = true;
+                                        }
+                                    }
+                                    else {
+                                        $level = 1;
+                                    }
+                                    break;
+                                case "Diamond":
+                                    $ingot = "§l§bDiamond";
+                                    if(($l = (int)trim($text[2])) <= self::INGOT_DIAMOND["maxLevel"]) {
+                                        $level = $l;
+                                        if($level == self::INGOT_DIAMOND["maxLevel"]) {
+                                            $maxLevel = true;
+                                        }
+                                    }
+                                    else {
+                                        $level = 1;
+                                    }
+                                    break;
+                            }
+
+                            if($level !== -1 && $ingot !== "") {
+                                $sign->setText("Generator", $ingot, "§fLevel: {$level}", ($maxLevel ? "§a§oMax level" : "§e§oClick to upgrade."));
+                            }
+                        }
+                    }
+                }
                 break;
             case "enable":
                 $data = $this->levels[$levelData];
